@@ -62,7 +62,6 @@ namespace Doji.PackageAuthoring.Editor.Wizards.PackageSearch {
         }
 
         private void Refresh() {
-            Debug.Log("Refreshing package indexes...");
             DisposeSources();
             BuildSources();
 

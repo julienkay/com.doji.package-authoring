@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using UnityEditor;
 using UnityEditor.Build;
 using UnityEngine;
@@ -15,16 +14,11 @@ namespace Doji.PackageAuthoring.Editor.Wizards {
     /// <summary>
     /// Editor window that scaffolds a package repository and a companion Unity test project.
     /// </summary>
-    public partial class PackageCreationWizard : EditorWindow {
+    public class PackageCreationWizard : EditorWindow {
         private const string PackageSectionPresetTooltip = "Apply package defaults or a package preset asset.";
 
         private const string CompanionProjectPresetTooltip =
             "Apply project defaults or a preset asset to the companion project.";
-
-        private const float StructurePreviewMinWidth = 360f;
-        private const float StructurePreviewMaxWidth = 640f;
-        private const float StructurePreviewMinHeight = 220f;
-        private const float StructurePreviewMaxHeight = 520f;
 
         private static readonly string PackageNameField =
             $"<{nameof(Doji.PackageAuthoring.Editor.Wizards.Models.PackageSettings.PackageName)}>k__BackingField";
@@ -51,7 +45,8 @@ namespace Doji.PackageAuthoring.Editor.Wizards {
             $"<{nameof(Doji.PackageAuthoring.Editor.Wizards.Models.ProjectSettings.TargetLocation)}>k__BackingField";
 
         [SerializeField] private bool _initializedFromDefaults;
-        [SerializeField] private Vector2 _structurePreviewScrollPosition;
+        [SerializeField] private Vector2 _contentScrollPosition;
+        [SerializeField] private Vector2 _repositoryLayoutPreviewScrollPosition;
         [SerializeField] private bool _autoOpenAfterCreation = true;
 
         private string RootDirectory => Path.Combine(ProjectSettings.TargetLocation, PackageSettings.PackageName);
@@ -64,7 +59,7 @@ namespace Doji.PackageAuthoring.Editor.Wizards {
         private SerializedObject _defaultsSerializedObject;
         private SerializedObject _windowSerializedObject;
         private SerializedProperty _autoOpenAfterCreationProperty;
-        private GUIStyle _structurePreviewStyle;
+        private RepositoryLayoutPreviewPanel _repositoryLayoutPreviewPanel;
 
         private PackageAuthoringProfile Defaults => _defaults ??= CreateTemporaryProfile();
         private ProjectSettings ProjectSettings => Defaults.ProjectDefaults;
@@ -78,7 +73,7 @@ namespace Doji.PackageAuthoring.Editor.Wizards {
         public static void ShowWindow() {
             PackageCreationWizard window = GetWindow<PackageCreationWizard>();
             window.titleContent = new GUIContent("Package Creation");
-            window.minSize = new Vector2(1000f, 800f);
+            window.minSize = new Vector2(1000f, 600f);
         }
 
         /// <summary>
@@ -86,6 +81,7 @@ namespace Doji.PackageAuthoring.Editor.Wizards {
         /// </summary>
         private void OnEnable() {
             titleContent = new GUIContent("Package Creation");
+            minSize = new Vector2(1000f, 600f);
 
             if (!_initializedFromDefaults) {
                 ApplyProjectDefaults();
@@ -104,6 +100,7 @@ namespace Doji.PackageAuthoring.Editor.Wizards {
             _defaultsSerializedObject = null;
             _windowSerializedObject = null;
             _autoOpenAfterCreationProperty = null;
+            _repositoryLayoutPreviewPanel = null;
         }
 
         /// <summary>
@@ -157,31 +154,40 @@ namespace Doji.PackageAuthoring.Editor.Wizards {
 
             _defaultsSerializedObject.Update();
             _windowSerializedObject.Update();
-            GUILayout.Space(10);
-            EditorGUILayout.BeginHorizontal();
-            EditorGUILayout.BeginVertical(GUILayout.ExpandWidth(true));
-            DrawPackageDefinitionSection();
-
-            GUILayout.Space(8f);
-            DrawRepoSettingsSection();
-
-            GUILayout.Space(8f);
-            DrawCompanionProjectSection();
-
-            GUILayout.Space(8f);
-            PackageAuthoringGui.DrawSection("Output", DrawOutputSection);
-            EditorGUILayout.EndVertical();
-
             GUILayout.Space(10f);
-            DrawStructurePreviewPanel();
-            EditorGUILayout.EndHorizontal();
+
+            using (EditorGUILayout.ScrollViewScope scrollView = new EditorGUILayout.ScrollViewScope(
+                       _contentScrollPosition,
+                       GUILayout.ExpandHeight(true))) {
+                _contentScrollPosition = scrollView.scrollPosition;
+
+                EditorGUILayout.BeginHorizontal();
+                EditorGUILayout.BeginVertical(GUILayout.ExpandWidth(true));
+                DrawPackageDefinitionSection();
+
+                GUILayout.Space(8f);
+                DrawRepoSettingsSection();
+
+                GUILayout.Space(8f);
+                DrawCompanionProjectSection();
+
+                GUILayout.Space(8f);
+                PackageAuthoringGui.DrawSection("Output", DrawOutputSection);
+                EditorGUILayout.EndVertical();
+
+                GUILayout.Space(10f);
+                DrawRepositoryLayoutPreviewPanel();
+                EditorGUILayout.EndHorizontal();
+            }
 
             _defaultsSerializedObject.ApplyModifiedProperties();
             _windowSerializedObject.ApplyModifiedProperties();
 
             GUILayout.Space(10f);
-            if (GUILayout.Button("Create Package")) {
-                CreatePackageScaffolding();
+            using (new EditorGUILayout.HorizontalScope()) {
+                if (GUILayout.Button("Create Package", GUILayout.Height(24f), GUILayout.Width(140f))) {
+                    CreatePackageScaffolding();
+                }
             }
         }
 
@@ -318,157 +324,30 @@ namespace Doji.PackageAuthoring.Editor.Wizards {
         }
 
         /// <summary>
-        /// Draws a live tree preview for the generated repository layout beside the editable fields.
+        /// Draws a live repository layout preview beside the editable fields.
         /// </summary>
-        private void DrawStructurePreviewPanel() {
-            float previewWidth = Mathf.Clamp(position.width * 0.4f, StructurePreviewMinWidth, StructurePreviewMaxWidth);
-            EditorGUILayout.BeginVertical(GUILayout.Width(previewWidth), GUILayout.ExpandHeight(true));
-            PackageAuthoringGui.DrawSection("Project Structure Preview", DrawStructurePreviewContent);
-            EditorGUILayout.EndVertical();
+        private void DrawRepositoryLayoutPreviewPanel() {
+            _repositoryLayoutPreviewPanel ??= new RepositoryLayoutPreviewPanel();
+            _repositoryLayoutPreviewPanel.Draw(
+                position.width,
+                BuildRepositoryLayoutPreviewData(),
+                ref _repositoryLayoutPreviewScrollPosition);
         }
 
-        /// <summary>
-        /// Renders the generated tree in a scrollable, read-only text area.
-        /// </summary>
-        private void DrawStructurePreviewContent() {
-            _structurePreviewStyle ??= new GUIStyle(EditorStyles.textArea) {
-                wordWrap = false,
-                richText = false
+        private RepositoryLayoutPreviewData BuildRepositoryLayoutPreviewData() {
+            return new RepositoryLayoutPreviewData {
+                RootDirectoryName = GetDirectoryName(PreviewRootDirectory, CurrentPackageName),
+                PackageName = CurrentPackageName,
+                AssemblyName = CurrentAssemblyName,
+                CompanionProjectName = CurrentProductName,
+                IncludeDocsFolder = CurrentCreateDocsFolder,
+                IncludeSamplesFolder = CurrentCreateSamplesFolder,
+                IncludeEditorFolder = CurrentCreateEditorFolder,
+                IncludeTestsFolder = CurrentCreateTestsFolder,
+                IncludeRepositoryGitIgnore = File.Exists(Path.Combine(Directory.GetCurrentDirectory(), ".gitignore")),
+                IncludePackagesLockFile = File.Exists(
+                    Path.Combine(Directory.GetCurrentDirectory(), "Packages", "packages-lock.json"))
             };
-
-            string previewText = BuildStructurePreview();
-            float contentHeight = _structurePreviewStyle.CalcHeight(
-                new GUIContent(previewText),
-                Mathf.Max(1f, EditorGUIUtility.currentViewWidth));
-            float previewHeight =
-                Mathf.Clamp(contentHeight + 10f, StructurePreviewMinHeight, StructurePreviewMaxHeight);
-
-            using (EditorGUILayout.ScrollViewScope scrollView = new EditorGUILayout.ScrollViewScope(
-                       _structurePreviewScrollPosition,
-                       GUILayout.ExpandWidth(true),
-                       GUILayout.Height(previewHeight))) {
-                _structurePreviewScrollPosition = scrollView.scrollPosition;
-                EditorGUILayout.SelectableLabel(
-                    previewText,
-                    _structurePreviewStyle,
-                    GUILayout.MinHeight(contentHeight),
-                    GUILayout.ExpandWidth(true));
-            }
-        }
-
-        private string BuildStructurePreview() {
-            PreviewNode root = new PreviewNode(GetLeafNameOrFallback(PreviewRootDirectory, CurrentPackageName));
-
-            if (CurrentCreateDocsFolder) {
-                root.Children.Add(BuildDocsPreview());
-            }
-
-            root.Children.Add(BuildPackagePreview());
-            root.Children.Add(new PreviewNode("LICENSE"));
-            root.Children.Add(new PreviewNode("README.md"));
-            root.Children.Add(BuildCompanionProjectPreview());
-
-            StringBuilder builder = new StringBuilder();
-            AppendTree(builder, root, string.Empty, isLast: true, isRoot: true);
-            return builder.ToString();
-        }
-
-        private PreviewNode BuildDocsPreview() {
-            PreviewNode docs = new PreviewNode("docs");
-            docs.Children.Add(new PreviewNode(".gitignore"));
-            docs.Children.Add(new PreviewNode("docfx.json"));
-            docs.Children.Add(new PreviewNode("docfx-pdf.json"));
-            docs.Children.Add(new PreviewNode("filterConfig.yml"));
-            docs.Children.Add(new PreviewNode("index.md"));
-
-            PreviewNode api = new PreviewNode("api");
-            api.Children.Add(new PreviewNode(".gitignore"));
-            api.Children.Add(new PreviewNode("index.md"));
-            docs.Children.Add(api);
-
-            PreviewNode images = new PreviewNode("images");
-            images.Children.Add(new PreviewNode("doji.png"));
-            images.Children.Add(new PreviewNode("favicon.ico"));
-            docs.Children.Add(images);
-
-            PreviewNode manual = new PreviewNode("manual");
-            manual.Children.Add(new PreviewNode("toc.yml"));
-            docs.Children.Add(manual);
-
-            PreviewNode pdf = new PreviewNode("pdf");
-            pdf.Children.Add(new PreviewNode("toc.yml"));
-            docs.Children.Add(pdf);
-
-            docs.Children.Add(new PreviewNode("toc.yml"));
-            return docs;
-        }
-
-        private PreviewNode BuildPackagePreview() {
-            PreviewNode package = new PreviewNode(CurrentPackageName);
-            package.Children.Add(new PreviewNode("CHANGELOG.md"));
-
-            if (CurrentCreateEditorFolder) {
-                PreviewNode editor = new PreviewNode("Editor");
-                editor.Children.Add(new PreviewNode($"{CurrentAssemblyName}.Editor.asmdef"));
-                package.Children.Add(editor);
-            }
-
-            package.Children.Add(new PreviewNode("README.md"));
-
-            PreviewNode runtime = new PreviewNode("Runtime");
-            runtime.Children.Add(new PreviewNode($"{CurrentAssemblyName}.asmdef"));
-            runtime.Children.Add(new PreviewNode("AssemblyInfo.cs"));
-            package.Children.Add(runtime);
-
-            if (CurrentCreateSamplesFolder) {
-                PreviewNode samples = new PreviewNode("Samples~");
-                samples.Children.Add(new PreviewNode($"{CurrentAssemblyName}.asmdef"));
-                samples.Children.Add(new PreviewNode("00-SharedSampleAssets"));
-
-                PreviewNode basicSample = new PreviewNode("01-BasicSample");
-                basicSample.Children.Add(new PreviewNode("BasicSample.cs"));
-                samples.Children.Add(basicSample);
-
-                package.Children.Add(samples);
-            }
-
-            if (CurrentCreateTestsFolder) {
-                package.Children.Add(new PreviewNode("Tests"));
-            }
-
-            package.Children.Add(new PreviewNode("package.json"));
-            return package;
-        }
-
-        private PreviewNode BuildCompanionProjectPreview() {
-            PreviewNode projects = new PreviewNode("projects");
-            PreviewNode project = new PreviewNode(CurrentProductName);
-            if (File.Exists(Path.Combine(Directory.GetCurrentDirectory(), ".gitignore"))) {
-                project.Children.Add(new PreviewNode(".gitignore"));
-            }
-
-            project.Children.Add(new PreviewNode("Assets"));
-
-            PreviewNode packages = new PreviewNode("Packages");
-            packages.Children.Add(new PreviewNode("manifest.json"));
-            if (File.Exists(Path.Combine(Directory.GetCurrentDirectory(), "Packages", "packages-lock.json"))) {
-                packages.Children.Add(new PreviewNode("packages-lock.json"));
-            }
-
-            project.Children.Add(packages);
-
-            project.Children.Add(new PreviewNode("ProjectSettings"));
-            projects.Children.Add(project);
-            return projects;
-        }
-
-        private static string GetLeafNameOrFallback(string path, string fallback) {
-            if (string.IsNullOrWhiteSpace(path)) {
-                return fallback;
-            }
-
-            path = path.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
-            return string.IsNullOrWhiteSpace(path) ? fallback : Path.GetFileName(path);
         }
 
         private string PreviewRootDirectory => Path.Combine(CurrentTargetLocation, CurrentPackageName);
@@ -532,31 +411,13 @@ namespace Doji.PackageAuthoring.Editor.Wizards {
             return profile;
         }
 
-        private static void AppendTree(StringBuilder builder, PreviewNode node, string indent, bool isLast,
-            bool isRoot = false) {
-            if (isRoot) {
-                builder.AppendLine(node.Name);
-            }
-            else {
-                builder.Append(indent);
-                builder.Append(isLast ? "└── " : "├── ");
-                builder.AppendLine(node.Name);
+        private static string GetDirectoryName(string path, string fallback) {
+            if (string.IsNullOrWhiteSpace(path)) {
+                return fallback;
             }
 
-            string childIndent = isRoot ? string.Empty : indent + (isLast ? "    " : "│   ");
-            for (int i = 0; i < node.Children.Count; i++) {
-                AppendTree(builder, node.Children[i], childIndent, i == node.Children.Count - 1);
-            }
-        }
-
-        private sealed class PreviewNode {
-            public PreviewNode(string name) {
-                Name = string.IsNullOrWhiteSpace(name) ? "(unnamed)" : name;
-            }
-
-            public string Name { get; }
-
-            public List<PreviewNode> Children { get; } = new();
+            path = path.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+            return string.IsNullOrWhiteSpace(path) ? fallback : Path.GetFileName(path);
         }
 
         /// <summary>

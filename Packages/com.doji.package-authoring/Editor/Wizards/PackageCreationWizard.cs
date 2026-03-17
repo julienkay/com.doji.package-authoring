@@ -557,8 +557,11 @@ namespace Doji.PackageAuthoring.Editor.Wizards {
         }
 
         private void CreateRootFiles() {
-            string licensePath = Path.Combine(RootDirectory, "LICENSE");
-            CreateFile(licensePath, Ctx.GetLicense());
+            string license = Ctx.GetLicense();
+            if (!string.IsNullOrWhiteSpace(license)) {
+                string licensePath = Path.Combine(RootDirectory, "LICENSE");
+                CreateFile(licensePath, license);
+            }
 
             string readmePath = Path.Combine(RootDirectory, "README.md");
             CreateFile(readmePath, Ctx.GetRepositoryReadme());

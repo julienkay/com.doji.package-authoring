@@ -246,7 +246,11 @@ namespace Doji.PackageAuthoring.Editor.Wizards.UI {
             }
 
             root.Children.Add(BuildPackageNode(data));
-            root.Children.Add(CreateGeneratedFileNode("LICENSE", "LICENSE", data.Context.GetLicense(), RepositoryLayoutGroup.Repo));
+            string license = data.Context.GetLicense();
+            if (!string.IsNullOrWhiteSpace(license)) {
+                root.Children.Add(CreateGeneratedFileNode("LICENSE", "LICENSE", license, RepositoryLayoutGroup.Repo));
+            }
+
             root.Children.Add(CreateGeneratedFileNode(
                 "README.md",
                 "README.md",

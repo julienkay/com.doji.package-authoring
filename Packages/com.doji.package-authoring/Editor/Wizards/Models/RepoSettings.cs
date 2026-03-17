@@ -17,7 +17,7 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Models {
         /// License template used for generated repository files.
         /// </summary>
         [field: SerializeField]
-        public LicenseType LicenseType { get; set; } = LicenseType.MIT;
+        public LicenseType LicenseType { get; set; } = LicenseType.None;
 
         /// <summary>
         /// Copies all repository-facing values from another settings instance.

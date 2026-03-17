@@ -7,6 +7,8 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Templates {
     public static class LicenseTemplate {
         public static string GetLicense(PackageContext ctx) {
             switch (ctx.Repo.LicenseType) {
+                case LicenseType.None:
+                    return string.Empty;
                 case LicenseType.Apache:
                     return GetApacheLicense();
                 case LicenseType.BSD:

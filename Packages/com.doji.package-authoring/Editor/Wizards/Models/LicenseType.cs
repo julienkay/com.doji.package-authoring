@@ -4,6 +4,11 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Models {
     /// </summary>
     public enum LicenseType {
         /// <summary>
+        /// Does not generate a repository license file.
+        /// </summary>
+        None,
+
+        /// <summary>
         /// Generates an MIT license file.
         /// </summary>
         MIT,

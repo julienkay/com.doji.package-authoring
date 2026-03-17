@@ -92,6 +92,8 @@ namespace Doji.PackageAuthoring.Editor.Wizards {
         }
 
         private void OnDisable() {
+            _repositoryLayoutPreviewPanel?.Dispose();
+
             if (_defaults != null) {
                 DestroyImmediate(_defaults);
                 _defaults = null;
@@ -176,6 +178,8 @@ namespace Doji.PackageAuthoring.Editor.Wizards {
                 EditorGUILayout.EndVertical();
 
                 GUILayout.Space(10f);
+                _defaultsSerializedObject.ApplyModifiedProperties();
+                _windowSerializedObject.ApplyModifiedProperties();
                 DrawRepositoryLayoutPreviewPanel();
                 EditorGUILayout.EndHorizontal();
             }
@@ -330,12 +334,14 @@ namespace Doji.PackageAuthoring.Editor.Wizards {
             _repositoryLayoutPreviewPanel ??= new RepositoryLayoutPreviewPanel();
             _repositoryLayoutPreviewPanel.Draw(
                 position.width,
+                position.height,
                 BuildRepositoryLayoutPreviewData(),
                 ref _repositoryLayoutPreviewScrollPosition);
         }
 
         private RepositoryLayoutPreviewData BuildRepositoryLayoutPreviewData() {
             return new RepositoryLayoutPreviewData {
+                Context = Ctx,
                 RootDirectoryName = GetDirectoryName(PreviewRootDirectory, CurrentPackageName),
                 PackageName = CurrentPackageName,
                 AssemblyName = CurrentAssemblyName,

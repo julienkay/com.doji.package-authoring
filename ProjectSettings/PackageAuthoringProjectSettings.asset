@@ -26,6 +26,7 @@ MonoBehaviour:
     <IncludeAuthor>k__BackingField: 1
     <AuthorUrl>k__BackingField: https://www.doji-tech.com/
     <AuthorEmail>k__BackingField: support@doji-tech.com
+    <DocumentationUrl>k__BackingField: https://docs.doji-tech.com/{{PACKAGE_NAME}}
     <IncludeMinimumUnityVersion>k__BackingField: 0
     <MinimumUnityMajor>k__BackingField: 
     <MinimumUnityMinor>k__BackingField: 
@@ -40,4 +41,4 @@ MonoBehaviour:
         <Version>k__BackingField: 2.5.0
   <RepoDefaults>k__BackingField:
     <CopyrightHolder>k__BackingField: Julien Kipp
-    <LicenseType>k__BackingField: 1
+    <LicenseType>k__BackingField: 2

@@ -51,9 +51,14 @@ namespace Doji.PackageAuthoring.Editor.Wizards.UI {
         public bool IncludeTestsFolder { get; set; }
 
         /// <summary>
-        /// Whether the companion project preview should include a copied root <c>.gitignore</c>.
+        /// Whether the companion project preview should include a generated <c>.gitignore</c>.
         /// </summary>
         public bool IncludeRepositoryGitIgnore { get; set; }
+
+        /// <summary>
+        /// Template content shown for the generated companion-project <c>.gitignore</c>.
+        /// </summary>
+        public string RepositoryGitIgnoreTemplate { get; set; }
 
         /// <summary>
         /// Whether the companion project preview should include the copied lock file from the template project.

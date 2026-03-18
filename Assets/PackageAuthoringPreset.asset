@@ -13,29 +13,31 @@ MonoBehaviour:
   m_Name: PackageAuthoringPreset
   m_EditorClassIdentifier: Doji.PackageAuthoring.Editor::Doji.PackageAuthoring.Editor.Wizards.Models.PackageAuthoringProfile
   <ProjectDefaults>k__BackingField:
-    <CompanyName>k__BackingField: Your Company
-    <ProductName>k__BackingField: My Project
+    <CompanyName>k__BackingField: Doji Technologies
+    <ProductName>k__BackingField: Package Authoring
     <Version>k__BackingField: 1.0.0
     <TargetLocation>k__BackingField: ../
   <PackageDefaults>k__BackingField:
-    <PackageName>k__BackingField: com.yourcompany.yourpackage
-    <AssemblyName>k__BackingField: YourCompany.YourPackageAssembly
-    <NamespaceName>k__BackingField: YourCompany.YourPackageNamespace
-    <Description>k__BackingField: Describe what this package provides.
-    <CompanyName>k__BackingField: Your Company
+    <PackageName>k__BackingField: com.doji.package-authoring
+    <AssemblyName>k__BackingField: Doji.PackageAuthoring
+    <NamespaceName>k__BackingField: Doji.PackageAuthoring
+    <Description>k__BackingField: A package to simplify bootstrapping Unity packages
+      including docs & sample projects
+    <CompanyName>k__BackingField: Doji Technologies
     <IncludeAuthor>k__BackingField: 1
-    <AuthorUrl>k__BackingField: 
-    <AuthorEmail>k__BackingField: 
+    <AuthorUrl>k__BackingField: https://www.doji-tech.com/
+    <AuthorEmail>k__BackingField: support@doji-tech.com
+    <DocumentationUrl>k__BackingField: https://docs.doji-tech.com/{{PACKAGE_NAME}}
     <IncludeMinimumUnityVersion>k__BackingField: 0
     <MinimumUnityMajor>k__BackingField: 
     <MinimumUnityMinor>k__BackingField: 
     <MinimumUnityRelease>k__BackingField: 
     <CreateDocsFolder>k__BackingField: 1
     <CreateSamplesFolder>k__BackingField: 0
-    <CreateEditorFolder>k__BackingField: 0
+    <CreateEditorFolder>k__BackingField: 1
     <CreateTestsFolder>k__BackingField: 0
     <Dependencies>k__BackingField:
       <Items>k__BackingField: []
   <RepoDefaults>k__BackingField:
-    <CopyrightHolder>k__BackingField: Your Name
-    <LicenseType>k__BackingField: 0
+    <CopyrightHolder>k__BackingField: Julien Kipp
+    <LicenseType>k__BackingField: 2

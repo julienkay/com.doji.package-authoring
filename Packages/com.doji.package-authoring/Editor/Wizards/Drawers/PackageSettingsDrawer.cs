@@ -1,7 +1,7 @@
-using System;
 using UnityEditor;
 using UnityEngine;
 using Doji.PackageAuthoring.Editor.Wizards.Models;
+using Doji.PackageAuthoring.Editor.Wizards.UI;
 
 namespace Doji.PackageAuthoring.Editor.Wizards {
     /// <summary>
@@ -17,6 +17,8 @@ namespace Doji.PackageAuthoring.Editor.Wizards {
         private static readonly string IncludeAuthorField = $"<{nameof(PackageSettings.IncludeAuthor)}>k__BackingField";
         private static readonly string AuthorUrlField = $"<{nameof(PackageSettings.AuthorUrl)}>k__BackingField";
         private static readonly string AuthorEmailField = $"<{nameof(PackageSettings.AuthorEmail)}>k__BackingField";
+        private static readonly string DocumentationUrlField =
+            $"<{nameof(PackageSettings.DocumentationUrl)}>k__BackingField";
 
         private static readonly string IncludeMinimumUnityVersionField =
             $"<{nameof(PackageSettings.IncludeMinimumUnityVersion)}>k__BackingField";
@@ -46,7 +48,7 @@ namespace Doji.PackageAuthoring.Editor.Wizards {
 
         /// <inheritdoc />
         public override float GetPropertyHeight(SerializedProperty property, GUIContent label) {
-            int lineCount = 11;
+            int lineCount = 12;
             if (property.FindPropertyRelative(IncludeAuthorField).boolValue) {
                 lineCount += 2;
             }
@@ -96,6 +98,11 @@ namespace Doji.PackageAuthoring.Editor.Wizards {
                 EditorGUI.indentLevel--;
             }
 
+            DrawTokenAwareTextField(
+                ref row,
+                property.FindPropertyRelative(DocumentationUrlField),
+                new GUIContent("Documentation URL"));
+
             DrawField(ref row, property.FindPropertyRelative(CreateDocsFolderField),
                 new GUIContent("Create Documentation Folder"));
             DrawField(ref row, property.FindPropertyRelative(CreateSamplesFolderField),
@@ -121,6 +128,11 @@ namespace Doji.PackageAuthoring.Editor.Wizards {
 
         private static void DrawField(ref Rect row, SerializedProperty property, GUIContent label) {
             EditorGUI.PropertyField(row, property, label);
+            row.y += EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
+        }
+
+        private static void DrawTokenAwareTextField(ref Rect row, SerializedProperty property, GUIContent label) {
+            property.stringValue = InlineRichTextTextField.Draw(row, label, property.stringValue);
             row.y += EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
         }
     }

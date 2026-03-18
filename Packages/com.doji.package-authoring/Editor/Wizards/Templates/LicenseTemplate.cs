@@ -1,4 +1,5 @@
 using Doji.PackageAuthoring.Editor.Wizards.Models;
+using Doji.PackageAuthoring.Editor.Wizards.Presets;
 
 namespace Doji.PackageAuthoring.Editor.Wizards.Templates {
     /// <summary>
@@ -9,6 +10,8 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Templates {
             switch (ctx.Repo.LicenseType) {
                 case LicenseType.None:
                     return string.Empty;
+                case LicenseType.Custom:
+                    return GetCustomLicense(ctx);
                 case LicenseType.Apache:
                     return GetApacheLicense();
                 case LicenseType.BSD:
@@ -45,6 +48,10 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ";
+        }
+
+        private static string GetCustomLicense(PackageContext ctx) {
+            return CustomLicenseTemplateSettings.Instance.GetResolvedContent(ctx);
         }
 
         private static string GetApacheLicense() {

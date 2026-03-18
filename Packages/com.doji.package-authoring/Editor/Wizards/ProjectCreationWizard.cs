@@ -44,6 +44,8 @@ namespace Doji.PackageAuthoring.Editor.Wizards {
 
         private PackageAuthoringProfile Defaults => _defaults ??= CreateTemporaryProfile();
         private ProjectSettings ProjectSettings => Defaults.ProjectDefaults;
+        private string CurrentGitIgnoreTemplate =>
+            GitIgnoreTemplateSettings.Instance.GetResolvedContent(ProjectSettings);
 
         [MenuItem("Tools/Project Creation Wizard")]
         public static void ShowWindow() {
@@ -226,10 +228,9 @@ namespace Doji.PackageAuthoring.Editor.Wizards {
                 RevertProjectSettings();
             }
 
-            string gitignorePath = Path.Combine(Directory.GetCurrentDirectory(), ".gitignore");
-            if (File.Exists(gitignorePath)) {
+            if (!string.IsNullOrWhiteSpace(CurrentGitIgnoreTemplate)) {
                 string targetPath = Path.Combine(ProjectDirectory, ".gitignore");
-                CopyFile(gitignorePath, targetPath);
+                CreateFile(targetPath, CurrentGitIgnoreTemplate);
             }
 
             Debug.Log($"Project created successfully at {ProjectDirectory}");
@@ -313,6 +314,22 @@ namespace Doji.PackageAuthoring.Editor.Wizards {
             if (!File.Exists(destFileName)) {
                 File.Copy(sourceFileName, destFileName, overwrite: false);
             }
+        }
+
+        /// <summary>
+        /// Writes scaffolded content to disk and ensures the target directory exists first.
+        /// </summary>
+        private void CreateFile(string path, string content, bool overwrite = false) {
+            if (File.Exists(path) && !overwrite) {
+                return;
+            }
+
+            string directory = Path.GetDirectoryName(path);
+            if (!string.IsNullOrEmpty(directory)) {
+                Directory.CreateDirectory(directory);
+            }
+
+            File.WriteAllText(path, content);
         }
     }
 }

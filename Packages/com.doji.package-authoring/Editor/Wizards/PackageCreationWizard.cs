@@ -65,6 +65,7 @@ namespace Doji.PackageAuthoring.Editor.Wizards {
         private ProjectSettings ProjectSettings => Defaults.ProjectDefaults;
         private PackageSettings PackageSettings => Defaults.PackageDefaults;
         private RepoSettings RepoSettings => Defaults.RepoDefaults;
+        private string CurrentGitIgnoreTemplate => GitIgnoreTemplateSettings.Instance.GetResolvedContent(Ctx);
 
         /// <summary>
         /// Opens the package creation wizard.
@@ -350,7 +351,8 @@ namespace Doji.PackageAuthoring.Editor.Wizards {
                 IncludeSamplesFolder = CurrentCreateSamplesFolder,
                 IncludeEditorFolder = CurrentCreateEditorFolder,
                 IncludeTestsFolder = CurrentCreateTestsFolder,
-                IncludeRepositoryGitIgnore = File.Exists(Path.Combine(Directory.GetCurrentDirectory(), ".gitignore")),
+                IncludeRepositoryGitIgnore = !string.IsNullOrWhiteSpace(CurrentGitIgnoreTemplate),
+                RepositoryGitIgnoreTemplate = CurrentGitIgnoreTemplate,
                 IncludePackagesLockFile = File.Exists(
                     Path.Combine(Directory.GetCurrentDirectory(), "Packages", "packages-lock.json"))
             };
@@ -485,10 +487,9 @@ namespace Doji.PackageAuthoring.Editor.Wizards {
                 CopyDirectory("Packages", Path.Combine(ProjectDirectory, "Packages"));
                 CopyDirectory("ProjectSettings", Path.Combine(ProjectDirectory, "ProjectSettings"));
 
-                string gitignorePath = Path.Combine(Directory.GetCurrentDirectory(), ".gitignore");
-                if (File.Exists(gitignorePath)) {
+                if (!string.IsNullOrWhiteSpace(CurrentGitIgnoreTemplate)) {
                     string targetPath = Path.Combine(ProjectDirectory, ".gitignore");
-                    CopyFile(gitignorePath, targetPath);
+                    CreateFile(targetPath, CurrentGitIgnoreTemplate);
                 }
 
                 string projectManifestPath = Path.Combine(ProjectDirectory, "Packages", "manifest.json");

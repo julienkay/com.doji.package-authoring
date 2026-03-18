@@ -373,10 +373,10 @@ namespace Doji.PackageAuthoring.Editor.Wizards.UI {
             RepositoryLayoutNode projects = CreateDirectoryNode("projects", "projects", RepositoryLayoutGroup.Project);
             RepositoryLayoutNode project = CreateDirectoryNode(data.CompanionProjectName, $"projects/{data.CompanionProjectName}", RepositoryLayoutGroup.Project);
             if (data.IncludeRepositoryGitIgnore) {
-                project.Children.Add(CreateTemplateFileNode(
+                project.Children.Add(CreateGeneratedFileNode(
                     ".gitignore",
                     $"projects/{data.CompanionProjectName}/.gitignore",
-                    ".gitignore",
+                    data.RepositoryGitIgnoreTemplate,
                     RepositoryLayoutGroup.Project));
             }
 

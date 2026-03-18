@@ -10,6 +10,8 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Templates {
     /// </summary>
     public static class PackageManifestTemplate {
         public static string GetPackageManifest(PackageContext ctx) {
+            string documentationUrl = TemplateTokenResolver.Resolve(ctx.Package.DocumentationUrl, ctx);
+
             JObject json = Obj(
                 Prop("name", ctx.Package.PackageName),
                 Prop("version", ctx.Project.Version),
@@ -25,7 +27,7 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Templates {
                     !string.IsNullOrWhiteSpace(ctx.Package.MinimumUnityRelease),
                     "unityRelease",
                     ctx.Package.MinimumUnityRelease),
-                Prop("documentationUrl", $"https://docs.doji-tech.com/{ctx.Package.PackageName}/"),
+                PropIf(!string.IsNullOrWhiteSpace(documentationUrl), "documentationUrl", documentationUrl),
                 PropIf(ctx.Package.CreateSamplesFolder, "samples", GetSamples(ctx)),
                 PropIf(ctx.Package.Dependencies is { Count: > 0 }, "dependencies", GetDependencies(ctx))
             );

@@ -56,6 +56,12 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Models {
         public string AuthorEmail { get; set; } = string.Empty;
 
         /// <summary>
+        /// Optional documentation URL written into the generated package manifest after supported tokens are resolved.
+        /// </summary>
+        [field: SerializeField]
+        public string DocumentationUrl { get; set; } = string.Empty;
+
+        /// <summary>
         /// Whether the generated package manifest should include a minimum Unity version.
         /// </summary>
         [field: SerializeField]
@@ -126,6 +132,7 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Models {
             IncludeAuthor = other.IncludeAuthor;
             AuthorUrl = other.AuthorUrl;
             AuthorEmail = other.AuthorEmail;
+            DocumentationUrl = other.DocumentationUrl;
             IncludeMinimumUnityVersion = other.IncludeMinimumUnityVersion;
             MinimumUnityMajor = other.MinimumUnityMajor;
             MinimumUnityMinor = other.MinimumUnityMinor;

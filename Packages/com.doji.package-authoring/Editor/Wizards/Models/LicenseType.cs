@@ -9,6 +9,11 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Models {
         None,
 
         /// <summary>
+        /// Generates a license file from the project-scoped custom license template.
+        /// </summary>
+        Custom,
+
+        /// <summary>
         /// Generates an MIT license file.
         /// </summary>
         MIT,

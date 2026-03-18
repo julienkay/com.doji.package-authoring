@@ -14,6 +14,9 @@ namespace Doji.PackageAuthoring.Editor.Wizards.UI {
         private const float MinHeight = 320f;
         private const float TreeColumnMinWidth = 180f;
         private const float RowPadding = 4f;
+        private const float TagRightMargin = 6f;
+        private const float TagSpacing = 6f;
+        private const string Ellipsis = "...";
         private const string RuntimeAssemblyGuidPreview = "<runtime-assembly-guid>";
         private static readonly Color SelectionColor = new(0.24f, 0.47f, 0.85f, 0.18f);
         private static readonly Color RepoTint = new(0.92f, 0.86f, 1f);
@@ -505,9 +508,21 @@ namespace Doji.PackageAuthoring.Editor.Wizards.UI {
             entries.Add(new RepositoryLayoutEntry(displayText, node));
 
             string childIndent = isRoot ? string.Empty : indent + (isLast ? "    " : "│   ");
-            for (int i = 0; i < node.Children.Count; i++) {
-                AppendEntries(entries, node.Children[i], childIndent, i == node.Children.Count - 1);
+            List<RepositoryLayoutNode> sortedChildren = GetSortedChildren(node.Children);
+            for (int i = 0; i < sortedChildren.Count; i++) {
+                AppendEntries(entries, sortedChildren[i], childIndent, i == sortedChildren.Count - 1);
             }
+        }
+
+        private static List<RepositoryLayoutNode> GetSortedChildren(List<RepositoryLayoutNode> children) {
+            List<RepositoryLayoutNode> sortedChildren = new(children);
+            sortedChildren.Sort((left, right) => {
+                int ignoreCaseComparison = string.Compare(left.Name, right.Name, System.StringComparison.OrdinalIgnoreCase);
+                return ignoreCaseComparison != 0
+                    ? ignoreCaseComparison
+                    : string.Compare(left.Name, right.Name, System.StringComparison.Ordinal);
+            });
+            return sortedChildren;
         }
 
         /// <summary>
@@ -591,24 +606,64 @@ namespace Doji.PackageAuthoring.Editor.Wizards.UI {
         }
 
         private void DrawEntry(Rect rowRect, RepositoryLayoutEntry entry) {
-            GUI.Label(rowRect, entry.DisplayText, _treeRowStyle);
+            Rect textRect = rowRect;
+            Rect tagRect = Rect.zero;
+            if (!string.IsNullOrWhiteSpace(entry.Node.GroupLabel)) {
+                Vector2 tagSize = _tagStyle.CalcSize(new GUIContent(entry.Node.GroupLabel));
+                tagRect = new Rect(
+                    rowRect.xMax - tagSize.x - TagRightMargin,
+                    rowRect.y + 1f,
+                    tagSize.x,
+                    Mathf.Min(rowRect.height - 2f, tagSize.y));
+                textRect.xMax = Mathf.Max(textRect.xMin, tagRect.xMin - TagSpacing);
+            }
 
-            if (string.IsNullOrWhiteSpace(entry.Node.GroupLabel)) {
+            string displayText = TruncateToWidth(entry.DisplayText, _treeRowStyle, Mathf.Max(0f, textRect.width));
+            GUI.Label(textRect, new GUIContent(displayText, entry.DisplayText), _treeRowStyle);
+
+            if (tagRect == Rect.zero) {
                 return;
             }
 
             Color previousColor = GUI.color;
             GUI.color = entry.Node.GroupColor;
-
-            Vector2 tagSize = _tagStyle.CalcSize(new GUIContent(entry.Node.GroupLabel));
-            Rect tagRect = new Rect(
-                rowRect.xMax - tagSize.x - 6f,
-                rowRect.y + 1f,
-                tagSize.x,
-                Mathf.Min(rowRect.height - 2f, tagSize.y));
             GUI.Box(tagRect, entry.Node.GroupLabel, _tagStyle);
-
             GUI.color = previousColor;
+        }
+
+        /// <summary>
+        /// Shrinks a tree label to the space left in the row while preserving a trailing ellipsis when truncation occurs.
+        /// </summary>
+        /// <param name="text">Full row label, including tree branch prefixes.</param>
+        /// <param name="style">GUI style used to measure the rendered width.</param>
+        /// <param name="availableWidth">Maximum width available for the label after reserving tag space.</param>
+        private static string TruncateToWidth(string text, GUIStyle style, float availableWidth) {
+            if (string.IsNullOrEmpty(text) || style == null || availableWidth <= 0f) {
+                return string.Empty;
+            }
+
+            if (style.CalcSize(new GUIContent(text)).x <= availableWidth) {
+                return text;
+            }
+
+            if (style.CalcSize(new GUIContent(Ellipsis)).x > availableWidth) {
+                return string.Empty;
+            }
+
+            int min = 0;
+            int max = text.Length;
+            while (min < max) {
+                int mid = (min + max + 1) / 2;
+                string candidate = text.Substring(0, mid) + Ellipsis;
+                if (style.CalcSize(new GUIContent(candidate)).x <= availableWidth) {
+                    min = mid;
+                }
+                else {
+                    max = mid - 1;
+                }
+            }
+
+            return min <= 0 ? Ellipsis : text.Substring(0, min) + Ellipsis;
         }
 
         private readonly struct RepositoryLayoutEntry {

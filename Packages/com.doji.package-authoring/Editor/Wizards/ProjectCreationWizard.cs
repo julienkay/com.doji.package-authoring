@@ -13,6 +13,7 @@ namespace Doji.PackageAuthoring.Editor.Wizards {
     /// Editor window that scaffolds a standalone Unity project from the shared project defaults or a preset.
     /// </summary>
     public class ProjectCreationWizard : EditorWindow {
+        private const string SessionStateKey = "Doji.PackageAuthoring.ProjectCreationWizard.SessionState";
         private const string ProjectSectionPresetTooltip = "Apply project defaults or a preset asset.";
 
         private static readonly string ProductNameField =
@@ -21,7 +22,6 @@ namespace Doji.PackageAuthoring.Editor.Wizards {
         private static readonly string TargetLocationField =
             $"<{nameof(Doji.PackageAuthoring.Editor.Wizards.Models.ProjectSettings.TargetLocation)}>k__BackingField";
 
-        [SerializeField] private bool _initializedFromDefaults;
         [SerializeField] private bool _autoOpenAfterCreation = true;
 
         private string ProjectDirectory => Path.Combine(ProjectSettings.TargetLocation, ProjectSettings.ProductName);
@@ -58,15 +58,16 @@ namespace Doji.PackageAuthoring.Editor.Wizards {
         private void OnEnable() {
             titleContent = new GUIContent("Project Creation");
 
-            if (!_initializedFromDefaults) {
+            if (!RestoreSessionState()) {
                 ApplyProjectDefaults();
-                _initializedFromDefaults = true;
             }
 
             InitializeSerializedState();
         }
 
         private void OnDisable() {
+            SaveSessionState();
+
             if (_defaults != null) {
                 DestroyImmediate(_defaults);
                 _defaults = null;
@@ -110,6 +111,21 @@ namespace Doji.PackageAuthoring.Editor.Wizards {
         }
 
         /// <summary>
+        /// Restores unsaved wizard input captured before the last domain reload within the current editor session.
+        /// </summary>
+        /// <returns><c>true</c> when prior session state existed.</returns>
+        private bool RestoreSessionState() {
+            return WizardSessionStateUtility.TryRestoreProfile(SessionStateKey, Defaults);
+        }
+
+        /// <summary>
+        /// Saves the current ad hoc wizard input so script recompiles do not reset the open form.
+        /// </summary>
+        private void SaveSessionState() {
+            WizardSessionStateUtility.SaveProfile(SessionStateKey, _defaults);
+        }
+
+        /// <summary>
         /// Applies only the project-facing portion of a preset to the current ad hoc window state.
         /// </summary>
         private void ApplyPreset(PackageAuthoringProfile preset) {
@@ -144,7 +160,7 @@ namespace Doji.PackageAuthoring.Editor.Wizards {
         }
 
         /// <summary>
-        /// Rebuilds cached serialized properties after domain reloads or window recreation.
+        /// Rebuilds the serialized wrappers and cached window properties around the current wizard state.
         /// </summary>
         private void InitializeSerializedState() {
             _defaultsSerializedObject = new SerializedObject(Defaults);

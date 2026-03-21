@@ -19,7 +19,7 @@ MonoBehaviour:
 
     # Get latest from https://github.com/github/gitignore/blob/main/Unity.gitignore
 
-    #{{PACKAGE_NAME}}
+    #
 
     #
     Temporary Unity package manager files

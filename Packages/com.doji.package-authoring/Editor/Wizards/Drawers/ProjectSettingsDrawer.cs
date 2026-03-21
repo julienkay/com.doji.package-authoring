@@ -1,6 +1,7 @@
 using Doji.PackageAuthoring.Editor.Wizards.Models;
 using UnityEditor;
 using UnityEngine;
+using Doji.PackageAuthoring.Editor.Wizards.UI;
 
 namespace Doji.PackageAuthoring.Editor.Wizards.Drawers {
     /// <summary>
@@ -29,20 +30,40 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Drawers {
             Rect row = new(position.x, position.y, position.width, EditorGUIUtility.singleLineHeight);
 
             EditorGUI.BeginProperty(position, label, property);
-            DrawField(ref row, property.FindPropertyRelative(CompanyNameField), new GUIContent("Company Name"));
-            DrawField(ref row, property.FindPropertyRelative(ProductNameField), new GUIContent(state.ProductLabel));
-            DrawField(ref row, property.FindPropertyRelative(VersionField), new GUIContent("Version"));
+            DrawField(
+                ref row,
+                property.FindPropertyRelative(CompanyNameField),
+                new GUIContent("Company Name"),
+                RepositoryLayoutPreviewHoverTargets.ProjectCompanyName);
+            DrawField(
+                ref row,
+                property.FindPropertyRelative(ProductNameField),
+                new GUIContent(state.ProductLabel),
+                RepositoryLayoutPreviewHoverTargets.ProductName);
+            DrawField(
+                ref row,
+                property.FindPropertyRelative(VersionField),
+                new GUIContent("Version"),
+                RepositoryLayoutPreviewHoverTargets.Version);
 
             if (state.IncludeTargetLocation) {
-                DrawField(ref row, property.FindPropertyRelative(TargetLocationField),
-                    new GUIContent("Target Location"));
+                DrawField(
+                    ref row,
+                    property.FindPropertyRelative(TargetLocationField),
+                    new GUIContent("Target Location"),
+                    RepositoryLayoutPreviewHoverTargets.TargetLocation);
             }
 
             EditorGUI.EndProperty();
         }
 
-        private static void DrawField(ref Rect row, SerializedProperty property, GUIContent label) {
+        private static void DrawField(
+            ref Rect row,
+            SerializedProperty property,
+            GUIContent label,
+            params string[] hoverTargets) {
             EditorGUI.PropertyField(row, property, label);
+            RepositoryLayoutPreviewHoverContext.SetHoveredTargetsIfHovered(row, hoverTargets);
             row.y += EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
         }
     }

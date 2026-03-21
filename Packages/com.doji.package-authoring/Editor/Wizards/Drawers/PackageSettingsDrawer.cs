@@ -74,49 +74,111 @@ namespace Doji.PackageAuthoring.Editor.Wizards {
             Rect row = new(position.x, position.y, position.width, EditorGUIUtility.singleLineHeight);
 
             EditorGUI.BeginProperty(position, label, property);
-            DrawField(ref row, property.FindPropertyRelative(PackageNameField), new GUIContent("Identifier"));
+            DrawField(
+                ref row,
+                property.FindPropertyRelative(PackageNameField),
+                new GUIContent("Identifier"),
+                RepositoryLayoutPreviewHoverTargets.PackageName);
             DrawField(
                 ref row,
                 property.FindPropertyRelative(PackageDisplayNameField),
-                new GUIContent("Package Name", "User-facing package display name written to package.json."));
-            DrawField(ref row, property.FindPropertyRelative(AssemblyNameField), new GUIContent("Assembly Name"));
-            DrawField(ref row, property.FindPropertyRelative(NamespaceNameField), new GUIContent("Namespace"));
-            DrawField(ref row, property.FindPropertyRelative(DescriptionField), new GUIContent("Description"));
-            DrawField(ref row, property.FindPropertyRelative(CompanyNameField), new GUIContent("Company Name"));
+                new GUIContent("Package Name", "User-facing package display name written to package.json."),
+                RepositoryLayoutPreviewHoverTargets.PackageDisplayName);
+            DrawField(
+                ref row,
+                property.FindPropertyRelative(AssemblyNameField),
+                new GUIContent("Assembly Name"),
+                RepositoryLayoutPreviewHoverTargets.AssemblyName);
+            DrawField(
+                ref row,
+                property.FindPropertyRelative(NamespaceNameField),
+                new GUIContent("Namespace"),
+                RepositoryLayoutPreviewHoverTargets.NamespaceName);
+            DrawField(
+                ref row,
+                property.FindPropertyRelative(DescriptionField),
+                new GUIContent("Description"),
+                RepositoryLayoutPreviewHoverTargets.Description);
+            DrawField(
+                ref row,
+                property.FindPropertyRelative(CompanyNameField),
+                new GUIContent("Company Name"),
+                RepositoryLayoutPreviewHoverTargets.PackageCompanyName);
 
             SerializedProperty includeAuthorProperty = property.FindPropertyRelative(IncludeAuthorField);
-            DrawField(ref row, includeAuthorProperty, new GUIContent("Include Author Metadata"));
+            DrawField(
+                ref row,
+                includeAuthorProperty,
+                new GUIContent("Include Author Metadata"),
+                RepositoryLayoutPreviewHoverTargets.IncludeAuthor);
             if (includeAuthorProperty.boolValue) {
                 EditorGUI.indentLevel++;
-                DrawField(ref row, property.FindPropertyRelative(AuthorUrlField), new GUIContent("URL"));
-                DrawField(ref row, property.FindPropertyRelative(AuthorEmailField), new GUIContent("Email"));
+                DrawField(
+                    ref row,
+                    property.FindPropertyRelative(AuthorUrlField),
+                    new GUIContent("URL"),
+                    RepositoryLayoutPreviewHoverTargets.AuthorUrl);
+                DrawField(
+                    ref row,
+                    property.FindPropertyRelative(AuthorEmailField),
+                    new GUIContent("Email"),
+                    RepositoryLayoutPreviewHoverTargets.AuthorEmail);
                 EditorGUI.indentLevel--;
             }
 
             SerializedProperty includeUnityVersionProperty =
                 property.FindPropertyRelative(IncludeMinimumUnityVersionField);
-            DrawField(ref row, includeUnityVersionProperty, new GUIContent("Minimum Unity Version"));
+            DrawField(
+                ref row,
+                includeUnityVersionProperty,
+                new GUIContent("Minimum Unity Version"),
+                RepositoryLayoutPreviewHoverTargets.IncludeMinimumUnityVersion);
             if (includeUnityVersionProperty.boolValue) {
                 EditorGUI.indentLevel++;
-                DrawField(ref row, property.FindPropertyRelative(MinimumUnityMajorField), new GUIContent("Major"));
-                DrawField(ref row, property.FindPropertyRelative(MinimumUnityMinorField), new GUIContent("Minor"));
-                DrawField(ref row, property.FindPropertyRelative(MinimumUnityReleaseField), new GUIContent("Release"));
+                DrawField(
+                    ref row,
+                    property.FindPropertyRelative(MinimumUnityMajorField),
+                    new GUIContent("Major"),
+                    RepositoryLayoutPreviewHoverTargets.MinimumUnityVersion);
+                DrawField(
+                    ref row,
+                    property.FindPropertyRelative(MinimumUnityMinorField),
+                    new GUIContent("Minor"),
+                    RepositoryLayoutPreviewHoverTargets.MinimumUnityVersion);
+                DrawField(
+                    ref row,
+                    property.FindPropertyRelative(MinimumUnityReleaseField),
+                    new GUIContent("Release"),
+                    RepositoryLayoutPreviewHoverTargets.MinimumUnityVersion);
                 EditorGUI.indentLevel--;
             }
 
             DrawTokenAwareTextField(
                 ref row,
                 property.FindPropertyRelative(DocumentationUrlField),
-                new GUIContent("Documentation URL"));
+                new GUIContent("Documentation URL"),
+                RepositoryLayoutPreviewHoverTargets.DocumentationUrl);
 
-            DrawField(ref row, property.FindPropertyRelative(CreateDocsFolderField),
-                new GUIContent("Create Documentation Folder"));
-            DrawField(ref row, property.FindPropertyRelative(CreateSamplesFolderField),
-                new GUIContent("Create Samples Folder"));
-            DrawField(ref row, property.FindPropertyRelative(CreateEditorFolderField),
-                new GUIContent("Create Editor Folder"));
-            DrawField(ref row, property.FindPropertyRelative(CreateTestsFolderField),
-                new GUIContent("Create Tests Folder"));
+            DrawField(
+                ref row,
+                property.FindPropertyRelative(CreateDocsFolderField),
+                new GUIContent("Create Documentation Folder"),
+                RepositoryLayoutPreviewHoverTargets.CreateDocsFolder);
+            DrawField(
+                ref row,
+                property.FindPropertyRelative(CreateSamplesFolderField),
+                new GUIContent("Create Samples Folder"),
+                RepositoryLayoutPreviewHoverTargets.CreateSamplesFolder);
+            DrawField(
+                ref row,
+                property.FindPropertyRelative(CreateEditorFolderField),
+                new GUIContent("Create Editor Folder"),
+                RepositoryLayoutPreviewHoverTargets.CreateEditorFolder);
+            DrawField(
+                ref row,
+                property.FindPropertyRelative(CreateTestsFolderField),
+                new GUIContent("Create Tests Folder"),
+                RepositoryLayoutPreviewHoverTargets.CreateTestsFolder);
 
             row.y += 8f - EditorGUIUtility.standardVerticalSpacing;
             SerializedProperty dependenciesProperty = property.FindPropertyRelative(DependenciesField);
@@ -129,16 +191,29 @@ namespace Doji.PackageAuthoring.Editor.Wizards {
                 dependenciesProperty,
                 new GUIContent("Dependencies"),
                 includeChildren: true);
+            RepositoryLayoutPreviewHoverContext.SetHoveredTargetsIfHovered(
+                new Rect(row.x, row.y, row.width, dependenciesHeight),
+                RepositoryLayoutPreviewHoverTargets.Dependencies);
             EditorGUI.EndProperty();
         }
 
-        private static void DrawField(ref Rect row, SerializedProperty property, GUIContent label) {
+        private static void DrawField(
+            ref Rect row,
+            SerializedProperty property,
+            GUIContent label,
+            params string[] hoverTargets) {
             EditorGUI.PropertyField(row, property, label);
+            RepositoryLayoutPreviewHoverContext.SetHoveredTargetsIfHovered(row, hoverTargets);
             row.y += EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
         }
 
-        private static void DrawTokenAwareTextField(ref Rect row, SerializedProperty property, GUIContent label) {
+        private static void DrawTokenAwareTextField(
+            ref Rect row,
+            SerializedProperty property,
+            GUIContent label,
+            params string[] hoverTargets) {
             property.stringValue = InlineRichTextTextField.Draw(row, label, property.stringValue);
+            RepositoryLayoutPreviewHoverContext.SetHoveredTargetsIfHovered(row, hoverTargets);
             row.y += EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
         }
     }

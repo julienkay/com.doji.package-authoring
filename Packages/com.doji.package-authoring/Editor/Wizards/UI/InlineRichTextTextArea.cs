@@ -3,12 +3,12 @@ using UnityEngine;
 
 namespace Doji.PackageAuthoring.Editor.Wizards.UI {
     /// <summary>
-    /// Draws a multiline IMGUI text area that highlights supported template tokens with a rich-text overlay.
+    /// Draws a multiline IMGUI text area with an overlay that colorizes supported template tokens.
     /// </summary>
     /// <remarks>
     /// This mirrors the single-line field approach: the real text area handles editing and selection while a label
-    /// drawn afterward provides the visible rich-text content. The control height is expanded to fit the content so
-    /// the outer inspector or settings scroll view handles overflow instead of relying on an internal text-area scroll
+    /// drawn afterward provides the visible formatted text. The control height is expanded to fit the content so the
+    /// outer inspector or settings scroll view handles overflow instead of relying on an internal text-area scroll
     /// offset that the overlay could not keep in sync.
     /// </remarks>
     internal static class InlineRichTextTextArea {

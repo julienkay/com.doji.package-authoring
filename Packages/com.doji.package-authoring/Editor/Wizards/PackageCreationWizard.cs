@@ -84,6 +84,7 @@ namespace Doji.PackageAuthoring.Editor.Wizards {
         private void OnEnable() {
             titleContent = new GUIContent("Package Creation");
             minSize = new Vector2(1000f, 600f);
+            wantsMouseMove = true;
 
             if (!RestoreSessionState()) {
                 ApplyProjectDefaults();
@@ -171,6 +172,7 @@ namespace Doji.PackageAuthoring.Editor.Wizards {
                 InitializeSerializedState();
             }
 
+            RepositoryLayoutPreviewHoverContext.BeginFrame();
             _defaultsSerializedObject.Update();
             _windowSerializedObject.Update();
             GUILayout.Space(10f);
@@ -209,6 +211,10 @@ namespace Doji.PackageAuthoring.Editor.Wizards {
                 if (GUILayout.Button("Create Package", GUILayout.Height(24f), GUILayout.Width(140f))) {
                     CreatePackageScaffolding();
                 }
+            }
+
+            if (Event.current.type == EventType.MouseMove) {
+                Repaint();
             }
         }
 

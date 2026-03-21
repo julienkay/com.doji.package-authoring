@@ -1,6 +1,7 @@
 using Doji.PackageAuthoring.Editor.Wizards.Models;
 using UnityEditor;
 using UnityEngine;
+using Doji.PackageAuthoring.Editor.Wizards.UI;
 
 namespace Doji.PackageAuthoring.Editor.Wizards.Drawers {
     /// <summary>
@@ -37,11 +38,17 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Drawers {
                 row,
                 property.FindPropertyRelative(CopyrightHolderField),
                 new GUIContent("Copyright Holder"));
+            RepositoryLayoutPreviewHoverContext.SetHoveredTargetsIfHovered(
+                row,
+                RepositoryLayoutPreviewHoverTargets.RepoCopyrightHolder);
             row.y += EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
             EditorGUI.PropertyField(
                 row,
                 property.FindPropertyRelative(LicenseTypeField),
                 LicenseTypeLabel);
+            RepositoryLayoutPreviewHoverContext.SetHoveredTargetsIfHovered(
+                row,
+                RepositoryLayoutPreviewHoverTargets.RepoLicenseType);
             EditorGUI.indentLevel = previousIndent;
             EditorGUI.EndProperty();
         }

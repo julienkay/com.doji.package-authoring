@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace Doji.PackageAuthoring.Editor.Wizards.UI {
@@ -10,6 +11,7 @@ namespace Doji.PackageAuthoring.Editor.Wizards.UI {
         [SerializeField] private string _content;
         [SerializeField] private string _sourceFilePath;
         [SerializeField] private string _sourceFolderPath;
+        [NonSerialized] private string[] _hoverHighlights = Array.Empty<string>();
 
         /// <summary>
         /// File or entry name shown in the Inspector header row.
@@ -37,6 +39,11 @@ namespace Doji.PackageAuthoring.Editor.Wizards.UI {
         public string SourceFolderPath => _sourceFolderPath;
 
         /// <summary>
+        /// Literal values that should be accent-highlighted in the Inspector preview while a related field is hovered.
+        /// </summary>
+        public string[] HoverHighlights => _hoverHighlights ?? Array.Empty<string>();
+
+        /// <summary>
         /// Replaces the selected preview payload without creating a new inspector target.
         /// </summary>
         public void UpdateContent(
@@ -44,12 +51,14 @@ namespace Doji.PackageAuthoring.Editor.Wizards.UI {
             string relativePath,
             string content,
             string sourceFilePath,
-            string sourceFolderPath) {
+            string sourceFolderPath,
+            string[] hoverHighlights) {
             _displayName = displayName;
             _relativePath = relativePath;
             _content = content;
             _sourceFilePath = sourceFilePath;
             _sourceFolderPath = sourceFolderPath;
+            _hoverHighlights = hoverHighlights ?? Array.Empty<string>();
             name = string.IsNullOrWhiteSpace(displayName) ? "Repository Layout Preview" : displayName;
         }
     }

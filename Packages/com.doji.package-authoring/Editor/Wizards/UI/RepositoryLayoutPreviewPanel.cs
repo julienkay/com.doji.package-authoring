@@ -19,6 +19,7 @@ namespace Doji.PackageAuthoring.Editor.Wizards.UI {
         private const string Ellipsis = "...";
         private const string RuntimeAssemblyGuidPreview = "<runtime-assembly-guid>";
         private static readonly Color HoverColor = new(0.24f, 0.47f, 0.85f, 0.08f);
+        private static readonly Color RelatedHoverColor = new(0.92f, 0.68f, 0.18f, 0.08f);
         private static readonly Color SelectionColor = new(0.24f, 0.47f, 0.85f, 0.18f);
         private static readonly Color RepoTint = new(0.92f, 0.86f, 1f);
         private static readonly Color DocsTint = new(0.78f, 0.90f, 1f);
@@ -29,6 +30,7 @@ namespace Doji.PackageAuthoring.Editor.Wizards.UI {
         private GUIStyle _treeContainerStyle;
         private GUIStyle _tagStyle;
         private RepositoryLayoutPreviewSelection _selectionPreview;
+        private bool _hoverHighlightingEnabled = true;
 
         /// <summary>
         /// Draws the preview section and updates its scroll state.
@@ -39,7 +41,7 @@ namespace Doji.PackageAuthoring.Editor.Wizards.UI {
             float previewHeight = Mathf.Max(MinHeight, windowHeight - 72f);
 
             // The tree is rebuilt every frame from wizard state, so the hidden Inspector selection must be refreshed too.
-            SyncInspectorSelection(root);
+            SyncInspectorSelection(root, data);
 
             // The parent wizard uses an outer scroll view, so the preview needs an explicit height instead of relying on ExpandHeight.
             EditorGUILayout.BeginVertical(
@@ -52,7 +54,8 @@ namespace Doji.PackageAuthoring.Editor.Wizards.UI {
                 GUILayout.Height(previewHeight));
             EditorGUILayout.LabelField("Repository Layout Preview", EditorStyles.boldLabel);
             EditorGUILayout.Space(3f);
-            DrawContent(root, previewWidth, previewHeight, ref scrollPosition);
+            DrawContent(root, previewWidth, previewHeight, data, ref scrollPosition);
+            DrawHoverHighlightingToggle();
             EditorGUILayout.EndVertical();
             EditorGUILayout.EndVertical();
         }
@@ -61,6 +64,7 @@ namespace Doji.PackageAuthoring.Editor.Wizards.UI {
             RepositoryLayoutNode root,
             float panelWidth,
             float panelHeight,
+            RepositoryLayoutPreviewData data,
             ref Vector2 scrollPosition) {
             EnsureStyles();
 
@@ -73,6 +77,9 @@ namespace Doji.PackageAuthoring.Editor.Wizards.UI {
 
             RepositoryLayoutPreviewSelection previewSelection = GetOrCreateSelectionPreview();
             string selectedPath = Selection.activeObject == previewSelection ? previewSelection.RelativePath : string.Empty;
+            IReadOnlyCollection<string> hoveredTargets = _hoverHighlightingEnabled
+                ? RepositoryLayoutPreviewHoverContext.CurrentTargets
+                : System.Array.Empty<string>();
 
             EditorGUILayout.BeginVertical(
                 _treeContainerStyle,
@@ -87,10 +94,15 @@ namespace Doji.PackageAuthoring.Editor.Wizards.UI {
                 scrollPosition = scrollView.scrollPosition;
                 foreach (RepositoryLayoutEntry entry in entries) {
                     Rect rowRect = EditorGUILayout.GetControlRect(false, rowHeight, GUILayout.ExpandWidth(true));
+                    bool isRelatedHover = hoveredTargets.Count > 0 && IsHoverMatch(entry.Node, hoveredTargets, root.Name, data);
                     bool isSelected = entry.Node.CanPreview &&
                                       string.Equals(entry.Node.RelativePath, selectedPath, System.StringComparison.Ordinal);
                     bool isHovered = entry.Node.CanPreview &&
                                      rowRect.Contains(Event.current.mousePosition);
+                    if (isRelatedHover) {
+                        EditorGUI.DrawRect(rowRect, RelatedHoverColor);
+                    }
+
                     if (isHovered && !isSelected) {
                         EditorGUI.DrawRect(rowRect, HoverColor);
                     }
@@ -104,7 +116,7 @@ namespace Doji.PackageAuthoring.Editor.Wizards.UI {
                         if (Event.current.type == EventType.MouseDown &&
                             Event.current.button == 0 &&
                             rowRect.Contains(Event.current.mousePosition)) {
-                            SelectPreview(entry.Node);
+                            SelectPreview(entry.Node, root.Name, data);
                             Event.current.Use();
                         }
                     }
@@ -113,6 +125,232 @@ namespace Doji.PackageAuthoring.Editor.Wizards.UI {
                 }
             }
             EditorGUILayout.EndVertical();
+        }
+
+        private void DrawHoverHighlightingToggle() {
+            EditorGUILayout.Space(4f);
+            _hoverHighlightingEnabled = EditorGUILayout.ToggleLeft(
+                new GUIContent(
+                    "Hover Highlights",
+                    "Highlights affected preview rows and matching content in the selected file while hovering related settings fields."),
+                _hoverHighlightingEnabled);
+        }
+
+        private static bool IsHoverMatch(
+            RepositoryLayoutNode node,
+            IReadOnlyCollection<string> hoveredTargets,
+            string rootDirectoryName,
+            RepositoryLayoutPreviewData data) {
+            foreach (string hoveredTarget in hoveredTargets) {
+                if (MatchesTarget(node, hoveredTarget, rootDirectoryName, data)) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Resolves one semantic hover target to the preview rows that should be softly highlighted.
+        /// </summary>
+        /// <remarks>
+        /// This is intentionally kept next to the preview tree renderer instead of on
+        /// <see cref="RepositoryLayoutPreviewHoverTargets"/>. The mapping needs access to both the generated node paths and
+        /// the current scaffold data, and several fields expand to multiple rows rather than a single static file.
+        ///
+        /// Each switch case defines the matching rule for one hovered field. The rule can match a preview row in
+        /// three different ways:
+        /// exact relative path comparison for a specific generated file or folder,
+        /// relative path prefix comparison for an entire generated subtree,
+        /// or text comparison against the node name, output path, or generated preview content when the field's value
+        /// is embedded into several files.
+        ///
+        /// Example:
+        /// the package identifier highlights broadly because it is both the package folder name and a token that
+        /// appears in multiple generated files, while dependencies only highlight <c>package.json</c> because that is
+        /// the only generated file they affect directly.
+        /// </remarks>
+        /// <param name="node">Current preview row under evaluation.</param>
+        /// <param name="hoveredTarget">Semantic hover identifier emitted by a settings field.</param>
+        /// <param name="rootDirectoryName">Displayed repository root folder name.</param>
+        /// <param name="data">Current preview data used to resolve generated paths and template content.</param>
+        /// <returns><c>true</c> when the row should be highlighted for the hovered field.</returns>
+        private static bool MatchesTarget(
+            RepositoryLayoutNode node,
+            string hoveredTarget,
+            string rootDirectoryName,
+            RepositoryLayoutPreviewData data) {
+            switch (hoveredTarget) {
+                case RepositoryLayoutPreviewHoverTargets.RepoCopyrightHolder:
+                    return MatchesContent(node, data.Context.Repo.CopyrightHolder) || MatchesPath(node, "LICENSE");
+                case RepositoryLayoutPreviewHoverTargets.RepoLicenseType:
+                    return MatchesPath(node, "LICENSE");
+                case RepositoryLayoutPreviewHoverTargets.PackageName:
+                    return MatchesContent(node, data.Context.Package.PackageName) ||
+                           MatchesPath(node, data.PackageName);
+                case RepositoryLayoutPreviewHoverTargets.PackageDisplayName:
+                    return MatchesContent(node, data.Context.Package.PackageDisplayName);
+                case RepositoryLayoutPreviewHoverTargets.AssemblyName:
+                    return MatchesContent(node, data.Context.Package.AssemblyName);
+                case RepositoryLayoutPreviewHoverTargets.NamespaceName:
+                    return MatchesContent(node, data.Context.Package.NamespaceName);
+                case RepositoryLayoutPreviewHoverTargets.Description:
+                    return MatchesContent(node, data.Context.Package.Description);
+                case RepositoryLayoutPreviewHoverTargets.PackageCompanyName:
+                    return MatchesContent(node, data.Context.Package.CompanyName);
+                case RepositoryLayoutPreviewHoverTargets.IncludeAuthor:
+                case RepositoryLayoutPreviewHoverTargets.AuthorUrl:
+                case RepositoryLayoutPreviewHoverTargets.AuthorEmail:
+                    return MatchesPath(node, $"{data.PackageName}/package.json");
+                case RepositoryLayoutPreviewHoverTargets.DocumentationUrl:
+                    return MatchesContent(node, data.Context.Package.DocumentationUrl) ||
+                           MatchesPath(node, $"{data.PackageName}/package.json");
+                case RepositoryLayoutPreviewHoverTargets.IncludeMinimumUnityVersion:
+                case RepositoryLayoutPreviewHoverTargets.MinimumUnityVersion:
+                    return MatchesPath(node, $"{data.PackageName}/package.json");
+                case RepositoryLayoutPreviewHoverTargets.CreateDocsFolder:
+                    return MatchesPath(node, "docs") || MatchesPrefix(node, "docs/");
+                case RepositoryLayoutPreviewHoverTargets.CreateSamplesFolder:
+                    return MatchesPath(node, $"{data.PackageName}/Samples~") ||
+                           MatchesPrefix(node, $"{data.PackageName}/Samples~/");
+                case RepositoryLayoutPreviewHoverTargets.CreateEditorFolder:
+                    return MatchesPath(node, $"{data.PackageName}/Editor") ||
+                           MatchesPrefix(node, $"{data.PackageName}/Editor/");
+                case RepositoryLayoutPreviewHoverTargets.CreateTestsFolder:
+                    return MatchesPath(node, $"{data.PackageName}/Tests") ||
+                           MatchesPrefix(node, $"{data.PackageName}/Tests/");
+                case RepositoryLayoutPreviewHoverTargets.Dependencies:
+                    return MatchesPath(node, $"{data.PackageName}/package.json");
+                case RepositoryLayoutPreviewHoverTargets.ProjectCompanyName:
+                    return MatchesContent(node, data.Context.Project.CompanyName);
+                case RepositoryLayoutPreviewHoverTargets.ProductName:
+                    return MatchesContent(node, data.Context.Project.ProductName) ||
+                           MatchesPath(node, $"projects/{data.CompanionProjectName}");
+                case RepositoryLayoutPreviewHoverTargets.Version:
+                    return MatchesContent(node, data.Context.Project.Version);
+                case RepositoryLayoutPreviewHoverTargets.TargetLocation:
+                    return MatchesPath(node, rootDirectoryName);
+                default:
+                    return false;
+            }
+        }
+
+        /// <summary>
+        /// Matches one concrete generated row by exact relative output path.
+        /// </summary>
+        private static bool MatchesPath(RepositoryLayoutNode node, string relativePath) {
+            return !string.IsNullOrWhiteSpace(relativePath) &&
+                   string.Equals(node.RelativePath, relativePath, System.StringComparison.Ordinal);
+        }
+
+        /// <summary>
+        /// Matches every row under a generated folder by checking whether the row path starts with the given prefix.
+        /// </summary>
+        private static bool MatchesPrefix(RepositoryLayoutNode node, string relativePathPrefix) {
+            return !string.IsNullOrWhiteSpace(relativePathPrefix) &&
+                   node.RelativePath.StartsWith(relativePathPrefix, System.StringComparison.Ordinal);
+        }
+
+        /// <summary>
+        /// Matches rows whose generated preview text contains the resolved field value.
+        /// </summary>
+        private static bool MatchesContent(RepositoryLayoutNode node, string value) {
+            return !string.IsNullOrWhiteSpace(value) &&
+                   !string.IsNullOrWhiteSpace(node.PreviewContent) &&
+                   node.PreviewContent.Contains(value, System.StringComparison.OrdinalIgnoreCase);
+        }
+
+        private static string[] GetHoverHighlights(
+            RepositoryLayoutNode node,
+            IReadOnlyCollection<string> hoveredTargets,
+            string rootDirectoryName,
+            RepositoryLayoutPreviewData data) {
+            if (node == null ||
+                data == null ||
+                hoveredTargets == null ||
+                hoveredTargets.Count == 0 ||
+                string.IsNullOrWhiteSpace(node.PreviewContent)) {
+                return System.Array.Empty<string>();
+            }
+
+            HashSet<string> highlights = new(System.StringComparer.Ordinal);
+            foreach (string hoveredTarget in hoveredTargets) {
+                foreach (string highlight in GetHoverHighlightsForTarget(node, hoveredTarget, rootDirectoryName, data)) {
+                    if (!string.IsNullOrWhiteSpace(highlight)) {
+                        highlights.Add(highlight);
+                    }
+                }
+            }
+
+            if (highlights.Count == 0) {
+                return System.Array.Empty<string>();
+            }
+
+            string[] highlightArray = new string[highlights.Count];
+            highlights.CopyTo(highlightArray);
+            return highlightArray;
+        }
+
+        private static IEnumerable<string> GetHoverHighlightsForTarget(
+            RepositoryLayoutNode node,
+            string hoveredTarget,
+            string rootDirectoryName,
+            RepositoryLayoutPreviewData data) {
+            if (!MatchesTarget(node, hoveredTarget, rootDirectoryName, data)) {
+                yield break;
+            }
+
+            switch (hoveredTarget) {
+                case RepositoryLayoutPreviewHoverTargets.RepoCopyrightHolder:
+                    yield return data.Context.Repo.CopyrightHolder;
+                    yield break;
+                case RepositoryLayoutPreviewHoverTargets.PackageName:
+                    yield return data.Context.Package.PackageName;
+                    yield break;
+                case RepositoryLayoutPreviewHoverTargets.PackageDisplayName:
+                    yield return data.Context.Package.PackageDisplayName;
+                    yield break;
+                case RepositoryLayoutPreviewHoverTargets.AssemblyName:
+                    yield return data.Context.Package.AssemblyName;
+                    yield break;
+                case RepositoryLayoutPreviewHoverTargets.NamespaceName:
+                    yield return data.Context.Package.NamespaceName;
+                    yield break;
+                case RepositoryLayoutPreviewHoverTargets.Description:
+                    yield return data.Context.Package.Description;
+                    yield break;
+                case RepositoryLayoutPreviewHoverTargets.PackageCompanyName:
+                    yield return data.Context.Package.CompanyName;
+                    yield break;
+                case RepositoryLayoutPreviewHoverTargets.IncludeAuthor:
+                    yield return data.Context.Package.CompanyName;
+                    yield return data.Context.Package.AuthorUrl;
+                    yield return data.Context.Package.AuthorEmail;
+                    yield break;
+                case RepositoryLayoutPreviewHoverTargets.AuthorUrl:
+                    yield return data.Context.Package.AuthorUrl;
+                    yield break;
+                case RepositoryLayoutPreviewHoverTargets.AuthorEmail:
+                    yield return data.Context.Package.AuthorEmail;
+                    yield break;
+                case RepositoryLayoutPreviewHoverTargets.DocumentationUrl:
+                    yield return TemplateTokenResolver.Resolve(data.Context.Package.DocumentationUrl, data.Context);
+                    yield break;
+                case RepositoryLayoutPreviewHoverTargets.MinimumUnityVersion:
+                    yield return $"{data.Context.Package.MinimumUnityMajor}.{data.Context.Package.MinimumUnityMinor}";
+                    yield return data.Context.Package.MinimumUnityRelease;
+                    yield break;
+                case RepositoryLayoutPreviewHoverTargets.ProjectCompanyName:
+                    yield return data.Context.Project.CompanyName;
+                    yield break;
+                case RepositoryLayoutPreviewHoverTargets.ProductName:
+                    yield return data.Context.Project.ProductName;
+                    yield break;
+                case RepositoryLayoutPreviewHoverTargets.Version:
+                    yield return data.Context.Project.Version;
+                    yield return $"{data.Context.Project.Version}.0";
+                    yield break;
+            }
         }
 
         /// <summary>
@@ -173,22 +411,23 @@ namespace Doji.PackageAuthoring.Editor.Wizards.UI {
                 relativePath: string.Empty,
                 previewContent: string.Empty,
                 sourceFilePath: string.Empty,
-                sourceFolderPath: string.Empty);
+                sourceFolderPath: string.Empty,
+                hoverHighlights: null);
             return _selectionPreview;
         }
 
-        private void SelectPreview(RepositoryLayoutNode node) {
+        private void SelectPreview(RepositoryLayoutNode node, string rootDirectoryName, RepositoryLayoutPreviewData data) {
             if (!node.CanPreview) {
                 return;
             }
 
             RepositoryLayoutPreviewSelection preview = GetOrCreateSelectionPreview();
-            ApplySelectionPayload(preview, node);
+            ApplySelectionPayload(preview, node, rootDirectoryName, data);
             EditorUtility.SetDirty(preview);
             Selection.activeObject = preview;
         }
 
-        private void SyncInspectorSelection(RepositoryLayoutNode root) {
+        private void SyncInspectorSelection(RepositoryLayoutNode root, RepositoryLayoutPreviewData data) {
             RepositoryLayoutPreviewSelection preview = GetOrCreateSelectionPreview();
             if (Selection.activeObject != preview || string.IsNullOrWhiteSpace(preview.RelativePath)) {
                 return;
@@ -199,21 +438,26 @@ namespace Doji.PackageAuthoring.Editor.Wizards.UI {
                 return;
             }
 
-            ApplySelectionPayload(preview, matchingNode);
+            ApplySelectionPayload(preview, matchingNode, root.Name, data);
             EditorUtility.SetDirty(preview);
         }
 
         /// <summary>
         /// Applies a node's resolved content and backing paths to the reusable inspector target.
         /// </summary>
-        private static void ApplySelectionPayload(RepositoryLayoutPreviewSelection preview, RepositoryLayoutNode node) {
+        private static void ApplySelectionPayload(
+            RepositoryLayoutPreviewSelection preview,
+            RepositoryLayoutNode node,
+            string rootDirectoryName,
+            RepositoryLayoutPreviewData data) {
             ApplySelectionPayload(
                 preview,
                 node.Name,
                 node.RelativePath,
                 node.PreviewContent,
                 node.SourceFilePath,
-                node.SourceFolderPath);
+                node.SourceFolderPath,
+                GetHoverHighlights(node, RepositoryLayoutPreviewHoverContext.CurrentTargets, rootDirectoryName, data));
         }
 
         /// <summary>
@@ -225,8 +469,9 @@ namespace Doji.PackageAuthoring.Editor.Wizards.UI {
             string relativePath,
             string previewContent,
             string sourceFilePath,
-            string sourceFolderPath) {
-            preview.UpdateContent(displayName, relativePath, previewContent, sourceFilePath, sourceFolderPath);
+            string sourceFolderPath,
+            string[] hoverHighlights) {
+            preview.UpdateContent(displayName, relativePath, previewContent, sourceFilePath, sourceFolderPath, hoverHighlights);
         }
 
         private static RepositoryLayoutNode FindNodeByPath(RepositoryLayoutNode node, string relativePath) {

@@ -11,8 +11,10 @@ namespace Doji.PackageAuthoring.Editor.Wizards.UI {
         private const float RowHeight = 22f;
         private const float IconButtonWidth = 30f;
         private const float IconButtonGap = 6f;
+        private static readonly Color TransparentColor = new(0f, 0f, 0f, 0f);
 
         private GUIStyle _contentStyle;
+        private GUIStyle _contentOverlayStyle;
         private GUIStyle _pathFieldStyle;
         private GUIStyle _iconButtonStyle;
 
@@ -25,6 +27,14 @@ namespace Doji.PackageAuthoring.Editor.Wizards.UI {
                 wordWrap = false,
                 richText = false
             };
+            _contentOverlayStyle ??= new GUIStyle(EditorStyles.label) {
+                alignment = TextAnchor.UpperLeft,
+                clipping = TextClipping.Clip,
+                padding = _contentStyle.padding,
+                richText = true,
+                wordWrap = false
+            };
+            _contentOverlayStyle.normal.textColor = EditorStyles.label.normal.textColor;
             _pathFieldStyle ??= new GUIStyle(EditorStyles.textField);
             _iconButtonStyle ??= new GUIStyle(EditorStyles.miniButton) {
                 alignment = TextAnchor.MiddleCenter,
@@ -52,11 +62,21 @@ namespace Doji.PackageAuthoring.Editor.Wizards.UI {
 
             float width = Mathf.Max(1f, EditorGUIUtility.currentViewWidth - 28f);
             float height = Mathf.Max(220f, _contentStyle.CalcHeight(new GUIContent(preview.Content), width) + 8f);
-            EditorGUILayout.SelectableLabel(
-                preview.Content,
+            Rect contentRect = EditorGUILayout.GetControlRect(
+                false,
+                height,
                 _contentStyle,
                 GUILayout.MinHeight(height),
                 GUILayout.ExpandWidth(true));
+
+            Color originalContentColor = GUI.contentColor;
+            GUI.contentColor = TransparentColor;
+            EditorGUI.SelectableLabel(contentRect, preview.Content, _contentStyle);
+            GUI.contentColor = originalContentColor;
+            GUI.Label(
+                contentRect,
+                TokenHighlightRichTextFormatter.Build(preview.Content, preview.HoverHighlights),
+                _contentOverlayStyle);
         }
 
         /// <summary>

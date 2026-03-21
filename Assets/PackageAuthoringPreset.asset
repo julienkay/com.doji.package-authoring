@@ -19,6 +19,7 @@ MonoBehaviour:
     <TargetLocation>k__BackingField: ../
   <PackageDefaults>k__BackingField:
     <PackageName>k__BackingField: com.doji.package-authoring
+    <PackageDisplayName>k__BackingField: Package Authoring
     <AssemblyName>k__BackingField: Doji.PackageAuthoring
     <NamespaceName>k__BackingField: Doji.PackageAuthoring
     <Description>k__BackingField: A package to simplify bootstrapping Unity packages

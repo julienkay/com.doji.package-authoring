@@ -10,6 +10,8 @@ namespace Doji.PackageAuthoring.Editor.Wizards {
     [CustomPropertyDrawer(typeof(PackageSettings))]
     internal sealed class PackageSettingsDrawer : PropertyDrawer {
         private static readonly string PackageNameField = $"<{nameof(PackageSettings.PackageName)}>k__BackingField";
+        private static readonly string PackageDisplayNameField =
+            $"<{nameof(PackageSettings.PackageDisplayName)}>k__BackingField";
         private static readonly string AssemblyNameField = $"<{nameof(PackageSettings.AssemblyName)}>k__BackingField";
         private static readonly string NamespaceNameField = $"<{nameof(PackageSettings.NamespaceName)}>k__BackingField";
         private static readonly string DescriptionField = $"<{nameof(PackageSettings.Description)}>k__BackingField";
@@ -48,7 +50,7 @@ namespace Doji.PackageAuthoring.Editor.Wizards {
 
         /// <inheritdoc />
         public override float GetPropertyHeight(SerializedProperty property, GUIContent label) {
-            int lineCount = 12;
+            int lineCount = 13;
             if (property.FindPropertyRelative(IncludeAuthorField).boolValue) {
                 lineCount += 2;
             }
@@ -73,6 +75,10 @@ namespace Doji.PackageAuthoring.Editor.Wizards {
 
             EditorGUI.BeginProperty(position, label, property);
             DrawField(ref row, property.FindPropertyRelative(PackageNameField), new GUIContent("Identifier"));
+            DrawField(
+                ref row,
+                property.FindPropertyRelative(PackageDisplayNameField),
+                new GUIContent("Package Name", "User-facing package display name written to package.json."));
             DrawField(ref row, property.FindPropertyRelative(AssemblyNameField), new GUIContent("Assembly Name"));
             DrawField(ref row, property.FindPropertyRelative(NamespaceNameField), new GUIContent("Namespace"));
             DrawField(ref row, property.FindPropertyRelative(DescriptionField), new GUIContent("Description"));

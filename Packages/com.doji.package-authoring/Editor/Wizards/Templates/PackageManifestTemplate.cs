@@ -15,7 +15,7 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Templates {
             JObject json = Obj(
                 Prop("name", ctx.Package.PackageName),
                 Prop("version", ctx.Project.Version),
-                Prop("displayName", ctx.Project.ProductName),
+                Prop("displayName", ctx.Package.PackageDisplayName),
                 Prop("description", ctx.Package.Description),
                 Prop("author", ctx.Package.IncludeAuthor ? GetAuthorMetadata(ctx) : null),
                 PropIf(
@@ -55,7 +55,7 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Templates {
                 ),
                 Obj(
                     Prop("displayName", "Basic Sample"),
-                    Prop("description", $"Basic example on how to use {ctx.Project.ProductName}."),
+                    Prop("description", $"Basic example on how to use {ctx.Package.PackageDisplayName}."),
                     Prop("path", "Samples~/01-BasicSample")
                 )
             );

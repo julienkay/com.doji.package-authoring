@@ -14,6 +14,12 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Models {
         public string PackageName { get; set; } = "com.yourcompany.yourpackage";
 
         /// <summary>
+        /// User-facing package title written to the generated package manifest.
+        /// </summary>
+        [field: SerializeField]
+        public string PackageDisplayName { get; set; } = "My Package";
+
+        /// <summary>
         /// Primary runtime assembly name used for generated asmdef files.
         /// </summary>
         [field: SerializeField]
@@ -125,6 +131,7 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Models {
             }
 
             PackageName = other.PackageName;
+            PackageDisplayName = other.PackageDisplayName;
             AssemblyName = other.AssemblyName;
             NamespaceName = other.NamespaceName;
             Description = other.Description;

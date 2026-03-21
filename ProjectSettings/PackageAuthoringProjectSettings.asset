@@ -19,6 +19,7 @@ MonoBehaviour:
     <TargetLocation>k__BackingField: ../
   <PackageDefaults>k__BackingField:
     <PackageName>k__BackingField: com.doji.package
+    <PackageDisplayName>k__BackingField: My Package
     <AssemblyName>k__BackingField: Doji.Package
     <NamespaceName>k__BackingField: Doji.AI.PackageNS
     <Description>k__BackingField: A short description for readmes etc

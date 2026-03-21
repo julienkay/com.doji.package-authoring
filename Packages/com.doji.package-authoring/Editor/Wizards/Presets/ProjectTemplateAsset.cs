@@ -1,5 +1,6 @@
 using Doji.PackageAuthoring.Editor.Wizards.Models;
 using Doji.PackageAuthoring.Editor.Wizards.Templates;
+using UnityEditorInternal;
 using UnityEngine;
 
 namespace Doji.PackageAuthoring.Editor.Wizards.Presets {
@@ -42,6 +43,34 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Presets {
             if (Content == null) {
                 Content = DefaultContent;
             }
+        }
+
+        /// <summary>
+        /// Loads a persisted template settings asset when it exists, or creates a transient instance otherwise.
+        /// </summary>
+        protected static T LoadOrCreateSettings<T>(string assetPath)
+            where T : ProjectTemplateAsset {
+            Object[] settings = InternalEditorUtility.LoadSerializedFileAndForget(assetPath);
+            if (settings.Length > 0 && settings[0] is T existingSettings) {
+                return existingSettings;
+            }
+
+            T created = CreateInstance<T>();
+            created.hideFlags = HideFlags.HideAndDontSave;
+            return created;
+        }
+
+        /// <summary>
+        /// Saves the current template asset back into the project settings folder.
+        /// </summary>
+        protected void SaveSettingsAsset(string assetPath, bool saveAsText = true) {
+            EnsureDefaultContent();
+            InternalEditorUtility.SaveToSerializedFileAndForget(
+                new Object[] {
+                    this
+                },
+                assetPath,
+                saveAsText);
         }
     }
 }

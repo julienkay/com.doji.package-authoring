@@ -698,16 +698,25 @@ namespace Doji.PackageAuthoring.Editor.Wizards {
         }
 
         /// <summary>
-        /// Copies any repository-level docs template content into the generated docs folder.
+        /// Creates the required documentation subfolders and copies any static binary assets.
         /// </summary>
         private void CreateDocfxFolders(string path) {
-            CopyDirectory("docs", path);
+            Directory.CreateDirectory(Path.Combine(path, "api"));
+            Directory.CreateDirectory(Path.Combine(path, "manual"));
+            Directory.CreateDirectory(Path.Combine(path, "pdf"));
+
+            string imagesSourcePath = Path.Combine("docs", "images");
+            string imagesDestinationPath = Path.Combine(path, "images");
+            CopyDirectory(imagesSourcePath, imagesDestinationPath);
         }
 
         /// <summary>
         /// Writes the generated docfx configuration and table-of-contents files.
         /// </summary>
         private void CreateDocfxFiles(string path) {
+            string docsGitIgnorePath = Path.Combine(path, ".gitignore");
+            CreateFile(docsGitIgnorePath, Ctx.GetDocsGitIgnore());
+
             string docfxConfigPath = Path.Combine(path, "docfx.json");
             CreateFile(docfxConfigPath, Ctx.GetDocfxJson());
 
@@ -720,11 +729,20 @@ namespace Doji.PackageAuthoring.Editor.Wizards {
             string indexPath = Path.Combine(path, "index.md");
             CreateFile(indexPath, Ctx.GetIndexMD());
 
+            string apiGitIgnorePath = Path.Combine(path, "api", ".gitignore");
+            CreateFile(apiGitIgnorePath, Ctx.GetDocsApiGitIgnore());
+
+            string apiIndexPath = Path.Combine(path, "api", "index.md");
+            CreateFile(apiIndexPath, Ctx.GetDocsApiIndex());
+
             string tocPath = Path.Combine(path, "toc.yml");
             CreateFile(tocPath, Ctx.GetRootToc());
 
             string manualTocPath = Path.Combine(path, "manual", "toc.yml");
             CreateFile(manualTocPath, Ctx.GetManualToc());
+
+            string pdfTocPath = Path.Combine(path, "pdf", "toc.yml");
+            CreateFile(pdfTocPath, Ctx.GetPdfToc());
         }
 
         /// <summary>

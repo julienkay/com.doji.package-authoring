@@ -273,7 +273,7 @@ namespace Doji.PackageAuthoring.Editor.Wizards.UI {
 
         private static RepositoryLayoutNode BuildDocsNode(RepositoryLayoutPreviewData data) {
             RepositoryLayoutNode docs = CreateDirectoryNode("docs", "docs", RepositoryLayoutGroup.Docs);
-            docs.Children.Add(CreateTemplateFileNode(".gitignore", "docs/.gitignore", "docs/.gitignore", RepositoryLayoutGroup.Docs));
+            docs.Children.Add(CreateGeneratedFileNode(".gitignore", "docs/.gitignore", data.Context.GetDocsGitIgnore(), RepositoryLayoutGroup.Docs));
             docs.Children.Add(CreateGeneratedFileNode("docfx.json", "docs/docfx.json", data.Context.GetDocfxJson(), RepositoryLayoutGroup.Docs));
             docs.Children.Add(CreateGeneratedFileNode(
                 "docfx-pdf.json",
@@ -288,8 +288,8 @@ namespace Doji.PackageAuthoring.Editor.Wizards.UI {
             docs.Children.Add(CreateGeneratedFileNode("index.md", "docs/index.md", data.Context.GetIndexMD(), RepositoryLayoutGroup.Docs));
 
             RepositoryLayoutNode api = CreateDirectoryNode("api", "docs/api", RepositoryLayoutGroup.Docs);
-            api.Children.Add(CreateTemplateFileNode(".gitignore", "docs/api/.gitignore", "docs/api/.gitignore", RepositoryLayoutGroup.Docs));
-            api.Children.Add(CreateTemplateFileNode("index.md", "docs/api/index.md", "docs/api/index.md", RepositoryLayoutGroup.Docs));
+            api.Children.Add(CreateGeneratedFileNode(".gitignore", "docs/api/.gitignore", data.Context.GetDocsApiGitIgnore(), RepositoryLayoutGroup.Docs));
+            api.Children.Add(CreateGeneratedFileNode("index.md", "docs/api/index.md", data.Context.GetDocsApiIndex(), RepositoryLayoutGroup.Docs));
             docs.Children.Add(api);
 
             RepositoryLayoutNode images = CreateDirectoryNode("images", "docs/images", RepositoryLayoutGroup.Docs);
@@ -302,7 +302,7 @@ namespace Doji.PackageAuthoring.Editor.Wizards.UI {
             docs.Children.Add(manual);
 
             RepositoryLayoutNode pdf = CreateDirectoryNode("pdf", "docs/pdf", RepositoryLayoutGroup.Docs);
-            pdf.Children.Add(CreateTemplateFileNode("toc.yml", "docs/pdf/toc.yml", "docs/pdf/toc.yml", RepositoryLayoutGroup.Docs));
+            pdf.Children.Add(CreateGeneratedFileNode("toc.yml", "docs/pdf/toc.yml", data.Context.GetPdfToc(), RepositoryLayoutGroup.Docs));
             docs.Children.Add(pdf);
 
             docs.Children.Add(CreateGeneratedFileNode("toc.yml", "docs/toc.yml", data.Context.GetRootToc(), RepositoryLayoutGroup.Docs));

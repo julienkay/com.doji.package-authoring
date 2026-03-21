@@ -1,3 +1,5 @@
+using Doji.PackageAuthoring.Editor.Wizards.Presets;
+
 namespace Doji.PackageAuthoring.Editor.Wizards.Templates {
     /// <summary>
     /// Provides short template call sites on top of <see cref="PackageContext"/>.
@@ -74,45 +76,73 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Templates {
         }
 
         /// <summary>
+        /// Builds the repository <c>docs/.gitignore</c> file.
+        /// </summary>
+        public static string GetDocsGitIgnore(this PackageContext ctx) {
+            return DocsGitIgnoreTemplateSettings.Instance.GetResolvedContent(ctx);
+        }
+
+        /// <summary>
+        /// Builds the repository <c>docs/api/.gitignore</c> file.
+        /// </summary>
+        public static string GetDocsApiGitIgnore(this PackageContext ctx) {
+            return DocsApiGitIgnoreTemplateSettings.Instance.GetResolvedContent(ctx);
+        }
+
+        /// <summary>
+        /// Builds the repository <c>docs/api/index.md</c> file.
+        /// </summary>
+        public static string GetDocsApiIndex(this PackageContext ctx) {
+            return DocsApiIndexTemplateSettings.Instance.GetResolvedContent(ctx);
+        }
+
+        /// <summary>
         /// Builds the docfx configuration file.
         /// </summary>
         public static string GetDocfxJson(this PackageContext ctx) {
-            return DocfxTemplates.GetDocfxJson(ctx);
+            return DocsDocfxJsonTemplateSettings.Instance.GetResolvedContent(ctx);
         }
 
         /// <summary>
         /// Builds the docfx PDF configuration file.
         /// </summary>
         public static string GetDocfxPdfJson(this PackageContext ctx) {
-            return DocfxTemplates.GetDocfxPdfJson(ctx);
+            return DocsDocfxPdfJsonTemplateSettings.Instance.GetResolvedContent(ctx);
         }
 
         /// <summary>
         /// Builds the docfx API filter file.
         /// </summary>
         public static string GetFilterConfig(this PackageContext ctx) {
-            return DocfxTemplates.GetFilterConfig(ctx);
+            return DocsFilterConfigTemplateSettings.Instance.GetResolvedContent(ctx);
         }
 
         /// <summary>
         /// Builds the docs landing page.
         /// </summary>
         public static string GetIndexMD(this PackageContext ctx) {
-            return DocfxTemplates.GetIndexMD(ctx);
+            return DocsIndexTemplateSettings.Instance.GetResolvedContent(ctx);
         }
 
         /// <summary>
         /// Builds the root documentation table of contents.
         /// </summary>
         public static string GetRootToc(this PackageContext ctx) {
-            return DocfxTemplates.GetRootToc(ctx);
+            return DocsRootTocTemplateSettings.Instance.GetResolvedContent(ctx);
         }
 
         /// <summary>
         /// Builds the manual documentation table of contents.
         /// </summary>
         public static string GetManualToc(this PackageContext ctx) {
-            return DocfxTemplates.GetManualToc(ctx);
+            return DocsManualTocTemplateSettings.Instance.GetResolvedContent(ctx);
+        }
+
+        /// <summary>
+        /// Builds the PDF documentation table of contents.
+        /// </summary>
+        public static string GetPdfToc(this PackageContext ctx) {
+            return DocsPdfTocTemplateSettings.Instance.GetResolvedContent(ctx);
         }
 
         /// <summary>

@@ -45,13 +45,15 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Templates {
 {{PACKAGE_NAME}}
 {{PACKAGE_VERSION}}
 {{PACKAGE_COMPANY}}
+{{PACKAGE_DESCRIPTION}}
 {{PROJECT_NAME}}
 {{PROJECT_COMPANY}}
 {{NAMESPACE_NAME}}
+{{NAMESPACE_NAME_REGEX}}
 {{ASSEMBLY_NAME}}";
 
         public const string SupportedTokensHelpText =
-            "Available tokens: {{YEAR}}, {{COPYRIGHT_HOLDER}}, {{PACKAGE_NAME}}, {{PACKAGE_VERSION}}, {{PACKAGE_COMPANY}}, {{PROJECT_NAME}}, {{PROJECT_COMPANY}}, {{NAMESPACE_NAME}}, {{ASSEMBLY_NAME}}";
+            "Available tokens: {{YEAR}}, {{COPYRIGHT_HOLDER}}, {{PACKAGE_NAME}}, {{PACKAGE_VERSION}}, {{PACKAGE_COMPANY}}, {{PACKAGE_DESCRIPTION}}, {{PROJECT_NAME}}, {{PROJECT_COMPANY}}, {{NAMESPACE_NAME}}, {{NAMESPACE_NAME_REGEX}}, {{ASSEMBLY_NAME}}";
 
         private static readonly string[] SupportedTokens = {
             "{{YEAR}}",
@@ -59,9 +61,11 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Templates {
             "{{PACKAGE_NAME}}",
             "{{PACKAGE_VERSION}}",
             "{{PACKAGE_COMPANY}}",
+            "{{PACKAGE_DESCRIPTION}}",
             "{{PROJECT_NAME}}",
             "{{PROJECT_COMPANY}}",
             "{{NAMESPACE_NAME}}",
+            "{{NAMESPACE_NAME_REGEX}}",
             "{{ASSEMBLY_NAME}}"
         };
 
@@ -164,9 +168,11 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Templates {
                 ["{{PACKAGE_NAME}}"] = package?.PackageName ?? string.Empty,
                 ["{{PACKAGE_VERSION}}"] = project?.Version ?? string.Empty,
                 ["{{PACKAGE_COMPANY}}"] = package?.CompanyName ?? string.Empty,
+                ["{{PACKAGE_DESCRIPTION}}"] = package?.Description ?? string.Empty,
                 ["{{PROJECT_NAME}}"] = project?.ProductName ?? string.Empty,
                 ["{{PROJECT_COMPANY}}"] = project?.CompanyName ?? string.Empty,
                 ["{{NAMESPACE_NAME}}"] = package?.NamespaceName ?? string.Empty,
+                ["{{NAMESPACE_NAME_REGEX}}"] = (package?.NamespaceName ?? string.Empty).Replace(".", @"\."),
                 ["{{ASSEMBLY_NAME}}"] = package?.AssemblyName ?? string.Empty
             };
         }

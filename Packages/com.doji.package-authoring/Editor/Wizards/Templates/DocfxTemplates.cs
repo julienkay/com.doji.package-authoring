@@ -1,19 +1,37 @@
 namespace Doji.PackageAuthoring.Editor.Wizards.Templates {
     /// <summary>
-    /// Builds docfx configuration files for generated package documentation.
+    /// Provides the built-in fallback content for generated documentation scaffold files.
     /// </summary>
     public static class DocfxTemplates {
-        public static string GetDocfxJson(PackageContext ctx) {
-            return $@"{{
+        public const string DocsGitIgnoreDefaultContent = @"###############
+#    folder   #
+###############
+/**/DROP/
+/**/TEMP/
+/**/packages/
+/**/bin/
+/**/obj/
+_site";
+
+        public const string DocsApiGitIgnoreDefaultContent = @"###############
+#  temp file  #
+###############
+*.yml
+.manifest";
+
+        public const string DocsApiIndexDefaultContent = @"# Scripting API
+This is the documentation for the Scripting APIs of this package.";
+
+        public const string DocfxJsonDefaultContent = @"{
   ""metadata"": [
-    {{
+    {
       ""src"": [
-        {{
+        {
           ""files"": [
             ""**/*.cs""
           ],
-          ""src"": ""../{ctx.Package.PackageName}""
-        }}
+          ""src"": ""../{{PACKAGE_NAME}}""
+        }
       ],
       ""dest"": ""api"",
       ""includePrivateMembers"": false,
@@ -26,40 +44,37 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Templates {
       ""allowCompilationErrors"": true,
       ""globalNamespaceId"": ""Global"",
       ""filter"": ""filterConfig.yml""
-    }}
+    }
   ],
-  ""build"": {{
+  ""build"": {
     ""content"": [
-      {{
+      {
         ""files"": [
           ""api/**.yml"",
           ""api/index.md""
         ]
-      }},
-      {{
+      },
+      {
         ""files"": [
           ""manual/**.md"",
           ""manual/**/toc.yml"",
           ""toc.yml"",
           ""*.md""
         ]
-      }}
+      }
     ],
     ""resource"": [
-      {{
+      {
         ""files"": [
-          ""images/**"",
+          ""images/**""
         ]
-      }}
+      }
     ],
     ""output"": ""_site"",
     ""globalMetadataFiles"": [],
-    ""globalMetadata"": {{
-      ""_appFaviconPath"": ""images/favicon.ico"",
-      ""_appLogoPath"": ""images/doji.png"",
-      ""_appLogoUrl"": ""https://docs.doji-tech.com/"",
+    ""globalMetadata"": {
       ""_disableContribution"": true
-    }},
+    },
     ""fileMetadataFiles"": [],
     ""template"": [
       ""default""
@@ -67,16 +82,19 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Templates {
     ""postProcessors"": [],
     ""keepFileLink"": false,
     ""disableGitFeatures"": false
-  }}
-}}";
-        }
+  }
+}";
 
-        public static string GetDocfxPdfJson(PackageContext ctx) {
-            return $@"{{
+        public const string DocfxPdfJsonDefaultContent = @"{
   ""metadata"": [
-    {{
+    {
       ""src"": [
-        {{ ""files"": [ ""{ctx.Package.AssemblyName.ToLower()}.csproj"" ], ""src"": ""../projects/{ctx.Project.ProductName}"" }}
+        {
+          ""files"": [
+            ""**/*.cs""
+          ],
+          ""src"": ""../{{PACKAGE_NAME}}""
+        }
       ],
       ""dest"": ""api"",
       ""includePrivateMembers"": false,
@@ -86,94 +104,91 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Templates {
       ""namespaceLayout"": ""flattened"",
       ""memberLayout"": ""samePage"",
       ""EnumSortOrder"": ""declaringOrder"",
-      ""allowCompilationErrors"": false,
+      ""allowCompilationErrors"": true,
       ""globalNamespaceId"": ""Global"",
       ""filter"": ""filterConfig.yml""
-    }}
+    }
   ],
-  ""build"": {{
+  ""build"": {
     ""content"": [
-      {{
+      {
         ""files"": [
           ""api/**.yml"",
           ""api/index.md""
         ]
-      }},
-      {{
+      },
+      {
         ""files"": [
           ""manual/**.md"",
           ""manual/**/toc.yml"",
           ""toc.yml"",
           ""*.md""
         ]
-      }},
-      {{ ""files"": [ ""pdf/toc.yml"" ] }}
+      },
+      {
+        ""files"": [
+          ""pdf/toc.yml""
+        ]
+      }
     ],
     ""resource"": [
-      {{
+      {
         ""files"": [
-          ""images/**"",
+          ""images/**""
         ]
-      }}
+      }
     ],
     ""output"": ""_site"",
     ""globalMetadataFiles"": [],
-    ""globalMetadata"": {{
-      ""_appFaviconPath"": ""images/favicon.ico"",
-      ""_appLogoPath"": ""images/doji.png"",
-      ""_appLogoUrl"": ""https://www.doji-tech.com/"",
+    ""globalMetadata"": {
       ""_disableContribution"": true,
       ""pdf"": true,
       ""pdfTocPage"": true,
-      ""pdfFileName"": ""{ctx.Package.PackageName}.pdf""
-    }},
+      ""pdfFileName"": ""{{PACKAGE_NAME}}.pdf""
+    },
     ""fileMetadataFiles"": [],
     ""template"": [
       ""default"",
-      ""modern"",
-      ""template""
+      ""modern""
     ],
     ""postProcessors"": [],
     ""keepFileLink"": false,
     ""disableGitFeatures"": false
-  }}
-}}";
-        }
+  }
+}";
 
-        public static string GetFilterConfig(PackageContext ctx) {
-            string ns = ctx.Package.NamespaceName.Replace(".", @"\.");
-            return $@"apiRules:
+        public const string FilterConfigDefaultContent = @"apiRules:
 - include: # The namespaces to generate
-    uidRegex: ^{ns}
+    uidRegex: ^{{NAMESPACE_NAME_REGEX}}
     type: Namespace
 - include:
     uidRegex: ^Global
     type: Namespace
 - exclude:
-    uidRegex: ^{ns}\.Editor
+    uidRegex: ^{{NAMESPACE_NAME_REGEX}}\.Editor
 - exclude:
-    uidRegex: ^{ns}\.Samples";
-        }
+    uidRegex: ^{{NAMESPACE_NAME_REGEX}}\.Samples";
 
-        public static string GetIndexMD(PackageContext ctx) {
-            return $@"# {ctx.Project.ProductName}
+        public const string IndexDefaultContent = @"# {{PROJECT_NAME}}
 
-{ctx.Package.Description}.";
-        }
+{{PACKAGE_DESCRIPTION}}";
 
-        public static string GetRootToc(PackageContext ctx) {
-            return $@"- name: Manual
+        public const string RootTocDefaultContent = @"- name: Manual
   href: manual/
 - name: Scripting API
   href: api/
   homepage: api/index.md
 ";
-        }
 
-        public static string GetManualToc(PackageContext ctx) {
-            return $@"- name: {ctx.Project.ProductName}
+        public const string ManualTocDefaultContent = @"- name: {{PROJECT_NAME}}
   href: ../index.md
 ";
-        }
+
+        public const string PdfTocDefaultContent = @"order: 200
+items:
+- name: Manual
+  href: ../manual/toc.yml
+- name: Scripting API
+  href: ../api/toc.yml";
     }
 }

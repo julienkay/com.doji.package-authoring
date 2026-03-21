@@ -14,6 +14,9 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Presets {
         private static readonly GUIContent CustomLicenseTemplateLabel = new(
             "Custom License",
             "Template content written to generated repository LICENSE files when Open Source License is set to Custom.");
+        private static readonly GUIContent DocumentationTemplatesLabel = new(
+            "Documentation",
+            "Template content written to generated repository documentation scaffold files.");
 
         /// <summary>
         /// Creates the parent settings provider shown under <c>Project/Doji/Package Authoring/Templates</c>.
@@ -42,6 +45,16 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Presets {
         public static SettingsProvider CreateCustomLicenseTemplateProvider() {
             return new SettingsProvider("Project/Doji/Package Authoring/Templates/Custom License", SettingsScope.Project) {
                 guiHandler = _ => DrawCustomLicenseSection()
+            };
+        }
+
+        /// <summary>
+        /// Creates the child settings provider for generated documentation scaffold templates.
+        /// </summary>
+        [SettingsProvider]
+        public static SettingsProvider CreateDocumentationTemplateProvider() {
+            return new SettingsProvider("Project/Doji/Package Authoring/Templates/Documentation", SettingsScope.Project) {
+                guiHandler = _ => DrawDocumentationTemplatesSection()
             };
         }
 
@@ -99,6 +112,43 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Presets {
 
             if (serializedSettings.ApplyModifiedProperties()) {
                 settings.SaveSettings();
+            }
+        }
+
+        private static void DrawDocumentationTemplatesSection() {
+            EditorGUILayout.LabelField(DocumentationTemplatesLabel, EditorStyles.wordWrappedMiniLabel);
+            EditorGUILayout.Space(3f);
+            EditorGUILayout.HelpBox(
+                Templates.TemplateTokenResolver.SupportedTokensHelpText,
+                MessageType.None);
+
+            DrawTemplateAssetSection("docs/.gitignore", DocsGitIgnoreTemplateSettings.Instance, 120f, () => DocsGitIgnoreTemplateSettings.Instance.SaveSettings());
+            DrawTemplateAssetSection("docs/api/.gitignore", DocsApiGitIgnoreTemplateSettings.Instance, 120f, () => DocsApiGitIgnoreTemplateSettings.Instance.SaveSettings());
+            DrawTemplateAssetSection("docs/api/index.md", DocsApiIndexTemplateSettings.Instance, 120f, () => DocsApiIndexTemplateSettings.Instance.SaveSettings());
+            DrawTemplateAssetSection("docs/docfx.json", DocsDocfxJsonTemplateSettings.Instance, 320f, () => DocsDocfxJsonTemplateSettings.Instance.SaveSettings());
+            DrawTemplateAssetSection("docs/docfx-pdf.json", DocsDocfxPdfJsonTemplateSettings.Instance, 360f, () => DocsDocfxPdfJsonTemplateSettings.Instance.SaveSettings());
+            DrawTemplateAssetSection("docs/filterConfig.yml", DocsFilterConfigTemplateSettings.Instance, 180f, () => DocsFilterConfigTemplateSettings.Instance.SaveSettings());
+            DrawTemplateAssetSection("docs/index.md", DocsIndexTemplateSettings.Instance, 120f, () => DocsIndexTemplateSettings.Instance.SaveSettings());
+            DrawTemplateAssetSection("docs/toc.yml", DocsRootTocTemplateSettings.Instance, 120f, () => DocsRootTocTemplateSettings.Instance.SaveSettings());
+            DrawTemplateAssetSection("docs/manual/toc.yml", DocsManualTocTemplateSettings.Instance, 120f, () => DocsManualTocTemplateSettings.Instance.SaveSettings());
+            DrawTemplateAssetSection("docs/pdf/toc.yml", DocsPdfTocTemplateSettings.Instance, 120f, () => DocsPdfTocTemplateSettings.Instance.SaveSettings());
+        }
+
+        private static void DrawTemplateAssetSection(
+            string title,
+            ProjectTemplateAsset settings,
+            float minHeight,
+            System.Action saveSettings) {
+            using SerializedObject serializedSettings = new SerializedObject(settings);
+            serializedSettings.Update();
+
+            PackageAuthoringGui.DrawSection(title, () => {
+                SerializedProperty contentProperty = serializedSettings.FindProperty(ContentField);
+                DrawTemplateTextArea(contentProperty, minHeight);
+            });
+
+            if (serializedSettings.ApplyModifiedProperties()) {
+                saveSettings();
             }
         }
 

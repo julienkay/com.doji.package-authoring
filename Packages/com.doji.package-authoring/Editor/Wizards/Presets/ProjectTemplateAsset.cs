@@ -46,8 +46,22 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Presets {
         }
 
         /// <summary>
-        /// Loads a persisted template settings asset when it exists, or creates a transient instance otherwise.
+        /// Restores a template settings object from the project's <c>ProjectSettings</c> folder, or falls back to a transient in-memory instance.
         /// </summary>
+        /// <remarks>
+        /// Unity editor configuration is often stored either as importable assets under <c>Assets</c>/<c>Packages</c> or as
+        /// serialized objects under <c>ProjectSettings</c>. These template presets intentionally use the latter so the package
+        /// can provide built-in defaults without shipping mutable template files as real package assets.
+        ///
+        /// <see cref="InternalEditorUtility.LoadSerializedFileAndForget(string)"/> is the usual low-level API for this pattern:
+        /// it reads arbitrary serialized Unity objects from a known path even when they are not part of the Asset Database.
+        /// When the file does not exist yet, callers still need a working instance so the editor UI can expose default content
+        /// and later save the customized version back to disk. That is why this helper creates a hidden transient object instead
+        /// of returning <c>null</c>.
+        ///
+        /// This is typically used by project-scoped editor settings types that behave similarly to <c>ScriptableSingleton</c>
+        /// but need explicit control over inheritance, initialization, or save timing.
+        /// </remarks>
         protected static T LoadOrCreateSettings<T>(string assetPath)
             where T : ProjectTemplateAsset {
             Object[] settings = InternalEditorUtility.LoadSerializedFileAndForget(assetPath);

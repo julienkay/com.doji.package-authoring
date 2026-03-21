@@ -25,10 +25,14 @@ namespace Doji.PackageAuthoring.Editor.Wizards.UI {
         /// <summary>
         /// Draws a boxed section with a bold header and body content.
         /// </summary>
-        public static void DrawSection(string title, Action drawContent, Action drawHeaderAction = null) {
+        public static void DrawSection(
+            string title,
+            Action drawContent,
+            Action drawHeaderAction = null,
+            GUIStyle titleStyle = null) {
             EditorGUILayout.BeginVertical(EditorStyles.helpBox);
             EditorGUILayout.BeginHorizontal();
-            EditorGUILayout.LabelField(title, EditorStyles.boldLabel);
+            EditorGUILayout.LabelField(title, titleStyle ?? EditorStyles.boldLabel);
             drawHeaderAction?.Invoke();
             EditorGUILayout.EndHorizontal();
             EditorGUILayout.Space(3f);

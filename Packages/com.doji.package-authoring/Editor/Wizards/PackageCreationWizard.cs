@@ -62,6 +62,7 @@ namespace Doji.PackageAuthoring.Editor.Wizards {
         private RepositoryLayoutPreviewPanel _repositoryLayoutPreviewPanel;
 
         private PackageAuthoringProfile Defaults => _defaults ??= CreateTemporaryProfile();
+        private string ScopedSessionStateKey => WizardSessionStateUtility.GetProjectScopedKey(SessionStateKey);
         private ProjectSettings ProjectSettings => Defaults.ProjectDefaults;
         private PackageSettings PackageSettings => Defaults.PackageDefaults;
         private RepoSettings RepoSettings => Defaults.RepoDefaults;
@@ -118,14 +119,14 @@ namespace Doji.PackageAuthoring.Editor.Wizards {
         /// </summary>
         /// <returns><c>true</c> when prior session state existed.</returns>
         private bool RestoreSessionState() {
-            return WizardSessionStateUtility.TryRestoreProfile(SessionStateKey, Defaults);
+            return WizardSessionStateUtility.TryRestoreProfile(ScopedSessionStateKey, Defaults);
         }
 
         /// <summary>
         /// Saves the current ad hoc wizard input so script recompiles do not reset the open form.
         /// </summary>
         private void SaveSessionState() {
-            WizardSessionStateUtility.SaveProfile(SessionStateKey, _defaults);
+            WizardSessionStateUtility.SaveProfile(ScopedSessionStateKey, _defaults);
         }
 
         /// <summary>

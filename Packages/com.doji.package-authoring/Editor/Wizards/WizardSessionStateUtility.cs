@@ -1,4 +1,5 @@
 using UnityEditor;
+using UnityEngine;
 using Doji.PackageAuthoring.Editor.Wizards.Models;
 
 namespace Doji.PackageAuthoring.Editor.Wizards {
@@ -36,6 +37,15 @@ namespace Doji.PackageAuthoring.Editor.Wizards {
             }
 
             SessionState.SetString(key, EditorJsonUtility.ToJson(source));
+        }
+
+        /// <summary>
+        /// Scopes transient wizard state to the current Unity project so relative output paths are not reused elsewhere.
+        /// </summary>
+        public static string GetProjectScopedKey(string key) {
+            string projectPath = Application.dataPath;
+            string projectHash = Hash128.Compute(projectPath).ToString();
+            return $"{key}.{projectHash}";
         }
     }
 }

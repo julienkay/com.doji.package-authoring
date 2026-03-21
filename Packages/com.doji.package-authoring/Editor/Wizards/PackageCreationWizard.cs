@@ -1,8 +1,6 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
 using UnityEditor;
-using UnityEditor.Build;
 using UnityEngine;
 using Doji.PackageAuthoring.Editor.Utilities;
 using Doji.PackageAuthoring.Editor.Wizards.Models;
@@ -82,29 +80,24 @@ namespace Doji.PackageAuthoring.Editor.Wizards {
         /// Initializes the window title, transient state, and dependency editor UI.
         /// </summary>
         private void OnEnable() {
-            titleContent = new GUIContent("Package Creation");
-            minSize = new Vector2(1000f, 600f);
-            wantsMouseMove = true;
-
-            if (!RestoreSessionState()) {
-                ApplyProjectDefaults();
-            }
-
-            InitializeSerializedState();
+            WizardStateUtility.InitializeWindow(
+                this,
+                "Package Creation",
+                RestoreSessionState,
+                ApplyProjectDefaults,
+                InitializeSerializedState,
+                minSize: new Vector2(1000f, 600f),
+                wantsMouseMove: true);
         }
 
         private void OnDisable() {
-            SaveSessionState();
-            _repositoryLayoutPreviewPanel?.Dispose();
-
-            if (_defaults != null) {
-                DestroyImmediate(_defaults);
-                _defaults = null;
-            }
-
-            _defaultsSerializedObject = null;
-            _windowSerializedObject = null;
-            _autoOpenAfterCreationProperty = null;
+            WizardStateUtility.DisposeWindow(
+                SaveSessionState,
+                ref _defaults,
+                ref _defaultsSerializedObject,
+                ref _windowSerializedObject,
+                ref _autoOpenAfterCreationProperty,
+                () => _repositoryLayoutPreviewPanel?.Dispose());
             _repositoryLayoutPreviewPanel = null;
         }
 
@@ -238,10 +231,7 @@ namespace Doji.PackageAuthoring.Editor.Wizards {
         /// </summary>
         private void ApplyPackageDefaultsAndRefresh() {
             ApplyProjectDefaultsToPackageDefinition();
-            GUI.FocusControl(null);
-            _defaultsSerializedObject?.Update();
-            _windowSerializedObject?.Update();
-            Repaint();
+            WizardStateUtility.RefreshWindow(_defaultsSerializedObject, _windowSerializedObject, this);
         }
 
         /// <summary>
@@ -249,10 +239,7 @@ namespace Doji.PackageAuthoring.Editor.Wizards {
         /// </summary>
         private void ApplyCompanionProjectDefaultsAndRefresh() {
             ApplyProjectDefaultsToCompanionProject();
-            GUI.FocusControl(null);
-            _defaultsSerializedObject?.Update();
-            _windowSerializedObject?.Update();
-            Repaint();
+            WizardStateUtility.RefreshWindow(_defaultsSerializedObject, _windowSerializedObject, this);
         }
 
         /// <summary>
@@ -260,10 +247,7 @@ namespace Doji.PackageAuthoring.Editor.Wizards {
         /// </summary>
         private void ApplyPackagePresetAndRefresh(PackageAuthoringProfile preset) {
             ApplyPackagePreset(preset);
-            GUI.FocusControl(null);
-            _defaultsSerializedObject?.Update();
-            _windowSerializedObject?.Update();
-            Repaint();
+            WizardStateUtility.RefreshWindow(_defaultsSerializedObject, _windowSerializedObject, this);
         }
 
         /// <summary>
@@ -271,17 +255,14 @@ namespace Doji.PackageAuthoring.Editor.Wizards {
         /// </summary>
         private void ApplyProjectPresetAndRefresh(PackageAuthoringProfile preset) {
             ApplyProjectPreset(preset);
-            GUI.FocusControl(null);
-            _defaultsSerializedObject?.Update();
-            _windowSerializedObject?.Update();
-            Repaint();
+            WizardStateUtility.RefreshWindow(_defaultsSerializedObject, _windowSerializedObject, this);
         }
 
         /// <summary>
         /// Opens the preset menu scoped to package-definition defaults.
         /// </summary>
         private void ShowPackagePresetMenu(Rect buttonRect) {
-            PackageAuthoringPresetMenu.Show(
+            WizardStateUtility.ShowPresetMenu(
                 buttonRect,
                 ApplyPackageDefaultsAndRefresh,
                 ApplyPackagePresetAndRefresh);
@@ -291,7 +272,7 @@ namespace Doji.PackageAuthoring.Editor.Wizards {
         /// Opens the preset menu scoped to companion-project defaults.
         /// </summary>
         private void ShowCompanionProjectPresetMenu(Rect buttonRect) {
-            PackageAuthoringPresetMenu.Show(
+            WizardStateUtility.ShowPresetMenu(
                 buttonRect,
                 ApplyCompanionProjectDefaultsAndRefresh,
                 ApplyProjectPresetAndRefresh);
@@ -320,24 +301,13 @@ namespace Doji.PackageAuthoring.Editor.Wizards {
         /// Draws the companion-project section that controls the generated sample or test project metadata.
         /// </summary>
         private void DrawCompanionProjectSection() {
-            PackageAuthoringGui.DrawProjectSettingsSection(
+            PackageAuthoringGui.DrawGeneratedProjectSettingsSection(
                 _defaultsSerializedObject,
-                "Companion Project",
-                productLabel: "Project Name",
-                includeTargetLocation: false,
-                drawHeaderAction: () => PackageAuthoringGui.DrawSectionHeaderPresetButton(
-                    CompanionProjectPresetTooltip,
-                    ShowCompanionProjectPresetMenu),
-                drawFooter: DrawCompanionProjectFooter);
-        }
-
-        private void DrawCompanionProjectFooter() {
-            EditorGUILayout.PropertyField(
                 _autoOpenAfterCreationProperty,
-                new GUIContent("Auto-Open After Creation"));
-            EditorGUILayout.HelpBox(
-                "These values are applied to the generated companion Unity project and shared where the package uses the same product metadata.",
-                MessageType.None);
+                "Companion Project",
+                "The companion project",
+                CompanionProjectPresetTooltip,
+                ShowCompanionProjectPresetMenu);
         }
 
         /// <summary>
@@ -425,20 +395,15 @@ namespace Doji.PackageAuthoring.Editor.Wizards {
             PackageSettings.CreateTestsFolder);
 
         private static string GetSerializedString(SerializedProperty property, string relativePath, string fallback) {
-            return property?.FindPropertyRelative(relativePath)?.stringValue ?? fallback;
+            return WizardStateUtility.GetSerializedString(property, relativePath, fallback);
         }
 
         private static bool GetSerializedBool(SerializedProperty property, string relativePath, bool fallback) {
-            return property?.FindPropertyRelative(relativePath)?.boolValue ?? fallback;
+            return WizardStateUtility.GetSerializedBool(property, relativePath, fallback);
         }
 
         private static PackageAuthoringProfile CreateTemporaryProfile() {
-            PackageAuthoringProfile profile = CreateInstance<PackageAuthoringProfile>();
-            profile.hideFlags = HideFlags.HideInHierarchy | HideFlags.DontSaveInEditor;
-            profile.ProjectDefaults = new ProjectSettings();
-            profile.PackageDefaults = new PackageSettings();
-            profile.RepoDefaults = new RepoSettings();
-            return profile;
+            return WizardStateUtility.CreateTemporaryProfile();
         }
 
         private static string GetDirectoryName(string path, string fallback) {
@@ -501,127 +466,37 @@ namespace Doji.PackageAuthoring.Editor.Wizards {
         /// Copies the template Unity project and points its manifest back to the generated local package.
         /// </summary>
         private void CreateProjectStructure() {
-            UpdateProjectSettings();
-
-            try {
-                Directory.CreateDirectory(Path.Combine(ProjectDirectory, "Assets"));
-
-                CopyDirectory("Packages", Path.Combine(ProjectDirectory, "Packages"));
-                CopyDirectory("ProjectSettings", Path.Combine(ProjectDirectory, "ProjectSettings"));
-
-                if (!string.IsNullOrWhiteSpace(CurrentGitIgnoreTemplate)) {
-                    string targetPath = Path.Combine(ProjectDirectory, ".gitignore");
-                    CreateFile(targetPath, CurrentGitIgnoreTemplate);
-                }
-
-                string projectManifestPath = Path.Combine(ProjectDirectory, "Packages", "manifest.json");
-                CreateFile(projectManifestPath, Ctx.GetProjectManifest(), overwrite: true);
-            }
-            finally {
-                // The generator temporarily mutates project-level settings so copied files contain the new package metadata.
-                RevertProjectSettings();
-            }
-        }
-
-        private static string _originalCompanyName;
-        private static string _originalProductName;
-        private static string _originalVersion;
-        private static readonly List<string> OriginalIdentifiers = new();
-
-        private static readonly List<NamedBuildTarget> NamedTargets = new() {
-            NamedBuildTarget.Standalone,
-            NamedBuildTarget.Android
-        };
-
-        private static string _originalRootNamespace;
-
-        /// <summary>
-        /// Temporarily applies the wizard values to <see cref="PlayerSettings"/> so copied project files inherit them.
-        /// </summary>
-        private void UpdateProjectSettings() {
-            _originalCompanyName = PlayerSettings.companyName;
-            _originalProductName = PlayerSettings.productName;
-            _originalVersion = PlayerSettings.bundleVersion;
-            OriginalIdentifiers.Clear();
-            foreach (NamedBuildTarget target in NamedTargets) {
-                OriginalIdentifiers.Add(PlayerSettings.GetApplicationIdentifier(target));
-            }
-
-            _originalRootNamespace = EditorSettings.projectGenerationRootNamespace;
-
-            PlayerSettings.companyName = ProjectSettings.CompanyName;
-            PlayerSettings.productName = ProjectSettings.ProductName;
-            PlayerSettings.bundleVersion = ProjectSettings.Version;
-            foreach (NamedBuildTarget target in NamedTargets) {
-                PlayerSettings.SetApplicationIdentifier(target, PackageSettings.PackageName);
-            }
-
-            EditorSettings.projectGenerationRootNamespace = PackageSettings.NamespaceName;
-
-            AssetDatabase.SaveAssets();
-            AssetDatabase.Refresh();
-        }
-
-        /// <summary>
-        /// Restores the user's original project settings after the template project has been copied.
-        /// </summary>
-        private static void RevertProjectSettings() {
-            PlayerSettings.companyName = _originalCompanyName;
-            PlayerSettings.productName = _originalProductName;
-            PlayerSettings.bundleVersion = _originalVersion;
-            for (int i = 0; i < OriginalIdentifiers.Count; i++) {
-                PlayerSettings.SetApplicationIdentifier(NamedTargets[i], OriginalIdentifiers[i]);
-            }
-
-            EditorSettings.projectGenerationRootNamespace = _originalRootNamespace;
-
-            AssetDatabase.SaveAssets();
-            AssetDatabase.Refresh();
+            using IDisposable _ = GeneratedProjectScaffoldingUtility.ApplyTemporaryProjectSettings(
+                ProjectSettings,
+                _ => PackageSettings.PackageName,
+                PackageSettings.NamespaceName);
+            GeneratedProjectScaffoldingUtility.CopyTemplateProjectBaseline(
+                ProjectDirectory,
+                CurrentGitIgnoreTemplate,
+                Ctx.GetProjectManifest());
         }
 
         private void CreateRootFiles() {
             string license = Ctx.GetLicense();
             if (!string.IsNullOrWhiteSpace(license)) {
                 string licensePath = Path.Combine(RootDirectory, "LICENSE");
-                CreateFile(licensePath, license);
+                GeneratedProjectScaffoldingUtility.CreateFile(licensePath, license);
             }
 
             string readmePath = Path.Combine(RootDirectory, "README.md");
-            CreateFile(readmePath, Ctx.GetRepositoryReadme());
+            GeneratedProjectScaffoldingUtility.CreateFile(readmePath, Ctx.GetRepositoryReadme());
         }
 
         private void CreatePackageFiles(string path) {
             string packageManifestPath = Path.Combine(path, "package.json");
             // `package.json` is regenerated because optional samples and dependencies directly affect its contents.
-            CreateFile(packageManifestPath, Ctx.GetPackageManifest(), overwrite: true);
+            GeneratedProjectScaffoldingUtility.CreateFile(packageManifestPath, Ctx.GetPackageManifest(), overwrite: true);
 
             string readmePath = Path.Combine(path, "README.md");
-            CreateFile(readmePath, Ctx.GetPackageReadme());
+            GeneratedProjectScaffoldingUtility.CreateFile(readmePath, Ctx.GetPackageReadme());
 
             string changelogPath = Path.Combine(path, "CHANGELOG.md");
-            CreateFile(changelogPath, Ctx.GetChangelog());
-        }
-
-        /// <summary>
-        /// Recursively copies a directory into the generated output, preserving any existing destination files.
-        /// </summary>
-        private void CopyDirectory(string sourceDir, string destinationDir) {
-            if (!Directory.Exists(sourceDir)) {
-                Debug.LogWarning($"Source directory {sourceDir} does not exist. Skipping copy.");
-                return;
-            }
-
-            Directory.CreateDirectory(destinationDir);
-
-            foreach (string file in Directory.GetFiles(sourceDir)) {
-                string destFile = Path.Combine(destinationDir, Path.GetFileName(file));
-                CopyFile(file, destFile);
-            }
-
-            foreach (string subDir in Directory.GetDirectories(sourceDir)) {
-                string destSubDir = Path.Combine(destinationDir, Path.GetFileName(subDir));
-                CopyDirectory(subDir, destSubDir);
-            }
+            GeneratedProjectScaffoldingUtility.CreateFile(changelogPath, Ctx.GetChangelog());
         }
 
         /// <summary>
@@ -656,7 +531,7 @@ namespace Doji.PackageAuthoring.Editor.Wizards {
         /// </summary>
         private void CreateAssemblyInfo(string path) {
             string assemblyInfoPath = Path.Combine(path, "AssemblyInfo.cs");
-            CreateFile(assemblyInfoPath, Ctx.GetAssemblyInfo());
+            GeneratedProjectScaffoldingUtility.CreateFile(assemblyInfoPath, Ctx.GetAssemblyInfo());
         }
 
         /// <summary>
@@ -691,7 +566,9 @@ namespace Doji.PackageAuthoring.Editor.Wizards {
             CreateSamplesAsmDef(samplesPath, _runtimeAssemblyGuid);
 
             // Keep the starter sample in a numbered folder so package manager ordering is predictable.
-            CreateFile(Path.Combine(samplesPath, "01-BasicSample", "BasicSample.cs"), Ctx.GetSampleScript());
+            GeneratedProjectScaffoldingUtility.CreateFile(
+                Path.Combine(samplesPath, "01-BasicSample", "BasicSample.cs"),
+                Ctx.GetSampleScript());
         }
 
         /// <summary>
@@ -714,7 +591,7 @@ namespace Doji.PackageAuthoring.Editor.Wizards {
 
             string imagesSourcePath = Path.Combine("docs", "images");
             string imagesDestinationPath = Path.Combine(path, "images");
-            CopyDirectory(imagesSourcePath, imagesDestinationPath);
+            GeneratedProjectScaffoldingUtility.CopyDirectory(imagesSourcePath, imagesDestinationPath);
         }
 
         /// <summary>
@@ -722,50 +599,34 @@ namespace Doji.PackageAuthoring.Editor.Wizards {
         /// </summary>
         private void CreateDocfxFiles(string path) {
             string docsGitIgnorePath = Path.Combine(path, ".gitignore");
-            CreateFile(docsGitIgnorePath, Ctx.GetDocsGitIgnore());
+            GeneratedProjectScaffoldingUtility.CreateFile(docsGitIgnorePath, Ctx.GetDocsGitIgnore());
 
             string docfxConfigPath = Path.Combine(path, "docfx.json");
-            CreateFile(docfxConfigPath, Ctx.GetDocfxJson());
+            GeneratedProjectScaffoldingUtility.CreateFile(docfxConfigPath, Ctx.GetDocfxJson());
 
             string docfxPdfConfigPath = Path.Combine(path, "docfx-pdf.json");
-            CreateFile(docfxPdfConfigPath, Ctx.GetDocfxPdfJson());
+            GeneratedProjectScaffoldingUtility.CreateFile(docfxPdfConfigPath, Ctx.GetDocfxPdfJson());
 
             string filterConfigPath = Path.Combine(path, "filterConfig.yml");
-            CreateFile(filterConfigPath, Ctx.GetFilterConfig());
+            GeneratedProjectScaffoldingUtility.CreateFile(filterConfigPath, Ctx.GetFilterConfig());
 
             string indexPath = Path.Combine(path, "index.md");
-            CreateFile(indexPath, Ctx.GetIndexMD());
+            GeneratedProjectScaffoldingUtility.CreateFile(indexPath, Ctx.GetIndexMD());
 
             string apiGitIgnorePath = Path.Combine(path, "api", ".gitignore");
-            CreateFile(apiGitIgnorePath, Ctx.GetDocsApiGitIgnore());
+            GeneratedProjectScaffoldingUtility.CreateFile(apiGitIgnorePath, Ctx.GetDocsApiGitIgnore());
 
             string apiIndexPath = Path.Combine(path, "api", "index.md");
-            CreateFile(apiIndexPath, Ctx.GetDocsApiIndex());
+            GeneratedProjectScaffoldingUtility.CreateFile(apiIndexPath, Ctx.GetDocsApiIndex());
 
             string tocPath = Path.Combine(path, "toc.yml");
-            CreateFile(tocPath, Ctx.GetRootToc());
+            GeneratedProjectScaffoldingUtility.CreateFile(tocPath, Ctx.GetRootToc());
 
             string manualTocPath = Path.Combine(path, "manual", "toc.yml");
-            CreateFile(manualTocPath, Ctx.GetManualToc());
+            GeneratedProjectScaffoldingUtility.CreateFile(manualTocPath, Ctx.GetManualToc());
 
             string pdfTocPath = Path.Combine(path, "pdf", "toc.yml");
-            CreateFile(pdfTocPath, Ctx.GetPdfToc());
-        }
-
-        /// <summary>
-        /// Writes scaffolded content to disk and ensures the target directory exists first.
-        /// </summary>
-        private void CreateFile(string path, string content, bool overwrite = false) {
-            if (File.Exists(path) && !overwrite) {
-                return;
-            }
-
-            string directory = Path.GetDirectoryName(path);
-            if (!string.IsNullOrEmpty(directory)) {
-                Directory.CreateDirectory(directory);
-            }
-
-            File.WriteAllText(path, content);
+            GeneratedProjectScaffoldingUtility.CreateFile(pdfTocPath, Ctx.GetPdfToc());
         }
 
         /// <summary>
@@ -774,15 +635,12 @@ namespace Doji.PackageAuthoring.Editor.Wizards {
         /// <returns>GUID written into the generated asmdef meta file.</returns>
         private string CreateAsmDefWithMeta(string asmDefPath, string content) {
             string guid = Guid.NewGuid().ToString("N");
-            CreateFile(asmDefPath, content, overwrite: true);
-            CreateFile($"{asmDefPath}.meta", AssetMetaTemplate.GetAsmDefMeta(guid), overwrite: true);
+            GeneratedProjectScaffoldingUtility.CreateFile(asmDefPath, content, overwrite: true);
+            GeneratedProjectScaffoldingUtility.CreateFile(
+                $"{asmDefPath}.meta",
+                AssetMetaTemplate.GetAsmDefMeta(guid),
+                overwrite: true);
             return guid;
-        }
-
-        private void CopyFile(string sourceFileName, string destFileName) {
-            if (!File.Exists(destFileName)) {
-                File.Copy(sourceFileName, destFileName, overwrite: false);
-            }
         }
     }
 }

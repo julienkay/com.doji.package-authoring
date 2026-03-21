@@ -1,7 +1,6 @@
-using System.Collections.Generic;
+using System;
 using System.IO;
 using UnityEditor;
-using UnityEditor.Build;
 using UnityEngine;
 using Doji.PackageAuthoring.Editor.Utilities;
 using Doji.PackageAuthoring.Editor.Wizards.Models;
@@ -25,18 +24,6 @@ namespace Doji.PackageAuthoring.Editor.Wizards {
         [SerializeField] private bool _autoOpenAfterCreation = true;
 
         private string ProjectDirectory => Path.Combine(ProjectSettings.TargetLocation, ProjectSettings.ProductName);
-
-        private static string _originalCompanyName;
-        private static string _originalProductName;
-        private static string _originalVersion;
-        private static readonly List<string> OriginalIdentifiers = new();
-
-        private static readonly List<NamedBuildTarget> NamedTargets = new() {
-            NamedBuildTarget.Standalone,
-            NamedBuildTarget.Android
-        };
-
-        private static string _originalRootNamespace;
         private PackageAuthoringProfile _defaults;
         private SerializedObject _defaultsSerializedObject;
         private SerializedObject _windowSerializedObject;
@@ -57,26 +44,21 @@ namespace Doji.PackageAuthoring.Editor.Wizards {
         /// Initializes the window title and seeds the initial ad hoc state from project defaults.
         /// </summary>
         private void OnEnable() {
-            titleContent = new GUIContent("Project Creation");
-
-            if (!RestoreSessionState()) {
-                ApplyProjectDefaults();
-            }
-
-            InitializeSerializedState();
+            WizardStateUtility.InitializeWindow(
+                this,
+                "Project Creation",
+                RestoreSessionState,
+                ApplyProjectDefaults,
+                InitializeSerializedState);
         }
 
         private void OnDisable() {
-            SaveSessionState();
-
-            if (_defaults != null) {
-                DestroyImmediate(_defaults);
-                _defaults = null;
-            }
-
-            _defaultsSerializedObject = null;
-            _windowSerializedObject = null;
-            _autoOpenAfterCreationProperty = null;
+            WizardStateUtility.DisposeWindow(
+                SaveSessionState,
+                ref _defaults,
+                ref _defaultsSerializedObject,
+                ref _windowSerializedObject,
+                ref _autoOpenAfterCreationProperty);
         }
 
         /// <summary>
@@ -143,10 +125,7 @@ namespace Doji.PackageAuthoring.Editor.Wizards {
         /// </summary>
         private void ApplyProjectDefaultsAndRefresh() {
             ApplyProjectDefaults();
-            GUI.FocusControl(null);
-            _defaultsSerializedObject?.Update();
-            _windowSerializedObject?.Update();
-            Repaint();
+            WizardStateUtility.RefreshWindow(_defaultsSerializedObject, _windowSerializedObject, this);
         }
 
         /// <summary>
@@ -154,10 +133,7 @@ namespace Doji.PackageAuthoring.Editor.Wizards {
         /// </summary>
         private void ApplyPresetAndRefresh(PackageAuthoringProfile preset) {
             ApplyPreset(preset);
-            GUI.FocusControl(null);
-            _defaultsSerializedObject?.Update();
-            _windowSerializedObject?.Update();
-            Repaint();
+            WizardStateUtility.RefreshWindow(_defaultsSerializedObject, _windowSerializedObject, this);
         }
 
         /// <summary>
@@ -173,7 +149,7 @@ namespace Doji.PackageAuthoring.Editor.Wizards {
         /// Opens the shared preset context menu for the standalone project wizard.
         /// </summary>
         private void ShowPresetMenu(Rect buttonRect) {
-            PackageAuthoringPresetMenu.Show(
+            WizardStateUtility.ShowPresetMenu(
                 buttonRect,
                 ApplyProjectDefaultsAndRefresh,
                 ApplyPresetAndRefresh);
@@ -183,17 +159,13 @@ namespace Doji.PackageAuthoring.Editor.Wizards {
         /// Draws editable project identity fields specific to standalone project creation.
         /// </summary>
         private void DrawProjectSettingsSection() {
-            PackageAuthoringGui.DrawProjectSettingsSection(
+            PackageAuthoringGui.DrawGeneratedProjectSettingsSection(
                 _defaultsSerializedObject,
+                _autoOpenAfterCreationProperty,
                 "Project Settings",
-                productLabel: "Project Name",
-                includeTargetLocation: false,
-                drawHeaderAction: () => PackageAuthoringGui.DrawSectionHeaderPresetButton(
-                    ProjectSectionPresetTooltip,
-                    ShowPresetMenu),
-                drawFooter: () => EditorGUILayout.PropertyField(
-                    _autoOpenAfterCreationProperty,
-                    new GUIContent("Auto-Open After Creation")));
+                "The project",
+                ProjectSectionPresetTooltip,
+                ShowPresetMenu);
         }
 
         /// <summary>
@@ -217,38 +189,22 @@ namespace Doji.PackageAuthoring.Editor.Wizards {
             ProjectSettings.TargetLocation);
 
         private static string GetSerializedString(SerializedProperty property, string relativePath, string fallback) {
-            return property?.FindPropertyRelative(relativePath)?.stringValue ?? fallback;
+            return WizardStateUtility.GetSerializedString(property, relativePath, fallback);
         }
 
         private static PackageAuthoringProfile CreateTemporaryProfile() {
-            PackageAuthoringProfile profile = CreateInstance<PackageAuthoringProfile>();
-            profile.hideFlags = HideFlags.HideInHierarchy | HideFlags.DontSaveInEditor;
-            profile.ProjectDefaults = new ProjectSettings();
-            profile.PackageDefaults = new PackageSettings();
-            profile.RepoDefaults = new RepoSettings();
-            return profile;
+            return WizardStateUtility.CreateTemporaryProfile();
         }
 
         /// <summary>
         /// Copies the template project into the chosen location and optionally opens it in Unity.
         /// </summary>
         private void CreateProjectStructure() {
-            Directory.CreateDirectory(ProjectDirectory);
-            UpdateProjectSettings();
-
-            try {
-                Directory.CreateDirectory(Path.Combine(ProjectDirectory, "Assets"));
-                CopyDirectory("Packages", Path.Combine(ProjectDirectory, "Packages"));
-                CopyDirectory("ProjectSettings", Path.Combine(ProjectDirectory, "ProjectSettings"));
-            }
-            finally {
-                RevertProjectSettings();
-            }
-
-            if (!string.IsNullOrWhiteSpace(CurrentGitIgnoreTemplate)) {
-                string targetPath = Path.Combine(ProjectDirectory, ".gitignore");
-                CreateFile(targetPath, CurrentGitIgnoreTemplate);
-            }
+            using IDisposable _ = GeneratedProjectScaffoldingUtility.ApplyTemporaryProjectSettings(
+                ProjectSettings,
+                _ => BuildApplicationIdentifier(),
+                ProjectSettings.ProductName);
+            GeneratedProjectScaffoldingUtility.CopyTemplateProjectBaseline(ProjectDirectory, CurrentGitIgnoreTemplate);
 
             Debug.Log($"Project created successfully at {ProjectDirectory}");
 
@@ -257,96 +213,8 @@ namespace Doji.PackageAuthoring.Editor.Wizards {
             }
         }
 
-        /// <summary>
-        /// Temporarily applies the wizard values to Unity project settings before copying the template project.
-        /// </summary>
-        private void UpdateProjectSettings() {
-            _originalCompanyName = PlayerSettings.companyName;
-            _originalProductName = PlayerSettings.productName;
-            _originalVersion = PlayerSettings.bundleVersion;
-            OriginalIdentifiers.Clear();
-            foreach (NamedBuildTarget target in NamedTargets) {
-                OriginalIdentifiers.Add(PlayerSettings.GetApplicationIdentifier(target));
-            }
-
-            _originalRootNamespace = EditorSettings.projectGenerationRootNamespace;
-
-            PlayerSettings.companyName = ProjectSettings.CompanyName;
-            PlayerSettings.productName = ProjectSettings.ProductName;
-            PlayerSettings.bundleVersion = ProjectSettings.Version;
-            foreach (NamedBuildTarget target in NamedTargets) {
-                PlayerSettings.SetApplicationIdentifier(target,
-                    $"com.{ProjectSettings.CompanyName.ToLower().Replace(" ", "")}.{ProjectSettings.ProductName.ToLower()}");
-            }
-
-            EditorSettings.projectGenerationRootNamespace = ProjectSettings.ProductName;
-
-            AssetDatabase.SaveAssets();
-            AssetDatabase.Refresh();
-        }
-
-        /// <summary>
-        /// Restores the original Unity project settings after scaffolding completes.
-        /// </summary>
-        private static void RevertProjectSettings() {
-            PlayerSettings.companyName = _originalCompanyName;
-            PlayerSettings.productName = _originalProductName;
-            PlayerSettings.bundleVersion = _originalVersion;
-            for (int i = 0; i < OriginalIdentifiers.Count; i++) {
-                PlayerSettings.SetApplicationIdentifier(NamedTargets[i], OriginalIdentifiers[i]);
-            }
-
-            EditorSettings.projectGenerationRootNamespace = _originalRootNamespace;
-
-            AssetDatabase.SaveAssets();
-            AssetDatabase.Refresh();
-        }
-
-        /// <summary>
-        /// Recursively copies a directory tree into the generated standalone project.
-        /// </summary>
-        private void CopyDirectory(string sourceDir, string destinationDir) {
-            if (!Directory.Exists(sourceDir)) {
-                Debug.LogWarning($"Source directory {sourceDir} does not exist. Skipping copy.");
-                return;
-            }
-
-            Directory.CreateDirectory(destinationDir);
-
-            foreach (string file in Directory.GetFiles(sourceDir)) {
-                string destFile = Path.Combine(destinationDir, Path.GetFileName(file));
-                CopyFile(file, destFile);
-            }
-
-            foreach (string subDir in Directory.GetDirectories(sourceDir)) {
-                string destSubDir = Path.Combine(destinationDir, Path.GetFileName(subDir));
-                CopyDirectory(subDir, destSubDir);
-            }
-        }
-
-        /// <summary>
-        /// Copies a single file if the destination does not already exist.
-        /// </summary>
-        private void CopyFile(string sourceFileName, string destFileName) {
-            if (!File.Exists(destFileName)) {
-                File.Copy(sourceFileName, destFileName, overwrite: false);
-            }
-        }
-
-        /// <summary>
-        /// Writes scaffolded content to disk and ensures the target directory exists first.
-        /// </summary>
-        private void CreateFile(string path, string content, bool overwrite = false) {
-            if (File.Exists(path) && !overwrite) {
-                return;
-            }
-
-            string directory = Path.GetDirectoryName(path);
-            if (!string.IsNullOrEmpty(directory)) {
-                Directory.CreateDirectory(directory);
-            }
-
-            File.WriteAllText(path, content);
+        private string BuildApplicationIdentifier() {
+            return $"com.{ProjectSettings.CompanyName.ToLower().Replace(" ", "")}.{ProjectSettings.ProductName.ToLower()}";
         }
     }
 }

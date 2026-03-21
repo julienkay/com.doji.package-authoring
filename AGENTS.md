@@ -53,11 +53,6 @@ When adding code:
 
 ## Validation
 
-For structural or tooling changes, verify as much as practical by checking:
-
-- asmdef references and root namespaces
-- that editor-only packages do not depend on unnecessary runtime assemblies
-- generated manifests, asmdefs, and template output when relevant
-- that Unity-specific moves preserve matching `.meta` files
-
-If Unity is not run, say validation was limited to source inspection.
+- Unity-specific moves must preserve matching `.meta` files
+- after larger refactors, verify the current file contents before describing the final state; do not rely on intent, partial diffs, or memory
+- when multiple files should have changed, confirm each affected file explicitly

@@ -132,6 +132,50 @@ namespace Doji.PackageAuthoring.Editor.Wizards.UI {
         }
 
         /// <summary>
+        /// Draws the shared generated-project section used by project and package creation wizards.
+        /// </summary>
+        public static void DrawGeneratedProjectSettingsSection(
+            SerializedObject profileObject,
+            SerializedProperty autoOpenAfterCreationProperty,
+            string title,
+            string templateProjectLabel,
+            string presetTooltip,
+            Action<Rect> onPresetClicked) {
+            DrawProjectSettingsSection(
+                profileObject,
+                title,
+                productLabel: "Project Name",
+                includeTargetLocation: false,
+                drawHeaderAction: () => DrawSectionHeaderPresetButton(
+                    presetTooltip,
+                    onPresetClicked),
+                drawFooter: () => DrawGeneratedProjectSettingsFooter(
+                    autoOpenAfterCreationProperty,
+                    templateProjectLabel));
+        }
+
+        /// <summary>
+        /// Draws the shared note that explains which template baseline is copied into generated Unity projects.
+        /// </summary>
+        public static void DrawProjectTemplateBaselineNote(string projectLabel) {
+            EditorGUILayout.HelpBox(
+                $"{projectLabel} starts from this template project's baseline. That copied baseline includes the project container and bootstrap content, such as Assets, Packages, and ProjectSettings. These values customize the copied baseline where product metadata is written.",
+                MessageType.None);
+        }
+
+        /// <summary>
+        /// Draws the footer shared by generated-project settings sections.
+        /// </summary>
+        public static void DrawGeneratedProjectSettingsFooter(
+            SerializedProperty autoOpenAfterCreationProperty,
+            string templateProjectLabel) {
+            EditorGUILayout.PropertyField(
+                autoOpenAfterCreationProperty,
+                new GUIContent("Auto-Open After Creation"));
+            DrawProjectTemplateBaselineNote(templateProjectLabel);
+        }
+
+        /// <summary>
         /// Draws the editable output-location field from the serialized project-defaults block.
         /// </summary>
         public static void DrawProjectOutputField(SerializedObject profileObject) {

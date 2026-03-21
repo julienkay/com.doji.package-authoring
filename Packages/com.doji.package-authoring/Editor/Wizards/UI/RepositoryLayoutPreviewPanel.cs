@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using Doji.PackageAuthoring.Editor.Utilities;
 using Doji.PackageAuthoring.Editor.Wizards.Templates;
 using UnityEditor;
 using UnityEngine;
@@ -447,6 +448,7 @@ namespace Doji.PackageAuthoring.Editor.Wizards.UI {
             ApplySelectionPayload(preview, node, rootDirectoryName, data);
             EditorUtility.SetDirty(preview);
             Selection.activeObject = preview;
+            InspectorWindowUtility.TryRevealOpenInspector();
         }
 
         private void SyncInspectorSelection(PreviewSnapshot snapshot, RepositoryLayoutPreviewData data) {

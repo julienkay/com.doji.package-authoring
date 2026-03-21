@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using Doji.PackageAuthoring.Editor.Wizards.Templates;
 using UnityEditor;
 using UnityEngine;
@@ -16,7 +18,7 @@ namespace Doji.PackageAuthoring.Editor.Wizards.UI {
         private const float RowPadding = 4f;
         private const float TagRightMargin = 6f;
         private const float TagSpacing = 6f;
-        private const string Ellipsis = "...";
+        private const float TagColumnWidth = 44f;
         private const string RuntimeAssemblyGuidPreview = "<runtime-assembly-guid>";
         private static readonly Color HoverColor = new(0.24f, 0.47f, 0.85f, 0.08f);
         private static readonly Color RelatedHoverColor = new(0.92f, 0.68f, 0.18f, 0.08f);
@@ -31,17 +33,22 @@ namespace Doji.PackageAuthoring.Editor.Wizards.UI {
         private GUIStyle _tagStyle;
         private RepositoryLayoutPreviewSelection _selectionPreview;
         private bool _hoverHighlightingEnabled = true;
+        private readonly GUIContent _labelContent = new();
+        private bool _hasCachedSnapshot;
+        private PreviewSnapshotKey _cachedSnapshotKey;
+        private PreviewSnapshot _cachedSnapshot;
 
         /// <summary>
         /// Draws the preview section and updates its scroll state.
         /// </summary>
         public void Draw(float windowWidth, float windowHeight, RepositoryLayoutPreviewData data, ref Vector2 scrollPosition) {
-            RepositoryLayoutNode root = BuildPreviewTree(data);
+            PreviewSnapshot snapshot = GetOrBuildSnapshot(data);
             float previewWidth = Mathf.Clamp(windowWidth * 0.4f, MinWidth, MaxWidth);
             float previewHeight = Mathf.Max(MinHeight, windowHeight - 72f);
 
-            // The tree is rebuilt every frame from wizard state, so the hidden Inspector selection must be refreshed too.
-            SyncInspectorSelection(root, data);
+            // The preview tree is refreshed only when relevant wizard data changes, so the Inspector payload must be
+            // refreshed against the cached snapshot instead of assuming a rebuild every frame.
+            SyncInspectorSelection(snapshot, data);
 
             // The parent wizard uses an outer scroll view, so the preview needs an explicit height instead of relying on ExpandHeight.
             EditorGUILayout.BeginVertical(
@@ -54,22 +61,19 @@ namespace Doji.PackageAuthoring.Editor.Wizards.UI {
                 GUILayout.Height(previewHeight));
             EditorGUILayout.LabelField("Repository Layout Preview", EditorStyles.boldLabel);
             EditorGUILayout.Space(3f);
-            DrawContent(root, previewWidth, previewHeight, data, ref scrollPosition);
+            DrawContent(snapshot, previewWidth, previewHeight, data, ref scrollPosition);
             DrawHoverHighlightingToggle();
             EditorGUILayout.EndVertical();
             EditorGUILayout.EndVertical();
         }
 
         private void DrawContent(
-            RepositoryLayoutNode root,
+            PreviewSnapshot snapshot,
             float panelWidth,
             float panelHeight,
             RepositoryLayoutPreviewData data,
             ref Vector2 scrollPosition) {
             EnsureStyles();
-
-            List<RepositoryLayoutEntry> entries = new();
-            AppendEntries(entries, root, string.Empty, isLast: true, isRoot: true);
 
             float rowHeight = _treeRowStyle.lineHeight + RowPadding;
             float treeWidth = Mathf.Max(TreeColumnMinWidth, panelWidth - 12f);
@@ -92,9 +96,10 @@ namespace Doji.PackageAuthoring.Editor.Wizards.UI {
                        GUILayout.ExpandWidth(true),
                        GUILayout.Height(treeHeight - 12f))) {
                 scrollPosition = scrollView.scrollPosition;
-                foreach (RepositoryLayoutEntry entry in entries) {
+                foreach (RepositoryLayoutEntry entry in snapshot.Entries) {
                     Rect rowRect = EditorGUILayout.GetControlRect(false, rowHeight, GUILayout.ExpandWidth(true));
-                    bool isRelatedHover = hoveredTargets.Count > 0 && IsHoverMatch(entry.Node, hoveredTargets, root.Name, data);
+                    bool isRelatedHover = hoveredTargets.Count > 0 &&
+                                          IsHoverMatch(entry.Node, hoveredTargets, snapshot.Root.Name, data);
                     bool isSelected = entry.Node.CanPreview &&
                                       string.Equals(entry.Node.RelativePath, selectedPath, System.StringComparison.Ordinal);
                     bool isHovered = entry.Node.CanPreview &&
@@ -116,7 +121,7 @@ namespace Doji.PackageAuthoring.Editor.Wizards.UI {
                         if (Event.current.type == EventType.MouseDown &&
                             Event.current.button == 0 &&
                             rowRect.Contains(Event.current.mousePosition)) {
-                            SelectPreview(entry.Node, root.Name, data);
+                            SelectPreview(entry.Node, snapshot.Root.Name, data);
                             Event.current.Use();
                         }
                     }
@@ -134,6 +139,22 @@ namespace Doji.PackageAuthoring.Editor.Wizards.UI {
                     "Hover Highlights",
                     "Highlights affected preview rows and matching content in the selected file while hovering related settings fields."),
                 _hoverHighlightingEnabled);
+        }
+
+        private PreviewSnapshot GetOrBuildSnapshot(RepositoryLayoutPreviewData data) {
+            PreviewSnapshotKey snapshotKey = PreviewSnapshotKey.Create(data);
+            if (_hasCachedSnapshot && _cachedSnapshotKey.Equals(snapshotKey) && _cachedSnapshot != null) {
+                return _cachedSnapshot;
+            }
+
+            RepositoryLayoutNode root = BuildPreviewTree(data);
+            List<RepositoryLayoutEntry> entries = new();
+            AppendEntries(entries, root, string.Empty, isLast: true, isRoot: true);
+
+            _cachedSnapshot = new PreviewSnapshot(root, entries);
+            _cachedSnapshotKey = snapshotKey;
+            _hasCachedSnapshot = true;
+            return _cachedSnapshot;
         }
 
         private static bool IsHoverMatch(
@@ -365,7 +386,7 @@ namespace Doji.PackageAuthoring.Editor.Wizards.UI {
                 Selection.activeObject = null;
             }
 
-            Object.DestroyImmediate(_selectionPreview);
+            UnityEngine.Object.DestroyImmediate(_selectionPreview);
             _selectionPreview = null;
         }
 
@@ -379,7 +400,8 @@ namespace Doji.PackageAuthoring.Editor.Wizards.UI {
                 richText = false,
                 wordWrap = false,
                 alignment = TextAnchor.MiddleLeft,
-                padding = new RectOffset(4, 4, 2, 2)
+                padding = new RectOffset(4, 4, 2, 2),
+                clipping = TextClipping.Clip
             };
 
             _treeRowStyle.normal.textColor = _treeContainerStyle.normal.textColor;
@@ -388,7 +410,7 @@ namespace Doji.PackageAuthoring.Editor.Wizards.UI {
             _treeRowStyle.focused.textColor = _treeContainerStyle.normal.textColor;
 
             _tagStyle ??= new GUIStyle(EditorStyles.miniLabel) {
-                alignment = TextAnchor.MiddleCenter,
+                alignment = TextAnchor.MiddleRight,
                 fontStyle = FontStyle.Bold,
                 padding = new RectOffset(5, 5, 1, 1),
                 margin = new RectOffset(0, 0, 0, 0)
@@ -427,18 +449,18 @@ namespace Doji.PackageAuthoring.Editor.Wizards.UI {
             Selection.activeObject = preview;
         }
 
-        private void SyncInspectorSelection(RepositoryLayoutNode root, RepositoryLayoutPreviewData data) {
+        private void SyncInspectorSelection(PreviewSnapshot snapshot, RepositoryLayoutPreviewData data) {
             RepositoryLayoutPreviewSelection preview = GetOrCreateSelectionPreview();
             if (Selection.activeObject != preview || string.IsNullOrWhiteSpace(preview.RelativePath)) {
                 return;
             }
 
-            RepositoryLayoutNode matchingNode = FindNodeByPath(root, preview.RelativePath);
+            RepositoryLayoutNode matchingNode = snapshot.FindNodeByPath(preview.RelativePath);
             if (matchingNode == null || !matchingNode.CanPreview) {
                 return;
             }
 
-            ApplySelectionPayload(preview, matchingNode, root.Name, data);
+            ApplySelectionPayload(preview, matchingNode, snapshot.Root.Name, data);
             EditorUtility.SetDirty(preview);
         }
 
@@ -472,25 +494,6 @@ namespace Doji.PackageAuthoring.Editor.Wizards.UI {
             string sourceFolderPath,
             string[] hoverHighlights) {
             preview.UpdateContent(displayName, relativePath, previewContent, sourceFilePath, sourceFolderPath, hoverHighlights);
-        }
-
-        private static RepositoryLayoutNode FindNodeByPath(RepositoryLayoutNode node, string relativePath) {
-            if (node == null) {
-                return null;
-            }
-
-            if (string.Equals(node.RelativePath, relativePath, System.StringComparison.Ordinal)) {
-                return node;
-            }
-
-            foreach (RepositoryLayoutNode child in node.Children) {
-                RepositoryLayoutNode match = FindNodeByPath(child, relativePath);
-                if (match != null) {
-                    return match;
-                }
-            }
-
-            return null;
         }
 
         private static RepositoryLayoutNode BuildPreviewTree(RepositoryLayoutPreviewData data) {
@@ -781,6 +784,11 @@ namespace Doji.PackageAuthoring.Editor.Wizards.UI {
         /// Represents one directory or file entry in the rendered repository tree.
         /// </summary>
         private sealed class RepositoryLayoutNode {
+            public const string RepoGroupLabel = "REPO";
+            public const string DocsGroupLabel = "DOCS";
+            public const string PackageGroupLabel = "PKG";
+            public const string ProjectGroupLabel = "PROJ";
+
             /// <summary>
             /// Captures one rendered row and the preview metadata needed to drive Inspector selection.
             /// </summary>
@@ -834,10 +842,10 @@ namespace Doji.PackageAuthoring.Editor.Wizards.UI {
             public RepositoryLayoutGroup Group { get; }
 
             public string GroupLabel => Group switch {
-                RepositoryLayoutGroup.Repo => "REPO",
-                RepositoryLayoutGroup.Docs => "DOCS",
-                RepositoryLayoutGroup.Package => "PKG",
-                RepositoryLayoutGroup.Project => "PROJECT",
+                RepositoryLayoutGroup.Repo => RepoGroupLabel,
+                RepositoryLayoutGroup.Docs => DocsGroupLabel,
+                RepositoryLayoutGroup.Package => PackageGroupLabel,
+                RepositoryLayoutGroup.Project => ProjectGroupLabel,
                 _ => string.Empty
             };
 
@@ -859,21 +867,22 @@ namespace Doji.PackageAuthoring.Editor.Wizards.UI {
 
         private void DrawEntry(Rect rowRect, RepositoryLayoutEntry entry) {
             Rect textRect = rowRect;
-            Rect tagRect = Rect.zero;
-            if (!string.IsNullOrWhiteSpace(entry.Node.GroupLabel)) {
-                Vector2 tagSize = _tagStyle.CalcSize(new GUIContent(entry.Node.GroupLabel));
+            Rect tagRect = default;
+            bool hasTag = !string.IsNullOrEmpty(entry.Node.GroupLabel);
+            if (hasTag) {
                 tagRect = new Rect(
-                    rowRect.xMax - tagSize.x - TagRightMargin,
+                    rowRect.xMax - TagColumnWidth - TagRightMargin,
                     rowRect.y + 1f,
-                    tagSize.x,
-                    Mathf.Min(rowRect.height - 2f, tagSize.y));
+                    TagColumnWidth,
+                    Mathf.Max(0f, rowRect.height - 2f));
                 textRect.xMax = Mathf.Max(textRect.xMin, tagRect.xMin - TagSpacing);
             }
 
-            string displayText = TruncateToWidth(entry.DisplayText, _treeRowStyle, Mathf.Max(0f, textRect.width));
-            GUI.Label(textRect, new GUIContent(displayText, entry.DisplayText), _treeRowStyle);
+            _labelContent.text = entry.DisplayText;
+            _labelContent.tooltip = entry.DisplayText;
+            GUI.Label(textRect, _labelContent, _treeRowStyle);
 
-            if (tagRect == Rect.zero) {
+            if (!hasTag) {
                 return;
             }
 
@@ -881,41 +890,6 @@ namespace Doji.PackageAuthoring.Editor.Wizards.UI {
             GUI.color = entry.Node.GroupColor;
             GUI.Box(tagRect, entry.Node.GroupLabel, _tagStyle);
             GUI.color = previousColor;
-        }
-
-        /// <summary>
-        /// Shrinks a tree label to the space left in the row while preserving a trailing ellipsis when truncation occurs.
-        /// </summary>
-        /// <param name="text">Full row label, including tree branch prefixes.</param>
-        /// <param name="style">GUI style used to measure the rendered width.</param>
-        /// <param name="availableWidth">Maximum width available for the label after reserving tag space.</param>
-        private static string TruncateToWidth(string text, GUIStyle style, float availableWidth) {
-            if (string.IsNullOrEmpty(text) || style == null || availableWidth <= 0f) {
-                return string.Empty;
-            }
-
-            if (style.CalcSize(new GUIContent(text)).x <= availableWidth) {
-                return text;
-            }
-
-            if (style.CalcSize(new GUIContent(Ellipsis)).x > availableWidth) {
-                return string.Empty;
-            }
-
-            int min = 0;
-            int max = text.Length;
-            while (min < max) {
-                int mid = (min + max + 1) / 2;
-                string candidate = text.Substring(0, mid) + Ellipsis;
-                if (style.CalcSize(new GUIContent(candidate)).x <= availableWidth) {
-                    min = mid;
-                }
-                else {
-                    max = mid - 1;
-                }
-            }
-
-            return min <= 0 ? Ellipsis : text.Substring(0, min) + Ellipsis;
         }
 
         private readonly struct RepositoryLayoutEntry {
@@ -927,6 +901,140 @@ namespace Doji.PackageAuthoring.Editor.Wizards.UI {
             public string DisplayText { get; }
 
             public RepositoryLayoutNode Node { get; }
+        }
+
+        private sealed class PreviewSnapshot {
+            private readonly Dictionary<string, RepositoryLayoutNode> _nodesByPath;
+
+            public PreviewSnapshot(RepositoryLayoutNode root, List<RepositoryLayoutEntry> entries) {
+                Root = root;
+                Entries = entries;
+                _nodesByPath = new Dictionary<string, RepositoryLayoutNode>(StringComparer.Ordinal);
+                IndexNodes(root, _nodesByPath);
+            }
+
+            public RepositoryLayoutNode Root { get; }
+
+            public IReadOnlyList<RepositoryLayoutEntry> Entries { get; }
+
+            public RepositoryLayoutNode FindNodeByPath(string relativePath) {
+                return !string.IsNullOrWhiteSpace(relativePath) &&
+                       _nodesByPath.TryGetValue(relativePath, out RepositoryLayoutNode node)
+                    ? node
+                    : null;
+            }
+
+            private static void IndexNodes(
+                RepositoryLayoutNode node,
+                Dictionary<string, RepositoryLayoutNode> nodesByPath) {
+                if (node == null || string.IsNullOrWhiteSpace(node.RelativePath)) {
+                    return;
+                }
+
+                nodesByPath[node.RelativePath] = node;
+                foreach (RepositoryLayoutNode child in node.Children) {
+                    IndexNodes(child, nodesByPath);
+                }
+            }
+        }
+
+        private readonly struct PreviewSnapshotKey : IEquatable<PreviewSnapshotKey> {
+            private PreviewSnapshotKey(string signature) {
+                Signature = signature ?? string.Empty;
+            }
+
+            private string Signature { get; }
+
+            public static PreviewSnapshotKey Create(RepositoryLayoutPreviewData data) {
+                StringBuilder signature = new();
+                AppendValue(signature, data.RootDirectoryName);
+                AppendValue(signature, data.PackageName);
+                AppendValue(signature, data.AssemblyName);
+                AppendValue(signature, data.CompanionProjectName);
+                AppendValue(signature, data.IncludeDocsFolder);
+                AppendValue(signature, data.IncludeSamplesFolder);
+                AppendValue(signature, data.IncludeEditorFolder);
+                AppendValue(signature, data.IncludeTestsFolder);
+                AppendValue(signature, data.IncludeRepositoryGitIgnore);
+                AppendValue(signature, data.RepositoryGitIgnoreTemplate);
+                AppendValue(signature, data.IncludePackagesLockFile);
+                AppendContextValues(signature, data.Context);
+                return new PreviewSnapshotKey(signature.ToString());
+            }
+
+            public bool Equals(PreviewSnapshotKey other) {
+                return string.Equals(Signature, other.Signature, StringComparison.Ordinal);
+            }
+
+            public override bool Equals(object obj) {
+                return obj is PreviewSnapshotKey other && Equals(other);
+            }
+
+            public override int GetHashCode() {
+                return StringComparer.Ordinal.GetHashCode(Signature);
+            }
+
+            private static void AppendContextValues(StringBuilder signature, PackageContext context) {
+                if (context == null) {
+                    return;
+                }
+
+                AppendValue(signature, context.Project?.CompanyName);
+                AppendValue(signature, context.Project?.ProductName);
+                AppendValue(signature, context.Project?.Version);
+                AppendValue(signature, context.Project?.TargetLocation);
+
+                AppendValue(signature, context.Package?.PackageName);
+                AppendValue(signature, context.Package?.PackageDisplayName);
+                AppendValue(signature, context.Package?.AssemblyName);
+                AppendValue(signature, context.Package?.NamespaceName);
+                AppendValue(signature, context.Package?.Description);
+                AppendValue(signature, context.Package?.CompanyName);
+                AppendValue(signature, context.Package?.IncludeAuthor ?? false);
+                AppendValue(signature, context.Package?.AuthorUrl);
+                AppendValue(signature, context.Package?.AuthorEmail);
+                AppendValue(signature, context.Package?.DocumentationUrl);
+                AppendValue(signature, context.Package?.IncludeMinimumUnityVersion ?? false);
+                AppendValue(signature, context.Package?.MinimumUnityMajor);
+                AppendValue(signature, context.Package?.MinimumUnityMinor);
+                AppendValue(signature, context.Package?.MinimumUnityRelease);
+                AppendValue(signature, context.Package?.CreateDocsFolder ?? false);
+                AppendValue(signature, context.Package?.CreateSamplesFolder ?? false);
+                AppendValue(signature, context.Package?.CreateEditorFolder ?? false);
+                AppendValue(signature, context.Package?.CreateTestsFolder ?? false);
+                AppendDependencies(signature, context.Package?.Dependencies);
+
+                AppendValue(signature, context.Repo?.CopyrightHolder);
+                AppendValue(signature, (int?)context.Repo?.LicenseType ?? 0);
+            }
+
+            private static void AppendDependencies(StringBuilder signature, Doji.PackageAuthoring.Editor.Wizards.Models.PackageDependencyList dependencies) {
+                if (dependencies?.Items == null) {
+                    AppendValue(signature, 0);
+                    return;
+                }
+
+                AppendValue(signature, dependencies.Items.Count);
+                foreach (Doji.PackageAuthoring.Editor.Wizards.Models.PackageDependencyEntry dependency in dependencies.Items) {
+                    AppendValue(signature, dependency?.PackageName);
+                    AppendValue(signature, dependency?.Version);
+                }
+            }
+
+            private static void AppendValue(StringBuilder signature, string value) {
+                signature.Append(value ?? string.Empty);
+                signature.Append('\u001F');
+            }
+
+            private static void AppendValue(StringBuilder signature, bool value) {
+                signature.Append(value ? '1' : '0');
+                signature.Append('\u001F');
+            }
+
+            private static void AppendValue(StringBuilder signature, int value) {
+                signature.Append(value);
+                signature.Append('\u001F');
+            }
         }
 
         private enum RepositoryLayoutGroup {

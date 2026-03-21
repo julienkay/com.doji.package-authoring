@@ -2,19 +2,26 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using UnityEditor;
 using UnityEngine;
 
 namespace Doji.PackageAuthoring.Editor.Wizards.PackageSearch {
     /// <summary>
-    /// Shared in-memory cache of package metadata merged across Unity and project scoped registries.
+    /// Session-scoped package index shared by package authoring UI across editor windows, inspectors, and
+    /// domain reloads.
+    /// The cache merges Unity and scoped registry results into one lookup table, then restores that merged
+    /// snapshot from <see cref="SessionState"/> until <c>Packages/manifest.json</c> changes.
     /// </summary>
     public sealed class PackageSearchCache : IDisposable {
+        private const string SessionStateKey =
+            "Doji.PackageAuthoring.Editor.Wizards.PackageSearch.PackageSearchCache";
+
         private readonly List<IPackageSearchSource> _sources = new();
         private readonly List<PackageSearchEntry> _entries = new();
 
         /// <summary>
-        /// Process-wide cache shared by the package authoring UI so editor windows, inspectors, and settings
-        /// reuse the same registry queries and converge on one merged result set.
+        /// Shared cache instance used by the package authoring tooling so all IMGUI hosts converge on the same
+        /// merged package index and reuse the same session snapshot.
         /// </summary>
         public static PackageSearchCache Shared { get; } = new();
 
@@ -47,24 +54,47 @@ namespace Doji.PackageAuthoring.Editor.Wizards.PackageSearch {
             }
         }
 
+        [Serializable]
+        private sealed class SessionCacheSnapshot {
+            public string ManifestHash;
+            public long CachedAtUtcTicks;
+            public SessionCacheEntry[] Entries;
+        }
+
+        [Serializable]
+        private sealed class SessionCacheEntry {
+            public string PackageName;
+            public string Version;
+            public string DisplayName;
+            public string Description;
+            public string[] Keywords;
+            public string SourceName;
+        }
+
         private PackageSearchCache() {
         }
 
+        /// <summary>
+        /// Ensures package metadata is available either by restoring the current session snapshot or by starting
+        /// fresh source queries when no compatible snapshot exists.
+        /// </summary>
         public void EnsureLoaded() {
             if (_sources.Count == 0) {
-                Refresh();
+                BuildSources();
+                if (TryRestoreSnapshot()) {
+                    return;
+                }
+
+                RefreshSources();
                 return;
             }
 
             if (!HasPackages && !IsLoading) {
-                Refresh();
+                RefreshSources();
             }
         }
 
-        private void Refresh() {
-            DisposeSources();
-            BuildSources();
-
+        private void RefreshSources() {
             foreach (IPackageSearchSource source in _sources) {
                 source.Refresh();
             }
@@ -140,6 +170,7 @@ namespace Doji.PackageAuthoring.Editor.Wizards.PackageSearch {
 
         private void HandleSourceChanged() {
             RebuildEntries();
+            SaveSnapshotIfReady();
             Changed?.Invoke();
         }
 
@@ -159,6 +190,84 @@ namespace Doji.PackageAuthoring.Editor.Wizards.PackageSearch {
 
             _entries.Sort((left, right) =>
                 string.Compare(left.PackageName, right.PackageName, StringComparison.OrdinalIgnoreCase));
+        }
+
+        private bool TryRestoreSnapshot() {
+            string snapshotJson = SessionState.GetString(SessionStateKey, string.Empty);
+            if (string.IsNullOrWhiteSpace(snapshotJson)) {
+                return false;
+            }
+
+            SessionCacheSnapshot snapshot = JsonUtility.FromJson<SessionCacheSnapshot>(snapshotJson);
+            if (snapshot == null || !string.Equals(snapshot.ManifestHash, ComputeManifestHash(), StringComparison.Ordinal)) {
+                SessionState.EraseString(SessionStateKey);
+                return false;
+            }
+
+            _entries.Clear();
+            if (snapshot.Entries != null) {
+                foreach (SessionCacheEntry entry in snapshot.Entries) {
+                    if (string.IsNullOrWhiteSpace(entry?.PackageName)) {
+                        continue;
+                    }
+
+                    _entries.Add(new PackageSearchEntry(
+                        entry.PackageName,
+                        entry.Version,
+                        entry.DisplayName,
+                        entry.Description,
+                        entry.Keywords ?? Array.Empty<string>(),
+                        entry.SourceName));
+                }
+            }
+
+            _entries.Sort((left, right) =>
+                string.Compare(left.PackageName, right.PackageName, StringComparison.OrdinalIgnoreCase));
+            return _entries.Count > 0;
+        }
+
+        private void SaveSnapshotIfReady() {
+            if (IsLoading || _entries.Count == 0) {
+                return;
+            }
+
+            SessionCacheSnapshot snapshot = new() {
+                ManifestHash = ComputeManifestHash(),
+                CachedAtUtcTicks = DateTime.UtcNow.Ticks,
+                Entries = _entries
+                    .Select(entry => new SessionCacheEntry {
+                        PackageName = entry.PackageName,
+                        Version = entry.Version,
+                        DisplayName = entry.DisplayName,
+                        Description = entry.Description,
+                        Keywords = entry.Keywords ?? Array.Empty<string>(),
+                        SourceName = entry.SourceName
+                    })
+                    .ToArray()
+            };
+
+            SessionState.SetString(SessionStateKey, JsonUtility.ToJson(snapshot));
+        }
+
+        private static string ComputeManifestHash() {
+            string manifestPath = Path.Combine("Packages", "manifest.json");
+            if (!File.Exists(manifestPath)) {
+                return string.Empty;
+            }
+
+            string manifestJson = File.ReadAllText(manifestPath);
+            unchecked {
+                const uint fnvOffsetBasis = 2166136261u;
+                const uint fnvPrime = 16777619u;
+
+                uint hash = fnvOffsetBasis;
+                foreach (char character in manifestJson) {
+                    hash ^= character;
+                    hash *= fnvPrime;
+                }
+
+                return hash.ToString("X8");
+            }
         }
 
         private static bool PackageMatchesQuery(PackageSearchEntry entry, string query) {

@@ -18,6 +18,7 @@ namespace Doji.PackageAuthoring.Editor.Wizards.UI {
         private const float TagSpacing = 6f;
         private const string Ellipsis = "...";
         private const string RuntimeAssemblyGuidPreview = "<runtime-assembly-guid>";
+        private static readonly Color HoverColor = new(0.24f, 0.47f, 0.85f, 0.08f);
         private static readonly Color SelectionColor = new(0.24f, 0.47f, 0.85f, 0.18f);
         private static readonly Color RepoTint = new(0.92f, 0.86f, 1f);
         private static readonly Color DocsTint = new(0.78f, 0.90f, 1f);
@@ -88,6 +89,12 @@ namespace Doji.PackageAuthoring.Editor.Wizards.UI {
                     Rect rowRect = EditorGUILayout.GetControlRect(false, rowHeight, GUILayout.ExpandWidth(true));
                     bool isSelected = entry.Node.CanPreview &&
                                       string.Equals(entry.Node.RelativePath, selectedPath, System.StringComparison.Ordinal);
+                    bool isHovered = entry.Node.CanPreview &&
+                                     rowRect.Contains(Event.current.mousePosition);
+                    if (isHovered && !isSelected) {
+                        EditorGUI.DrawRect(rowRect, HoverColor);
+                    }
+
                     if (isSelected) {
                         EditorGUI.DrawRect(rowRect, SelectionColor);
                     }

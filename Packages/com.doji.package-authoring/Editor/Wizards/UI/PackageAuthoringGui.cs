@@ -159,7 +159,7 @@ namespace Doji.PackageAuthoring.Editor.Wizards.UI {
         /// </summary>
         public static void DrawProjectTemplateBaselineNote(string projectLabel) {
             EditorGUILayout.HelpBox(
-                $"{projectLabel} starts from this template project's baseline. That copied baseline includes the project container and bootstrap content, such as Assets, Packages, and ProjectSettings. These values customize the copied baseline where product metadata is written.",
+                $"{projectLabel} starts from this template project's baseline. That generated project includes the project container, a generated Assets folder, copied Packages and ProjectSettings, and a generated .gitignore. These values customize the generated project where product metadata is written.",
                 MessageType.None);
         }
 

@@ -5,11 +5,13 @@ This repository is a Unity 6 template project for bootstrapping either:
 - a new Unity application project
 - a reusable Unity package with an accompanying sample project
 
-The repo is centered around custom editor tooling in [`Assets/Editor`](/Users/julienkipp/Unity/UnityProjectTemplate/Assets/Editor) rather than gameplay code. It provides a small baseline setup with URP assets, Input System defaults, and scaffolding utilities that generate new project/package structures from inside the Unity Editor.
+The repo is centered around custom editor tooling in [`Assets/Editor`](/Users/julienkipp/Unity/UnityProjectTemplate/Assets/Editor) rather than gameplay code. It also contains template-project assets and settings used to support authoring and validation inside this repository.
+
+For durable repository context, conventions, and architectural notes that should survive local IDE or assistant history, see [`docs/ProjectContext.md`](/Users/julienkipp/Unity/UnityProjectTemplate/docs/ProjectContext.md).
 
 ## What This Repo Includes
 
-- `ProjectCreationWizard`: creates a new Unity project by copying `Packages`, `ProjectSettings`, and the root `.gitignore`, while temporarily applying product/company/version settings.
+- `ProjectCreationWizard`: creates a new Unity project by copying `Packages`, `ProjectSettings`, and the root `.gitignore`, creating the project container folders, and temporarily applying product/company/version settings.
 - `PackageCreationWizard`: creates a UPM-style package repository with generated manifests, runtime assembly definitions, optional docs/tests/samples folders, and a local sample Unity project that references the package.
 - Template helpers for common generated files such as `README.md`, `LICENSE`, `package.json`, `AssemblyInfo.cs`, DocFX config, and starter scripts.
 - Default Unity project configuration for:
@@ -29,10 +31,10 @@ The project is currently configured for Unity `6000.3.5f1`.
 Key folders:
 
 - [`Assets/Editor`](/Users/julienkipp/Unity/UnityProjectTemplate/Assets/Editor): editor windows and text/template generators for project and package scaffolding
-- [`Assets/Input`](/Users/julienkipp/Unity/UnityProjectTemplate/Assets/Input): baseline Input System actions asset
-- [`Assets/Settings`](/Users/julienkipp/Unity/UnityProjectTemplate/Assets/Settings): URP renderer, pipeline, and volume profile assets
+- [`Assets/Input`](/Users/julienkipp/Unity/UnityProjectTemplate/Assets/Input): template-project Input System actions asset
+- [`Assets/Settings`](/Users/julienkipp/Unity/UnityProjectTemplate/Assets/Settings): template-project URP renderer, pipeline, and volume profile assets
 - [`Packages`](/Users/julienkipp/Unity/UnityProjectTemplate/Packages): Unity package manifest for the template project itself
-- [`ProjectSettings`](/Users/julienkipp/Unity/UnityProjectTemplate/ProjectSettings): source project settings copied into generated projects
+- [`ProjectSettings`](/Users/julienkipp/Unity/UnityProjectTemplate/ProjectSettings): template-project settings and generator defaults
 - [`docs`](/Users/julienkipp/Unity/UnityProjectTemplate/docs): placeholder docs directory for future documentation work
 
 ## How To Use
@@ -49,7 +51,7 @@ Add an inline image here showing one wizard filled out with realistic example va
 
 ## Generated Outputs
 
-`ProjectCreationWizard` generates a fresh Unity project folder with copied package/project settings and project metadata applied.
+`ProjectCreationWizard` generates a fresh Unity project folder with copied `Packages` and `ProjectSettings`, a generated `.gitignore`, an `Assets` folder, and project metadata applied.
 
 `PackageCreationWizard` generates a repository shaped roughly like this:
 
@@ -82,7 +84,7 @@ The template project currently includes:
 Generated packages can also declare custom dependencies through the package wizard UI.
 
 Screenshot placeholder:
-Add an inline image here showing the baseline template setup in Unity, ideally `Assets/Input`, `Assets/Settings`, or the Package Manager with the main installed packages.
+Add an inline image here showing the template project's baseline setup in Unity, ideally `Assets/Input`, `Assets/Settings`, or the Package Manager with the main installed packages.
 
 ## Notes
 

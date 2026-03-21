@@ -68,10 +68,6 @@ namespace Doji.PackageAuthoring.Editor.Wizards.PackageSearch {
 
             _cache.EnsureLoaded();
 
-            if (_cache.IsLoading && !_cache.HasPackages) {
-                return height + spacing + lineHeight + spacing;
-            }
-
             List<PackageSearchEntry> matches = _cache.GetMatches(packageName, MaxVisibleSuggestions);
             if (matches.Count == 0) {
                 return height + spacing;
@@ -119,12 +115,6 @@ namespace Doji.PackageAuthoring.Editor.Wizards.PackageSearch {
             }
 
             _cache.EnsureLoaded();
-
-            if (_cache.IsLoading && !_cache.HasPackages) {
-                Rect statusRect = new(rect.x + 4, rect.y + lineHeight + spacing, rect.width - 8, lineHeight);
-                EditorGUI.LabelField(statusRect, _cache.StatusMessage, EditorStyles.miniLabel);
-                return;
-            }
 
             List<PackageSearchEntry>
                 matches = _cache.GetMatches(packageNameProperty.stringValue, MaxVisibleSuggestions);

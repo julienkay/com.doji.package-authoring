@@ -94,6 +94,7 @@ namespace Doji.PackageAuthoring.Editor.Wizards {
                     displayAddButton: true,
                     displayRemoveButton: true) {
                     drawHeaderCallback = DrawDependencyHeader,
+                    drawFooterCallback = DrawDependencyFooter,
                     drawElementCallback = DrawDependencyElement,
                     elementHeightCallback = GetDependencyElementHeight
                 };
@@ -131,6 +132,23 @@ namespace Doji.PackageAuthoring.Editor.Wizards {
                     $"{_serializedObject.targetObject.GetInstanceID()}.{_propertyPath}.dependency.{index}",
                     packageNameProperty.stringValue,
                     shouldShowSuggestions);
+            }
+
+            private void DrawDependencyFooter(Rect rect) {
+                ReorderableList.defaultBehaviours.DrawFooter(rect, DependenciesList);
+
+                if (!PackageSearchCache.Shared.IsLoading || PackageSearchCache.Shared.HasPackages) {
+                    return;
+                }
+
+                const float buttonGroupWidth = 60f;
+                Rect statusRect = new(
+                    rect.x + 6f,
+                    rect.y + 1f,
+                    Mathf.Max(0f, rect.width - buttonGroupWidth - 12f),
+                    rect.height - 2f);
+
+                EditorGUI.LabelField(statusRect, PackageSearchCache.Shared.StatusMessage, EditorStyles.miniLabel);
             }
 
             private bool ShouldShowSuggestions(int index, SerializedProperty packageNameProperty) {

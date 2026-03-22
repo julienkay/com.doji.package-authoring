@@ -1,4 +1,5 @@
 using Doji.PackageAuthoring.Editor.Wizards.Models;
+using Doji.PackageAuthoring.Editor.Wizards.Templates;
 using UnityEditor;
 using UnityEngine;
 using Doji.PackageAuthoring.Editor.Wizards.UI;
@@ -26,7 +27,7 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Drawers {
 
         private static readonly GUIContent RepositoryUrlLabel = EditorGUIUtility.TrTextContent(
             "Remote URL",
-            "Optional URL assigned to the repository's origin remote after git initialization.");
+            $"Optional URL assigned to the repository's origin remote after git initialization. {TemplateTokenResolver.SupportedTokensTooltipSuffix}");
 
         private static readonly GUIContent InitializeGitRepositoryLabel = EditorGUIUtility.TrTextContent(
             "Initialize Git Repository",
@@ -50,48 +51,58 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Drawers {
             EditorGUI.LabelField(row, RepositoryFilesSectionLabel, EditorStyles.boldLabel);
             row.y += EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
 
-            int previousIndent = EditorGUI.indentLevel;
             EditorGUI.indentLevel++;
-            EditorGUI.PropertyField(
-                row,
+            DrawField(
+                ref row,
                 property.FindPropertyRelative(CopyrightHolderField),
-                new GUIContent("Copyright Holder"));
-            RepositoryLayoutPreviewHoverContext.SetHoveredTargetsIfHovered(
-                row,
+                new GUIContent("Copyright Holder"),
                 RepositoryLayoutPreviewHoverTargets.RepoCopyrightHolder);
-            row.y += EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
-            EditorGUI.PropertyField(
-                row,
+            DrawField(
+                ref row,
                 property.FindPropertyRelative(IncludeReadmeField),
-                new GUIContent("Include README"));
-            RepositoryLayoutPreviewHoverContext.SetHoveredTargetsIfHovered(
-                row,
+                new GUIContent("Include README"),
                 RepositoryLayoutPreviewHoverTargets.IncludeRepositoryReadme);
-            row.y += EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
-            EditorGUI.PropertyField(
-                row,
+            DrawField(
+                ref row,
                 property.FindPropertyRelative(LicenseTypeField),
-                LicenseTypeLabel);
-            RepositoryLayoutPreviewHoverContext.SetHoveredTargetsIfHovered(
-                row,
+                LicenseTypeLabel,
                 RepositoryLayoutPreviewHoverTargets.RepoLicenseType);
-            row.y += EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
             SerializedProperty initializeGitRepositoryProperty =
                 property.FindPropertyRelative(InitializeGitRepositoryField);
-            EditorGUI.PropertyField(
-                row,
+            DrawField(
+                ref row,
                 initializeGitRepositoryProperty,
                 InitializeGitRepositoryLabel);
-            row.y += EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
             if (initializeGitRepositoryProperty.boolValue) {
-                int repositoryUrlIndent = EditorGUI.indentLevel;
                 EditorGUI.indentLevel++;
-                EditorGUI.PropertyField(row, property.FindPropertyRelative(RepositoryUrlField), RepositoryUrlLabel);
-                EditorGUI.indentLevel = repositoryUrlIndent;
+                DrawTokenAwareTextField(
+                    ref row,
+                    property.FindPropertyRelative(RepositoryUrlField),
+                    RepositoryUrlLabel);
+                EditorGUI.indentLevel--;
             }
 
-            EditorGUI.indentLevel = previousIndent;
+            EditorGUI.indentLevel--;
+
             EditorGUI.EndProperty();
+        }
+
+        private static void DrawField(
+            ref Rect row,
+            SerializedProperty property,
+            GUIContent label,
+            params string[] hoverTargets) {
+            EditorGUI.PropertyField(row, property, label);
+            RepositoryLayoutPreviewHoverContext.SetHoveredTargetsIfHovered(row, hoverTargets);
+            row.y += EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
+        }
+
+        private static void DrawTokenAwareTextField(
+            ref Rect row,
+            SerializedProperty property,
+            GUIContent label) {
+            property.stringValue = InlineRichTextTextField.Draw(row, label, property.stringValue);
+            row.y += EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
         }
     }
 }

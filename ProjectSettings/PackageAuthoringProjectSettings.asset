@@ -25,7 +25,7 @@ MonoBehaviour:
     <Description>k__BackingField: A short description for readmes etc
     <CompanyName>k__BackingField: Doji Technologies
     <IncludeAuthor>k__BackingField: 1
-    <AuthorUrl>k__BackingField: https://www.doji-tech.com/
+    <AuthorUrl>k__BackingField: https://docs.doji-tech.com/{{PACKAGE_NAME}}
     <AuthorEmail>k__BackingField: support@doji-tech.com
     <DocumentationUrl>k__BackingField: https://docs.doji-tech.com/{{PACKAGE_NAME}}
     <IncludeMinimumUnityVersion>k__BackingField: 0
@@ -44,4 +44,6 @@ MonoBehaviour:
   <RepoDefaults>k__BackingField:
     <CopyrightHolder>k__BackingField: Julien Kipp
     <LicenseType>k__BackingField: 2
+    <InitializeGitRepository>k__BackingField: 1
     <IncludeReadme>k__BackingField: 1
+    <RepositoryUrl>k__BackingField: https://github.com/julienkay/{{PACKAGE_NAME}}.git

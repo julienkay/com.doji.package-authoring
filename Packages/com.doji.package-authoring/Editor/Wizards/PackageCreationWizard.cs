@@ -432,7 +432,8 @@ namespace Doji.PackageAuthoring.Editor.Wizards {
             CreateRootFiles();
 
             if (RepoSettings.InitializeGitRepository) {
-                GitUtility.InitializeRepository(RootDirectory, RepoSettings.RepositoryUrl);
+                string repositoryUrl = TemplateTokenResolver.Resolve(RepoSettings.RepositoryUrl, Ctx);
+                GitUtility.InitializeRepository(RootDirectory, repositoryUrl);
             }
 
             Debug.Log($"Package scaffolding created successfully at {RootDirectory}");

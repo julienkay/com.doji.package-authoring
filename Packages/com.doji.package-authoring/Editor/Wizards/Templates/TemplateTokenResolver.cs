@@ -55,6 +55,8 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Templates {
         public const string SupportedTokensHelpText =
             "Available tokens: {{YEAR}}, {{COPYRIGHT_HOLDER}}, {{PACKAGE_NAME}}, {{PACKAGE_VERSION}}, {{PACKAGE_COMPANY}}, {{PACKAGE_DESCRIPTION}}, {{PROJECT_NAME}}, {{PROJECT_COMPANY}}, {{NAMESPACE_NAME}}, {{NAMESPACE_NAME_REGEX}}, {{ASSEMBLY_NAME}}";
 
+        public const string SupportedTokensTooltipSuffix = "Supports standard package authoring placeholders.";
+
         private static readonly string[] SupportedTokens = {
             "{{YEAR}}",
             "{{COPYRIGHT_HOLDER}}",

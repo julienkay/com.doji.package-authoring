@@ -15,6 +15,9 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Presets {
         private static readonly GUIContent GitIgnoreTemplateLabel = new(
             ".gitignore",
             "Template content written to generated project .gitignore files.");
+        private static readonly GUIContent RepositoryReadmeTemplateLabel = new(
+            "Repository README",
+            "Template content written to generated repository README.md files.");
         private static readonly GUIContent CustomLicenseTemplateLabel = new(
             "Custom License",
             "Template content written to generated repository LICENSE files when Open Source License is set to Custom.");
@@ -43,11 +46,31 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Presets {
         }
 
         /// <summary>
+        /// Creates the Package templates category shown under <c>Project/Doji/Package Authoring/Templates/Package</c>.
+        /// </summary>
+        [SettingsProvider]
+        public static SettingsProvider CreatePackageTemplatesProvider() {
+            return new SettingsProvider("Project/Doji/Package Authoring/Templates/Package", SettingsScope.Project) {
+                guiHandler = _ => DrawTemplateCategoryLandingPage("Package")
+            };
+        }
+
+        /// <summary>
+        /// Creates the Repository templates category shown under <c>Project/Doji/Package Authoring/Templates/Repository</c>.
+        /// </summary>
+        [SettingsProvider]
+        public static SettingsProvider CreateRepositoryTemplatesProvider() {
+            return new SettingsProvider("Project/Doji/Package Authoring/Templates/Repository", SettingsScope.Project) {
+                guiHandler = _ => DrawTemplateCategoryLandingPage("Repository")
+            };
+        }
+
+        /// <summary>
         /// Creates the child settings provider for the generated project <c>.gitignore</c> template.
         /// </summary>
         [SettingsProvider]
         public static SettingsProvider CreateGitIgnoreTemplateProvider() {
-            return new SettingsProvider("Project/Doji/Package Authoring/Templates/.gitignore", SettingsScope.Project) {
+            return new SettingsProvider("Project/Doji/Package Authoring/Templates/Package/.gitignore", SettingsScope.Project) {
                 guiHandler = _ => DrawGitIgnoreSection(),
                 deactivateHandler = SaveGitIgnoreSettingsOnDeactivate
             };
@@ -58,9 +81,20 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Presets {
         /// </summary>
         [SettingsProvider]
         public static SettingsProvider CreateCustomLicenseTemplateProvider() {
-            return new SettingsProvider("Project/Doji/Package Authoring/Templates/Custom License", SettingsScope.Project) {
+            return new SettingsProvider("Project/Doji/Package Authoring/Templates/Repository/Custom License", SettingsScope.Project) {
                 guiHandler = _ => DrawCustomLicenseSection(),
                 deactivateHandler = SaveCustomLicenseSettingsOnDeactivate,
+            };
+        }
+
+        /// <summary>
+        /// Creates the child settings provider for the generated repository README template.
+        /// </summary>
+        [SettingsProvider]
+        public static SettingsProvider CreateRepositoryReadmeTemplateProvider() {
+            return new SettingsProvider("Project/Doji/Package Authoring/Templates/Repository/README", SettingsScope.Project) {
+                guiHandler = _ => DrawRepositoryReadmeSection(),
+                deactivateHandler = SaveRepositoryReadmeSettingsOnDeactivate,
             };
         }
 
@@ -98,6 +132,16 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Presets {
         }
 
         /// <summary>
+        /// Draws a landing page for one template category under the main Templates section.
+        /// </summary>
+        private static void DrawTemplateCategoryLandingPage(string categoryName) {
+            EditorGUILayout.Space(8f);
+            EditorGUILayout.HelpBox(
+                $"Select a {categoryName.ToLowerInvariant()} template subsection to edit the generated file content.",
+                MessageType.Info);
+        }
+
+        /// <summary>
         /// Draws the editable project-level <c>.gitignore</c> template section and persists changes to <c>ProjectSettings</c>.
         /// </summary>
         private static void DrawGitIgnoreSection() {
@@ -108,6 +152,28 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Presets {
             PackageAuthoringGui.DrawSection(".gitignore Template", () => {
                 SerializedProperty contentProperty = serializedSettings.FindProperty(ContentField);
                 DrawTemplateTextArea(contentProperty, minHeight: 420f);
+            });
+
+            ApplyAndSaveOnChangeOrUndo(serializedSettings, settings.SaveSettings);
+            _pendingUndoRedoSave = false;
+        }
+
+        /// <summary>
+        /// Draws the editable repository README template with token guidance and explicit project-settings persistence.
+        /// </summary>
+        private static void DrawRepositoryReadmeSection() {
+            RepositoryReadmeTemplateSettings settings = RepositoryReadmeTemplateSettings.Instance;
+            using SerializedObject serializedSettings = new SerializedObject(settings);
+            serializedSettings.Update();
+
+            PackageAuthoringGui.DrawSection("Repository README Template", () => {
+                EditorGUILayout.LabelField(RepositoryReadmeTemplateLabel, EditorStyles.wordWrappedMiniLabel);
+                EditorGUILayout.Space(3f);
+                EditorGUILayout.HelpBox(
+                    Templates.TemplateTokenResolver.SupportedTokensHelpText,
+                    MessageType.None);
+                SerializedProperty contentProperty = serializedSettings.FindProperty(ContentField);
+                DrawTemplateTextArea(contentProperty, minHeight: 260f);
             });
 
             ApplyAndSaveOnChangeOrUndo(serializedSettings, settings.SaveSettings);
@@ -310,6 +376,13 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Presets {
         /// </summary>
         private static void SaveGitIgnoreSettingsOnDeactivate() {
             GitIgnoreTemplateSettings.Instance.SaveSettings();
+        }
+
+        /// <summary>
+        /// Persists the repository README template when the settings page is left.
+        /// </summary>
+        private static void SaveRepositoryReadmeSettingsOnDeactivate() {
+            RepositoryReadmeTemplateSettings.Instance.SaveSettings();
         }
 
         /// <summary>

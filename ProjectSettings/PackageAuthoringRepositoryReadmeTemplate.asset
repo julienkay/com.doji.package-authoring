@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &1
+MonoBehaviour:
+  m_ObjectHideFlags: 61
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 69aecf08183c4535ba5224d7ea988976, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Doji.PackageAuthoring.Editor::Doji.PackageAuthoring.Editor.Wizards.Presets.RepositoryReadmeTemplateSettings
+  <Content>k__BackingField: "<a href=\"https://www.doji-tech.com/\">\n  <img src=\"https://www.doji-tech.com/favicon.ico\"
+    alt=\"doji logo\" title=\"Doji\" align=\"right\" height=\"70\" />\n</a>\n\n#
+    {{Project.ProductName}}\n{{Package.Description}}\n\n[OpenUPM] - [Documentation
+    (coming soon)]\n\n[OpenUPM]: https://openupm.com/packages/{{Package.PackageName}}\n[Documentation
+    (coming soon)]: https://github.com/julienkay/{{Package.PackageName}}\n"

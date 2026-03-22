@@ -10,7 +10,8 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Presets {
             PackageAuthoringProjectSettings.Instance.SaveSettings();
             SaveTemplateSettings(
                 GitIgnoreTemplateSettings.Instance,
-                CustomLicenseTemplateSettings.Instance);
+                CustomLicenseTemplateSettings.Instance,
+                RepositoryReadmeTemplateSettings.Instance);
             SaveDocumentationTemplateSettings();
         }
 

@@ -431,7 +431,9 @@ namespace Doji.PackageAuthoring.Editor.Wizards {
             CreateProjectStructure();
             CreateRootFiles();
 
-            GitUtility.InitializeRepository(RootDirectory, PackageSettings.PackageName);
+            if (RepoSettings.InitializeGitRepository) {
+                GitUtility.InitializeRepository(RootDirectory, RepoSettings.RepositoryUrl);
+            }
 
             Debug.Log($"Package scaffolding created successfully at {RootDirectory}");
 

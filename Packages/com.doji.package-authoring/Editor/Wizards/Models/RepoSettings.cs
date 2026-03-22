@@ -20,10 +20,22 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Models {
         public LicenseType LicenseType { get; set; } = LicenseType.None;
 
         /// <summary>
+        /// Whether generated repositories should be initialized as git repositories.
+        /// </summary>
+        [field: SerializeField]
+        public bool InitializeGitRepository { get; set; } = true;
+
+        /// <summary>
         /// Whether to generate a repository-level <c>README.md</c> file.
         /// </summary>
         [field: SerializeField]
         public bool IncludeReadme { get; set; } = true;
+
+        /// <summary>
+        /// Remote URL assigned to the generated repository's <c>origin</c> remote when provided.
+        /// </summary>
+        [field: SerializeField]
+        public string RepositoryUrl { get; set; } = string.Empty;
 
         /// <summary>
         /// Copies all repository-facing values from another settings instance.
@@ -36,7 +48,9 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Models {
 
             CopyrightHolder = other.CopyrightHolder;
             LicenseType = other.LicenseType;
+            InitializeGitRepository = other.InitializeGitRepository;
             IncludeReadme = other.IncludeReadme;
+            RepositoryUrl = other.RepositoryUrl;
         }
     }
 }

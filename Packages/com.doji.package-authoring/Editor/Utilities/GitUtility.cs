@@ -1,18 +1,29 @@
 using System.Diagnostics;
 using System.IO;
+using Debug = UnityEngine.Debug;
 
 namespace Doji.PackageAuthoring.Editor.Utilities {
+    /// <summary>
+    /// Runs the git commands used to initialize generated repositories.
+    /// </summary>
     public static class GitUtility {
-        public static void InitializeRepository(string workingDirectory, string packageName) {
+        /// <summary>
+        /// Initializes a git repository and optionally assigns an <c>origin</c> remote before the first commit.
+        /// </summary>
+        /// <param name="workingDirectory">Root directory of the generated repository.</param>
+        /// <param name="repositoryUrl">Remote URL assigned to <c>origin</c> when provided.</param>
+        public static void InitializeRepository(string workingDirectory, string repositoryUrl = null) {
             if (Directory.Exists(Path.Combine(workingDirectory, ".git"))) {
-                UnityEngine.Debug.Log(
+                Debug.Log(
                     $"git repository already exists in '{Path.GetFullPath(workingDirectory)}'. Skipping git initialization step. (This message is harmless)");
                 return;
             }
 
-            string remoteRepoPath = $"https://github.com/julienkay/{packageName}.git";
             RunGitCommand("init", workingDirectory);
-            RunGitCommand($"remote add origin {remoteRepoPath}", workingDirectory);
+            if (!string.IsNullOrWhiteSpace(repositoryUrl)) {
+                RunGitCommand($"remote add origin \"{repositoryUrl}\"", workingDirectory);
+            }
+
             CommitInitialChanges(workingDirectory);
         }
 
@@ -38,11 +49,11 @@ namespace Doji.PackageAuthoring.Editor.Utilities {
                 process.WaitForExit();
 
                 if (!string.IsNullOrEmpty(output)) {
-                    UnityEngine.Debug.Log(output);
+                    Debug.Log(output);
                 }
 
                 if (!suppressStdErr && !string.IsNullOrEmpty(error)) {
-                    UnityEngine.Debug.LogError("Error: " + error);
+                    Debug.LogError("Error: " + error);
                 }
             }
         }

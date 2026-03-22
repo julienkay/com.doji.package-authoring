@@ -46,6 +46,13 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Presets {
         }
 
         /// <summary>
+        /// Replaces the current template content with the built-in default content.
+        /// </summary>
+        internal void RestoreDefaultContent() {
+            Content = DefaultContent;
+        }
+
+        /// <summary>
         /// Restores a template settings object from the project's <c>ProjectSettings</c> folder, or falls back to a transient in-memory instance.
         /// </summary>
         /// <remarks>

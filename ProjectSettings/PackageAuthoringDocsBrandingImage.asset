@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 0}
   m_Name: 
   m_EditorClassIdentifier: Doji.PackageAuthoring.Editor:Doji.PackageAuthoring.Editor.Wizards.Presets:DocsBrandingImageSettings
-  <FaviconTexture>k__BackingField: {fileID: 2800000, guid: 7c78e4260c82d4c31984be98500b55a2, type: 3}
-  <LogoTexture>k__BackingField: {fileID: 2800000, guid: 7c78e4260c82d4c31984be98500b55a2, type: 3}
+  <FaviconTexture>k__BackingField: {fileID: 2800000, guid: bfd9b7566b204ad3ab36d52013f02dce, type: 3}
+  <LogoTexture>k__BackingField: {fileID: 2800000, guid: a5bc8f2cf1ab46f79af8cdad680f2cd0, type: 3}

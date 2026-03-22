@@ -11,13 +11,21 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 0}
   m_Name: 
-  m_EditorClassIdentifier: Doji.PackageAuthoring.Editor:Doji.PackageAuthoring.Editor.Wizards.Presets:DocsApiGitIgnoreTemplateSettings
+  m_EditorClassIdentifier: Doji.PackageAuthoring.Editor:Doji.PackageAuthoring.Editor.Wizards.Presets:DocsGitIgnoreTemplateSettings
   <Content>k__BackingField: '###############
 
-    #  temp file  #
+    #    folder   #
 
     ###############
 
-    *.yml
+    /**/DROP/
 
-    .manifest'
+    /**/TEMP/
+
+    /**/packages/
+
+    /**/bin/
+
+    /**/obj/
+
+    _site'

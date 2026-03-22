@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Doji.PackageAuthoring.Editor:Doji.PackageAuthoring.Editor.Wizards.Presets:DocsRootTocTemplateSettings
   <Content>k__BackingField: "- name: Manual\n  href: manual/\n- name: Scripting API\n 
-    href: api/\n  homepage: api/index.md{{PACKAGE_DESCRIPTION}}\n"
+    href: api/\n  homepage: api/index.md\n"

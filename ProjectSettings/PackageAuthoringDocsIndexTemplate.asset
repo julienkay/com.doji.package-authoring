@@ -11,5 +11,8 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 0}
   m_Name: 
-  m_EditorClassIdentifier: Doji.PackageAuthoring.Editor:Doji.PackageAuthoring.Editor.Wizards.Presets:DocsManualTocTemplateSettings
-  <Content>k__BackingField: "- name: {{PROJECT_NAME}}\n  href: ../index.md\n"
+  m_EditorClassIdentifier: Doji.PackageAuthoring.Editor:Doji.PackageAuthoring.Editor.Wizards.Presets:DocsIndexTemplateSettings
+  <Content>k__BackingField: '# {{PROJECT_NAME}}
+
+
+    {{PACKAGE_DESCRIPTION}}'

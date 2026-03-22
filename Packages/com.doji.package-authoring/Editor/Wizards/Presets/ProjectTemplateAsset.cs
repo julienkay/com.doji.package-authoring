@@ -98,7 +98,7 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Presets {
     /// <summary>
     /// Base asset for project-scoped templates that know how to persist themselves back into <c>ProjectSettings</c>.
     /// </summary>
-    internal abstract class ProjectTemplateSettingsAsset : ProjectTemplateAsset {
+    internal abstract class ProjectTemplateSettingsAsset : ProjectTemplateAsset, IPackageAuthoringTemplateSettingsAsset {
         /// <summary>
         /// Serialized project settings path used when this template asset is saved.
         /// </summary>
@@ -109,6 +109,10 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Presets {
         /// </summary>
         public void SaveSettings() {
             SaveSettingsAsset(AssetPath);
+        }
+
+        void IPackageAuthoringTemplateSettingsAsset.RestoreDefaultContent() {
+            RestoreDefaultContent();
         }
     }
 

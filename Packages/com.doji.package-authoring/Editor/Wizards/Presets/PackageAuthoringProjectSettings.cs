@@ -9,7 +9,7 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Presets {
     /// This keeps a cached in-memory instance so editor UI state keyed by target instance remains stable across repaints.
     /// </summary>
     [FilePath("ProjectSettings/PackageAuthoringProjectSettings.asset", FilePathAttribute.Location.ProjectFolder)]
-    internal sealed class PackageAuthoringProjectSettings : PackageAuthoringProfile {
+    internal sealed class PackageAuthoringProjectSettings : PackageAuthoringProfile, IPackageAuthoringProjectSettingsAsset {
         private static PackageAuthoringProjectSettings _instance;
 
         /// <summary>

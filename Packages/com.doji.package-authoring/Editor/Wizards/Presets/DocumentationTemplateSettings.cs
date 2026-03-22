@@ -125,7 +125,7 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Presets {
     /// Shared project settings asset for the optional documentation branding image used to generate docs image outputs.
     /// </summary>
     [FilePath(DocumentationTemplateAssetPaths.DocsBrandingImage, FilePathAttribute.Location.ProjectFolder)]
-    internal sealed class DocsBrandingImageSettings : ScriptableObject {
+    internal sealed class DocsBrandingImageSettings : ScriptableObject, IPackageAuthoringProjectSettingsAsset {
         private static DocsBrandingImageSettings _instance;
 
         /// <summary>

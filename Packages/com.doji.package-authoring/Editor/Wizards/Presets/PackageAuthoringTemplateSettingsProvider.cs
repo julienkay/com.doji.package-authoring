@@ -239,7 +239,7 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Presets {
                 return;
             }
 
-            PackageAuthoringProjectSettingsApi.SaveDocumentationTemplateSettings();
+            PackageAuthoringProjectSettingsApi.SaveAllProjectSettings();
             _hasInitializedDocumentationTemplateSettings = true;
         }
 
@@ -396,11 +396,7 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Presets {
         /// Persists all editable documentation template assets when the documentation settings page is left.
         /// </summary>
         private static void SaveDocumentationTemplateSettingsOnDeactivate() {
-            DocsDocfxJsonTemplateSettings.Instance.SaveSettings();
-            DocsDocfxPdfJsonTemplateSettings.Instance.SaveSettings();
-            DocsFilterConfigTemplateSettings.Instance.SaveSettings();
-            DocsIndexTemplateSettings.Instance.SaveSettings();
-            DocsApiIndexTemplateSettings.Instance.SaveSettings();
+            PackageAuthoringProjectSettingsApi.SaveAllProjectSettings();
         }
 
         /// <summary>

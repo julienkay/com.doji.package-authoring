@@ -7,6 +7,7 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Presets {
     /// Registers and renders the Project Settings page for editable generation templates.
     /// </summary>
     internal static class PackageAuthoringTemplateSettingsProvider {
+        private static bool _pendingUndoRedoSave;
         private static readonly string ContentField = $"<{nameof(GitIgnoreTemplateSettings.Content)}>k__BackingField";
         private static readonly string FaviconTextureField = $"<{nameof(DocsBrandingImageSettings.FaviconTexture)}>k__BackingField";
         private static readonly string LogoTextureField = $"<{nameof(DocsBrandingImageSettings.LogoTexture)}>k__BackingField";
@@ -26,6 +27,10 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Presets {
             "Logo Source",
             "Optional texture asset used to generate docs/images/logo.png. Expected resolution: 50x50.");
 
+        static PackageAuthoringTemplateSettingsProvider() {
+            Undo.undoRedoPerformed += HandleUndoRedoPerformed;
+        }
+
         /// <summary>
         /// Creates the parent settings provider shown under <c>Project/Doji/Package Authoring/Templates</c>.
         /// </summary>
@@ -42,7 +47,8 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Presets {
         [SettingsProvider]
         public static SettingsProvider CreateGitIgnoreTemplateProvider() {
             return new SettingsProvider("Project/Doji/Package Authoring/Templates/.gitignore", SettingsScope.Project) {
-                guiHandler = _ => DrawGitIgnoreSection()
+                guiHandler = _ => DrawGitIgnoreSection(),
+                deactivateHandler = SaveGitIgnoreSettingsOnDeactivate
             };
         }
 
@@ -52,7 +58,8 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Presets {
         [SettingsProvider]
         public static SettingsProvider CreateCustomLicenseTemplateProvider() {
             return new SettingsProvider("Project/Doji/Package Authoring/Templates/Custom License", SettingsScope.Project) {
-                guiHandler = _ => DrawCustomLicenseSection()
+                guiHandler = _ => DrawCustomLicenseSection(),
+                deactivateHandler = SaveCustomLicenseSettingsOnDeactivate,
             };
         }
 
@@ -62,7 +69,8 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Presets {
         [SettingsProvider]
         public static SettingsProvider CreateDocumentationTemplateProvider() {
             return new SettingsProvider("Project/Doji/Package Authoring/Templates/Documentation (DocFX)", SettingsScope.Project) {
-                guiHandler = _ => DrawDocumentationTemplatesSection()
+                guiHandler = _ => DrawDocumentationTemplatesSection(),
+                deactivateHandler = SaveDocumentationTemplateSettingsOnDeactivate
             };
         }
 
@@ -98,9 +106,8 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Presets {
                 DrawTemplateTextArea(contentProperty, minHeight: 420f);
             });
 
-            if (serializedSettings.ApplyModifiedProperties()) {
-                settings.SaveSettings();
-            }
+            ApplyAndSaveOnChangeOrUndo(serializedSettings, settings.SaveSettings);
+            _pendingUndoRedoSave = false;
         }
 
         private static void DrawCustomLicenseSection() {
@@ -118,9 +125,8 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Presets {
                 DrawTemplateTextArea(contentProperty, minHeight: 220f);
             });
 
-            if (serializedSettings.ApplyModifiedProperties()) {
-                settings.SaveSettings();
-            }
+            ApplyAndSaveOnChangeOrUndo(serializedSettings, settings.SaveSettings);
+            _pendingUndoRedoSave = false;
         }
 
         private static void DrawDocumentationTemplatesSection() {
@@ -138,6 +144,8 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Presets {
             DrawReadOnlyTemplateAssetSection("docs/toc.yml", DocsRootTocTemplateSettings.Instance, 120f);
             DrawReadOnlyTemplateAssetSection("docs/manual/toc.yml", DocsManualTocTemplateSettings.Instance, 120f);
             DrawReadOnlyTemplateAssetSection("docs/pdf/toc.yml", DocsPdfTocTemplateSettings.Instance, 120f);
+
+            _pendingUndoRedoSave = false;
         }
 
         private static void DrawEditableTemplateAssetSection(
@@ -153,9 +161,7 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Presets {
                 DrawTemplateTextArea(contentProperty, minHeight);
             });
 
-            if (serializedSettings.ApplyModifiedProperties()) {
-                saveSettings();
-            }
+            ApplyAndSaveOnChangeOrUndo(serializedSettings, saveSettings);
         }
 
         private static void DrawReadOnlyTemplateAssetSection(
@@ -177,11 +183,11 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Presets {
         }
 
         private static void DrawTemplateTextArea(SerializedProperty contentProperty, float minHeight) {
-            EditorGUI.BeginChangeCheck();
+            string currentContent = contentProperty.stringValue ?? string.Empty;
             string updatedContent = InlineRichTextTextArea.DrawLayout(
-                contentProperty.stringValue,
+                currentContent,
                 minHeight);
-            if (EditorGUI.EndChangeCheck()) {
+            if (!string.Equals(updatedContent, currentContent, System.StringComparison.Ordinal)) {
                 contentProperty.stringValue = updatedContent;
             }
         }
@@ -234,6 +240,46 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Presets {
                 allowSceneObjects: false);
             if (EditorGUI.EndChangeCheck()) {
                 textureProperty.objectReferenceValue = updatedTexture;
+            }
+        }
+
+        private static void HandleUndoRedoPerformed() {
+            _pendingUndoRedoSave = true;
+        }
+
+        private static void SaveGitIgnoreSettingsOnDeactivate() {
+            GitIgnoreTemplateSettings.Instance.SaveSettings();
+        }
+
+        private static void SaveCustomLicenseSettingsOnDeactivate() {
+            CustomLicenseTemplateSettings.Instance.SaveSettings();
+        }
+
+        private static void SaveDocumentationTemplateSettingsOnDeactivate() {
+            DocsDocfxJsonTemplateSettings.Instance.SaveSettings();
+            DocsDocfxPdfJsonTemplateSettings.Instance.SaveSettings();
+            DocsFilterConfigTemplateSettings.Instance.SaveSettings();
+            DocsIndexTemplateSettings.Instance.SaveSettings();
+            DocsApiIndexTemplateSettings.Instance.SaveSettings();
+        }
+
+        /// <summary>
+        /// Applies serialized changes and persists project-settings assets even when the current GUI update is an undo/redo pass.
+        /// </summary>
+        /// <remarks>
+        /// Project-settings objects saved through explicit <c>SaveSettings()</c> calls can fall out of sync with disk when a custom
+        /// text control redraws correctly after undo/redo but no normal property-apply path reports a fresh modification. Undo can
+        /// also restore the in-memory value before the affected section is drawn, so by the time the field code runs there may no
+        /// longer be a detectable current-vs-updated string difference. Use this helper for editable settings UIs that write to
+        /// <c>ProjectSettings</c>, especially around custom text areas or overlay-based IMGUI controls where the visual edit flow is
+        /// decoupled from Unity's default inspector field pipeline. Editable template providers also add a narrow
+        /// <see cref="SettingsProvider.deactivateHandler"/> fallback so navigating away from the page persists the
+        /// current in-memory state even if a custom text control sidesteps the usual change notifications.
+        /// </remarks>
+        private static void ApplyAndSaveOnChangeOrUndo(SerializedObject serializedSettings, System.Action saveSettings) {
+            // Undo/redo updates the in-memory settings object, but these ProjectSettings-backed assets still need an explicit save.
+            if (serializedSettings.ApplyModifiedProperties() || _pendingUndoRedoSave) {
+                saveSettings();
             }
         }
 

@@ -1,3 +1,5 @@
+using UnityEngine;
+
 namespace Doji.PackageAuthoring.Editor.Wizards.Models {
     /// <summary>
     /// Supported generated license templates for new packages.
@@ -14,18 +16,21 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Models {
         Custom,
 
         /// <summary>
-        /// Generates an MIT license file.
+        /// Generates a license file for the SPDX <c>MIT</c> identifier.
         /// </summary>
-        MIT,
+        [InspectorName("MIT")]
+        Mit,
 
         /// <summary>
-        /// Generates an Apache 2.0 license file.
+        /// Generates a license file for the SPDX <c>Apache-2.0</c> identifier.
         /// </summary>
+        [InspectorName("Apache-2.0")]
         Apache,
 
         /// <summary>
-        /// Generates a BSD-style license file.
+        /// Generates a license file for the SPDX <c>BSD-3-Clause</c> identifier.
         /// </summary>
-        BSD
+        [InspectorName("BSD-3-Clause")]
+        Bsd
     }
 }

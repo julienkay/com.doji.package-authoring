@@ -579,19 +579,16 @@ namespace Doji.PackageAuthoring.Editor.Wizards {
             Directory.CreateDirectory(path);
             CreateDocfxFolders(path);
             CreateDocfxFiles(path);
+            CreateDocfxImages(path);
         }
 
         /// <summary>
-        /// Creates the required documentation subfolders and copies any static binary assets.
+        /// Creates the required documentation subfolders before any generated content is written.
         /// </summary>
         private void CreateDocfxFolders(string path) {
             Directory.CreateDirectory(Path.Combine(path, "api"));
             Directory.CreateDirectory(Path.Combine(path, "manual"));
             Directory.CreateDirectory(Path.Combine(path, "pdf"));
-
-            string imagesSourcePath = Path.Combine("docs", "images");
-            string imagesDestinationPath = Path.Combine(path, "images");
-            GeneratedProjectScaffoldingUtility.CopyDirectory(imagesSourcePath, imagesDestinationPath);
         }
 
         /// <summary>
@@ -627,6 +624,24 @@ namespace Doji.PackageAuthoring.Editor.Wizards {
 
             string pdfTocPath = Path.Combine(path, "pdf", "toc.yml");
             GeneratedProjectScaffoldingUtility.CreateFile(pdfTocPath, Ctx.GetPdfToc());
+        }
+
+        /// <summary>
+        /// Generates optional documentation image outputs from the configured branding texture.
+        /// </summary>
+        private void CreateDocfxImages(string path) {
+            DocsBrandingImageSettings brandingImages = DocsBrandingImageSettings.Instance;
+            if (!brandingImages.HasAnyImage) {
+                return;
+            }
+
+            string imagesPath = Path.Combine(path, "images");
+            if (!DocumentationImageUtility.TryWriteDocumentationImages(
+                    brandingImages.LogoTexture,
+                    brandingImages.FaviconTexture,
+                    imagesPath)) {
+                Debug.LogWarning("Failed to generate one or more documentation branding images from the configured source textures.");
+            }
         }
 
         /// <summary>

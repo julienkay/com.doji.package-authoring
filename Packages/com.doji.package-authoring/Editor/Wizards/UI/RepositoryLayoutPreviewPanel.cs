@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using Doji.PackageAuthoring.Editor.Utilities;
+using Doji.PackageAuthoring.Editor.Wizards.Presets;
 using Doji.PackageAuthoring.Editor.Wizards.Templates;
 using UnityEditor;
 using UnityEngine;
@@ -542,10 +543,31 @@ namespace Doji.PackageAuthoring.Editor.Wizards.UI {
             api.Children.Add(CreateGeneratedFileNode("index.md", "docs/api/index.md", data.Context.GetDocsApiIndex(), RepositoryLayoutGroup.Docs));
             docs.Children.Add(api);
 
-            RepositoryLayoutNode images = CreateDirectoryNode("images", "docs/images", RepositoryLayoutGroup.Docs);
-            images.Children.Add(CreateBinaryFileNode("doji.png", "docs/images/doji.png", RepositoryLayoutGroup.Docs));
-            images.Children.Add(CreateBinaryFileNode("favicon.ico", "docs/images/favicon.ico", RepositoryLayoutGroup.Docs));
-            docs.Children.Add(images);
+            DocsBrandingImageSettings brandingImages = DocsBrandingImageSettings.Instance;
+            if (brandingImages.HasAnyImage) {
+                RepositoryLayoutNode images = CreateDirectoryNode("images", "docs/images", RepositoryLayoutGroup.Docs);
+                if (brandingImages.LogoTexture != null) {
+                    string logoTexturePath = AssetDatabase.GetAssetPath(brandingImages.LogoTexture);
+                    images.Children.Add(CreateGeneratedBinaryFileNode(
+                        "logo.png",
+                        "docs/images/logo.png",
+                        $"Generated from documentation logo texture: {logoTexturePath}",
+                        logoTexturePath,
+                        RepositoryLayoutGroup.Docs));
+                }
+
+                if (brandingImages.FaviconTexture != null) {
+                    string faviconTexturePath = AssetDatabase.GetAssetPath(brandingImages.FaviconTexture);
+                    images.Children.Add(CreateGeneratedBinaryFileNode(
+                        "favicon.ico",
+                        "docs/images/favicon.ico",
+                        $"Generated from documentation favicon texture: {faviconTexturePath}",
+                        faviconTexturePath,
+                        RepositoryLayoutGroup.Docs));
+                }
+
+                docs.Children.Add(images);
+            }
 
             RepositoryLayoutNode manual = CreateDirectoryNode("manual", "docs/manual", RepositoryLayoutGroup.Docs);
             manual.Children.Add(CreateGeneratedFileNode("toc.yml", "docs/manual/toc.yml", data.Context.GetManualToc(), RepositoryLayoutGroup.Docs));
@@ -710,14 +732,19 @@ namespace Doji.PackageAuthoring.Editor.Wizards.UI {
                 group: group);
         }
 
-        private static RepositoryLayoutNode CreateBinaryFileNode(string name, string sourcePath, RepositoryLayoutGroup group) {
+        private static RepositoryLayoutNode CreateGeneratedBinaryFileNode(
+            string name,
+            string relativePath,
+            string previewContent,
+            string sourceAssetPath,
+            RepositoryLayoutGroup group) {
             return new RepositoryLayoutNode(
                 name,
-                sourcePath,
+                relativePath,
                 isDirectory: false,
-                previewContent: $"Binary asset copied from template: {sourcePath}",
-                sourceFilePath: GetExistingFilePath(sourcePath),
-                sourceFolderPath: GetExistingFolderPath(Path.GetDirectoryName(sourcePath)),
+                previewContent,
+                sourceFilePath: GetExistingFilePath(sourceAssetPath),
+                sourceFolderPath: GetExistingFolderPath(Path.GetDirectoryName(sourceAssetPath)),
                 group: group);
         }
 

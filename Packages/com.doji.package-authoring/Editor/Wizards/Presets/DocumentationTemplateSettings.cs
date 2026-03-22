@@ -6,6 +6,8 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Presets {
     /// Stores the project settings asset paths used by generated documentation scaffold templates.
     /// </summary>
     internal static class DocumentationTemplateAssetPaths {
+        public const string DefaultLogoTextureAsset = "Packages/com.doji.package-authoring/Editor/Defaults/Documentation/logo-template.png";
+        public const string DefaultFaviconTextureAsset = "Packages/com.doji.package-authoring/Editor/Defaults/Documentation/favicon-template.png";
         public const string DocsGitIgnore = "ProjectSettings/PackageAuthoringDocsGitIgnoreTemplate.asset";
         public const string DocsApiGitIgnore = "ProjectSettings/PackageAuthoringDocsApiGitIgnoreTemplate.asset";
         public const string DocsApiIndex = "ProjectSettings/PackageAuthoringDocsApiIndexTemplate.asset";
@@ -16,6 +18,7 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Presets {
         public const string DocsRootToc = "ProjectSettings/PackageAuthoringDocsRootTocTemplate.asset";
         public const string DocsManualToc = "ProjectSettings/PackageAuthoringDocsManualTocTemplate.asset";
         public const string DocsPdfToc = "ProjectSettings/PackageAuthoringDocsPdfTocTemplate.asset";
+        public const string DocsBrandingImage = "ProjectSettings/PackageAuthoringDocsBrandingImage.asset";
     }
 
     /// <summary>
@@ -157,5 +160,71 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Presets {
         protected override string DefaultContent => Templates.DocfxTemplates.PdfTocDefaultContent;
 
         protected override string AssetPath => DocumentationTemplateAssetPaths.DocsPdfToc;
+    }
+
+    /// <summary>
+    /// Shared project settings asset for the optional documentation branding image used to generate docs image outputs.
+    /// </summary>
+    [FilePath(DocumentationTemplateAssetPaths.DocsBrandingImage, FilePathAttribute.Location.ProjectFolder)]
+    internal sealed class DocsBrandingImageSettings : ScriptableObject {
+        private static DocsBrandingImageSettings _instance;
+
+        /// <summary>
+        /// Source texture used to generate <c>docs/images/favicon.ico</c>.
+        /// </summary>
+        [field: SerializeField]
+        public Texture2D FaviconTexture { get; set; }
+
+        /// <summary>
+        /// Source texture used to generate <c>docs/images/logo.png</c>.
+        /// </summary>
+        [field: SerializeField]
+        public Texture2D LogoTexture { get; set; }
+
+        /// <summary>
+        /// Shared project settings asset instance for the documentation branding image.
+        /// </summary>
+        public static DocsBrandingImageSettings Instance => _instance ??= GetOrCreateSettings();
+
+        /// <summary>
+        /// Whether at least one source texture has been assigned for docs image generation.
+        /// </summary>
+        public bool HasAnyImage => FaviconTexture != null || LogoTexture != null;
+
+        /// <summary>
+        /// Saves the current settings instance back into the project settings asset.
+        /// </summary>
+        public void SaveSettings() {
+            UnityEditorInternal.InternalEditorUtility.SaveToSerializedFileAndForget(
+                new Object[] {
+                    this
+                },
+                DocumentationTemplateAssetPaths.DocsBrandingImage,
+                true);
+        }
+
+        private void OnDisable() {
+            if (_instance == this) {
+                _instance = null;
+            }
+        }
+
+        private static DocsBrandingImageSettings GetOrCreateSettings() {
+            Object[] settings = UnityEditorInternal.InternalEditorUtility.LoadSerializedFileAndForget(
+                DocumentationTemplateAssetPaths.DocsBrandingImage);
+            if (settings.Length > 0 && settings[0] is DocsBrandingImageSettings existingSettings) {
+                return existingSettings;
+            }
+
+            DocsBrandingImageSettings created = CreateInstance<DocsBrandingImageSettings>();
+            created.hideFlags = HideFlags.HideAndDontSave;
+            created.AssignDefaultTextures();
+            return created;
+        }
+
+        private void AssignDefaultTextures() {
+            FaviconTexture = AssetDatabase.LoadAssetAtPath<Texture2D>(DocumentationTemplateAssetPaths.DefaultFaviconTextureAsset);
+            LogoTexture = AssetDatabase.LoadAssetAtPath<Texture2D>(DocumentationTemplateAssetPaths.DefaultLogoTextureAsset);
+        }
     }
 }

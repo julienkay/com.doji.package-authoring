@@ -8,6 +8,8 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Presets {
     /// </summary>
     internal static class PackageAuthoringTemplateSettingsProvider {
         private static readonly string ContentField = $"<{nameof(GitIgnoreTemplateSettings.Content)}>k__BackingField";
+        private static readonly string FaviconTextureField = $"<{nameof(DocsBrandingImageSettings.FaviconTexture)}>k__BackingField";
+        private static readonly string LogoTextureField = $"<{nameof(DocsBrandingImageSettings.LogoTexture)}>k__BackingField";
         private static readonly GUIContent GitIgnoreTemplateLabel = new(
             ".gitignore",
             "Template content written to generated project .gitignore files.");
@@ -17,6 +19,12 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Presets {
         private static readonly GUIContent DocumentationTemplatesLabel = new(
             "Documentation",
             "Template content written to generated repository documentation scaffold files.");
+        private static readonly GUIContent DocumentationFaviconTextureLabel = new(
+            "Favicon Source",
+            "Optional texture asset used to generate docs/images/favicon.ico. Expected resolution: 128x128 or higher.");
+        private static readonly GUIContent DocumentationLogoTextureLabel = new(
+            "Logo Source",
+            "Optional texture asset used to generate docs/images/logo.png. Expected resolution: 50x50.");
 
         /// <summary>
         /// Creates the parent settings provider shown under <c>Project/Doji/Package Authoring/Templates</c>.
@@ -118,10 +126,8 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Presets {
         private static void DrawDocumentationTemplatesSection() {
             EditorGUILayout.LabelField(DocumentationTemplatesLabel, EditorStyles.wordWrappedMiniLabel);
             EditorGUILayout.Space(3f);
-            EditorGUILayout.HelpBox(
-                Templates.TemplateTokenResolver.SupportedTokensHelpText,
-                MessageType.None);
 
+            DrawDocumentationBrandingSection();
             DrawReadOnlyTemplateAssetSection("docs/.gitignore", DocsGitIgnoreTemplateSettings.Instance, 120f);
             DrawEditableTemplateAssetSection("docs/docfx.json", DocsDocfxJsonTemplateSettings.Instance, 320f, () => DocsDocfxJsonTemplateSettings.Instance.SaveSettings());
             DrawEditableTemplateAssetSection("docs/docfx-pdf.json", DocsDocfxPdfJsonTemplateSettings.Instance, 360f, () => DocsDocfxPdfJsonTemplateSettings.Instance.SaveSettings());
@@ -195,6 +201,40 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Presets {
                 GUILayout.MinHeight(calculatedHeight),
                 GUILayout.ExpandWidth(true));
             GUI.contentColor = originalContentColor;
+        }
+
+        private static void DrawDocumentationBrandingSection() {
+            DocsBrandingImageSettings settings = DocsBrandingImageSettings.Instance;
+            using SerializedObject serializedSettings = new SerializedObject(settings);
+            serializedSettings.Update();
+
+            PackageAuthoringGui.DrawSection("docs/images", () => {
+                DrawTextureObjectField(serializedSettings, FaviconTextureField, DocumentationFaviconTextureLabel);
+                EditorGUILayout.Space(6f);
+                DrawTextureObjectField(serializedSettings, LogoTextureField, DocumentationLogoTextureLabel);
+            });
+
+            if (serializedSettings.ApplyModifiedProperties()) {
+                settings.SaveSettings();
+            }
+        }
+
+        private static void DrawTextureObjectField(
+            SerializedObject serializedSettings,
+            string propertyName,
+            GUIContent label) {
+            EditorGUILayout.LabelField(label, EditorStyles.wordWrappedMiniLabel);
+            EditorGUILayout.Space(3f);
+            SerializedProperty textureProperty = serializedSettings.FindProperty(propertyName);
+            EditorGUI.BeginChangeCheck();
+            Texture2D updatedTexture = (Texture2D)EditorGUILayout.ObjectField(
+                GUIContent.none,
+                textureProperty.objectReferenceValue,
+                typeof(Texture2D),
+                allowSceneObjects: false);
+            if (EditorGUI.EndChangeCheck()) {
+                textureProperty.objectReferenceValue = updatedTexture;
+            }
         }
 
         private static GUIStyle CreateReadOnlyHeaderStyle() {

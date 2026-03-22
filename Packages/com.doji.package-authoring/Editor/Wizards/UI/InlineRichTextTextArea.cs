@@ -24,30 +24,66 @@ namespace Doji.PackageAuthoring.Editor.Wizards.UI {
             value ??= string.Empty;
 
             GUIStyle inputStyle = EditorStyles.textArea;
-            float width = Mathf.Max(EditorGUIUtility.currentViewWidth - 48f, 120f);
-            float calculatedHeight = Mathf.Max(minHeight, inputStyle.CalcHeight(new GUIContent(value), width));
-            Rect areaRect = EditorGUILayout.GetControlRect(
-                hasLabel: false,
-                height: calculatedHeight,
-                inputStyle,
-                GUILayout.MinHeight(minHeight),
-                GUILayout.ExpandHeight(false));
+            Rect areaRect = GetTextAreaRect(value, minHeight, inputStyle);
 
             Color originalContentColor = GUI.contentColor;
             GUI.contentColor = TransparentColor;
             string updatedValue = EditorGUI.TextArea(areaRect, value);
             GUI.contentColor = originalContentColor;
 
+            GUIStyle overlayStyle = CreateOverlayStyle(inputStyle, EditorStyles.label.normal.textColor);
+            GUI.Label(areaRect, TokenHighlightRichTextFormatter.Build(updatedValue), overlayStyle);
+            return updatedValue;
+        }
+
+        /// <summary>
+        /// Draws a read-only multiline field that keeps token highlighting while still allowing selection and copy.
+        /// </summary>
+        /// <remarks>
+        /// A disabled IMGUI text area blocks selection, so the read-only variant uses a transparent selectable layer for
+        /// text interaction and a muted rich-text overlay for the visible content.
+        /// </remarks>
+        /// <param name="value">Plain-text content to display.</param>
+        /// <param name="minHeight">Minimum reserved height for the text area.</param>
+        /// <param name="baseTextColor">Muted base color used for non-token text.</param>
+        public static void DrawReadOnlyLayout(string value, float minHeight, Color baseTextColor) {
+            value ??= string.Empty;
+
+            GUIStyle selectionStyle = new(EditorStyles.textArea);
+            Rect areaRect = GetTextAreaRect(value, minHeight, selectionStyle);
+
+            Color originalContentColor = GUI.contentColor;
+            GUI.contentColor = TransparentColor;
+            EditorGUI.SelectableLabel(areaRect, value, selectionStyle);
+            GUI.contentColor = originalContentColor;
+
+            GUIStyle overlayStyle = CreateOverlayStyle(selectionStyle, baseTextColor);
+            GUI.Label(areaRect, TokenHighlightRichTextFormatter.Build(value), overlayStyle);
+        }
+
+        private static Rect GetTextAreaRect(string value, float minHeight, GUIStyle style) {
+            float width = Mathf.Max(EditorGUIUtility.currentViewWidth - 48f, 120f);
+            float calculatedHeight = Mathf.Max(minHeight, style.CalcHeight(new GUIContent(value), width));
+            return EditorGUILayout.GetControlRect(
+                hasLabel: false,
+                height: calculatedHeight,
+                style,
+                GUILayout.MinHeight(minHeight),
+                GUILayout.ExpandHeight(false));
+        }
+
+        private static GUIStyle CreateOverlayStyle(GUIStyle inputStyle, Color textColor) {
             GUIStyle overlayStyle = new(EditorStyles.label) {
                 alignment = TextAnchor.UpperLeft,
                 clipping = TextClipping.Clip,
                 padding = inputStyle.padding,
                 richText = true
             };
-            overlayStyle.normal.textColor = EditorStyles.label.normal.textColor;
-
-            GUI.Label(areaRect, TokenHighlightRichTextFormatter.Build(updatedValue), overlayStyle);
-            return updatedValue;
+            overlayStyle.normal.textColor = textColor;
+            overlayStyle.hover.textColor = textColor;
+            overlayStyle.focused.textColor = textColor;
+            overlayStyle.active.textColor = textColor;
+            return overlayStyle;
         }
     }
 }

@@ -1,6 +1,6 @@
+using Doji.PackageAuthoring.Editor.Wizards.UI;
 using UnityEditor;
 using UnityEngine;
-using Doji.PackageAuthoring.Editor.Wizards.UI;
 
 namespace Doji.PackageAuthoring.Editor.Wizards.Presets {
     /// <summary>
@@ -96,6 +96,9 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Presets {
             });
         }
 
+        /// <summary>
+        /// Draws the editable project-level <c>.gitignore</c> template section and persists changes to <c>ProjectSettings</c>.
+        /// </summary>
         private static void DrawGitIgnoreSection() {
             GitIgnoreTemplateSettings settings = GitIgnoreTemplateSettings.Instance;
             using SerializedObject serializedSettings = new SerializedObject(settings);
@@ -110,6 +113,9 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Presets {
             _pendingUndoRedoSave = false;
         }
 
+        /// <summary>
+        /// Draws the editable custom license template with token guidance and explicit project-settings persistence.
+        /// </summary>
         private static void DrawCustomLicenseSection() {
             CustomLicenseTemplateSettings settings = CustomLicenseTemplateSettings.Instance;
             using SerializedObject serializedSettings = new SerializedObject(settings);
@@ -129,6 +135,9 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Presets {
             _pendingUndoRedoSave = false;
         }
 
+        /// <summary>
+        /// Draws the documentation template settings page, mixing editable project overrides with locked built-in templates.
+        /// </summary>
         private static void DrawDocumentationTemplatesSection() {
             EditorGUILayout.LabelField(DocumentationTemplatesLabel, EditorStyles.wordWrappedMiniLabel);
             EditorGUILayout.Space(3f);
@@ -148,6 +157,13 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Presets {
             _pendingUndoRedoSave = false;
         }
 
+        /// <summary>
+        /// Draws one editable template asset section backed by a serialized <see cref="ProjectTemplateAsset"/>.
+        /// </summary>
+        /// <param name="title">Visible section title that also reflects the generated output path.</param>
+        /// <param name="settings">Project-settings asset containing the editable template content.</param>
+        /// <param name="minHeight">Minimum text-area height used before content-driven expansion.</param>
+        /// <param name="saveSettings">Persistence callback required because these assets are stored under <c>ProjectSettings</c>.</param>
         private static void DrawEditableTemplateAssetSection(
             string title,
             ProjectTemplateAsset settings,
@@ -164,6 +180,12 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Presets {
             ApplyAndSaveOnChangeOrUndo(serializedSettings, saveSettings);
         }
 
+        /// <summary>
+        /// Draws one built-in template section as locked content while preserving selection and copy behavior.
+        /// </summary>
+        /// <param name="title">Visible section title that also reflects the generated output path.</param>
+        /// <param name="settings">Template asset supplying the built-in content.</param>
+        /// <param name="minHeight">Minimum text-area height used before content-driven expansion.</param>
         private static void DrawReadOnlyTemplateAssetSection(
             string title,
             ProjectTemplateAsset settings,
@@ -182,33 +204,40 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Presets {
                 titleStyle: readOnlyHeaderStyle);
         }
 
+        /// <summary>
+        /// Draws the highlighted editable template text area and writes the updated value back to the serialized backing field.
+        /// </summary>
+        /// <remarks>
+        /// The actual text rendering lives in <see cref="InlineRichTextTextArea"/> so the settings provider only manages
+        /// serialized-property synchronization and change detection here.
+        /// </remarks>
         private static void DrawTemplateTextArea(SerializedProperty contentProperty, float minHeight) {
             string currentContent = contentProperty.stringValue ?? string.Empty;
-            string updatedContent = InlineRichTextTextArea.DrawLayout(
-                currentContent,
-                minHeight);
+            string updatedContent = InlineRichTextTextArea.DrawLayout(currentContent, minHeight);
             if (!string.Equals(updatedContent, currentContent, System.StringComparison.Ordinal)) {
                 contentProperty.stringValue = updatedContent;
             }
         }
 
+        /// <summary>
+        /// Draws a locked template text area with token highlighting, muted base text, and selectable content.
+        /// </summary>
+        /// <remarks>
+        /// Built-in templates must look non-editable without using a real disabled text area because disabled IMGUI controls
+        /// stop supporting text selection and copy.
+        /// </remarks>
         private static void DrawReadOnlyTemplateTextArea(string content, float minHeight) {
             content ??= string.Empty;
-            // Settings providers can be instantiated before EditorStyles is ready, so create GUI styles lazily during OnGUI.
-            GUIStyle readOnlyTemplateStyle = new(EditorStyles.textArea);
-
-            float width = Mathf.Max(EditorGUIUtility.currentViewWidth - 48f, 120f);
-            float calculatedHeight = Mathf.Max(minHeight, readOnlyTemplateStyle.CalcHeight(new GUIContent(content), width));
-            Color originalContentColor = GUI.contentColor;
-            GUI.contentColor = new Color(originalContentColor.r, originalContentColor.g, originalContentColor.b, 0.75f);
-            EditorGUILayout.SelectableLabel(
+            Color baseTextColor = EditorStyles.label.normal.textColor;
+            InlineRichTextTextArea.DrawReadOnlyLayout(
                 content,
-                readOnlyTemplateStyle,
-                GUILayout.MinHeight(calculatedHeight),
-                GUILayout.ExpandWidth(true));
-            GUI.contentColor = originalContentColor;
+                minHeight,
+                new Color(baseTextColor.r, baseTextColor.g, baseTextColor.b, 0.6f));
         }
 
+        /// <summary>
+        /// Draws the documentation image asset settings used to generate branding files inside <c>docs/images</c>.
+        /// </summary>
         private static void DrawDocumentationBrandingSection() {
             DocsBrandingImageSettings settings = DocsBrandingImageSettings.Instance;
             using SerializedObject serializedSettings = new SerializedObject(settings);
@@ -225,6 +254,12 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Presets {
             }
         }
 
+        /// <summary>
+        /// Draws one texture object field for a serialized branding image reference and records the assignment when changed.
+        /// </summary>
+        /// <param name="serializedSettings">Serialized wrapper around the branding settings asset.</param>
+        /// <param name="propertyName">Backing-field property name for the texture reference.</param>
+        /// <param name="label">Descriptive label shown above the object picker.</param>
         private static void DrawTextureObjectField(
             SerializedObject serializedSettings,
             string propertyName,
@@ -243,18 +278,30 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Presets {
             }
         }
 
+        /// <summary>
+        /// Marks the next GUI pass as requiring an explicit save after Unity replays serialized changes from undo or redo.
+        /// </summary>
         private static void HandleUndoRedoPerformed() {
             _pendingUndoRedoSave = true;
         }
 
+        /// <summary>
+        /// Persists the project-level <c>.gitignore</c> template when the settings page is left.
+        /// </summary>
         private static void SaveGitIgnoreSettingsOnDeactivate() {
             GitIgnoreTemplateSettings.Instance.SaveSettings();
         }
 
+        /// <summary>
+        /// Persists the custom license template when the settings page is left.
+        /// </summary>
         private static void SaveCustomLicenseSettingsOnDeactivate() {
             CustomLicenseTemplateSettings.Instance.SaveSettings();
         }
 
+        /// <summary>
+        /// Persists all editable documentation template assets when the documentation settings page is left.
+        /// </summary>
         private static void SaveDocumentationTemplateSettingsOnDeactivate() {
             DocsDocfxJsonTemplateSettings.Instance.SaveSettings();
             DocsDocfxPdfJsonTemplateSettings.Instance.SaveSettings();
@@ -283,6 +330,9 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Presets {
             }
         }
 
+        /// <summary>
+        /// Creates a muted section-header style used for built-in templates that are intentionally locked.
+        /// </summary>
         private static GUIStyle CreateReadOnlyHeaderStyle() {
             GUIStyle readOnlyHeaderStyle = new(EditorStyles.boldLabel);
             Color baseColor = readOnlyHeaderStyle.normal.textColor;
@@ -293,6 +343,9 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Presets {
             return readOnlyHeaderStyle;
         }
 
+        /// <summary>
+        /// Draws the lock icon shown in read-only template section headers to distinguish built-in content from editable overrides.
+        /// </summary>
         private static void DrawReadOnlyHeaderLock() {
             GUIContent lockIcon = EditorGUIUtility.IconContent("LockIcon-On", "Built-in template content");
             Rect lockRect = GUILayoutUtility.GetRect(lockIcon, GUIStyle.none, GUILayout.Width(18f), GUILayout.Height(18f));

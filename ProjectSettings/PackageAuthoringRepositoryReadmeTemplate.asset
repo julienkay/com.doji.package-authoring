@@ -12,8 +12,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 69aecf08183c4535ba5224d7ea988976, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Doji.PackageAuthoring.Editor::Doji.PackageAuthoring.Editor.Wizards.Presets.RepositoryReadmeTemplateSettings
-  <Content>k__BackingField: "<a href=\"https://www.doji-tech.com/\">\n  <img src=\"https://www.doji-tech.com/favicon.ico\"
-    alt=\"doji logo\" title=\"Doji\" align=\"right\" height=\"70\" />\n</a>\n\n#
-    {{Project.ProductName}}\n{{Package.Description}}\n\n[OpenUPM] - [Documentation
-    (coming soon)]\n\n[OpenUPM]: https://openupm.com/packages/{{Package.PackageName}}\n[Documentation
-    (coming soon)]: https://github.com/julienkay/{{Package.PackageName}}\n"
+  <Content>k__BackingField: '# {{PROJECT_NAME}}
+
+
+    {{PACKAGE_DESCRIPTION}}
+
+
+    ##
+    Installation
+
+
+    Add the package via UPM using:
+
+
+    `{{PACKAGE_NAME}}`
+
+
+    ##
+    Documentation
+
+
+    Document the public workflow, setup steps, and examples here.
+
+'

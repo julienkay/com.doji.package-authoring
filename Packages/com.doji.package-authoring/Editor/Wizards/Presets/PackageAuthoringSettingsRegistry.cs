@@ -41,6 +41,7 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Presets {
         /// participates in the persisted settings list because template settings must be saved after edits or resets.
         /// </remarks>
         internal static IReadOnlyList<IPackageAuthoringTemplateSettingsAsset> AllResettableTemplateSettingsAssets { get; } = new IPackageAuthoringTemplateSettingsAsset[] {
+            PackageReadmeTemplateSettings.Instance,
             GitIgnoreTemplateSettings.Instance,
             CustomLicenseTemplateSettings.Instance,
             RepositoryReadmeTemplateSettings.Instance,

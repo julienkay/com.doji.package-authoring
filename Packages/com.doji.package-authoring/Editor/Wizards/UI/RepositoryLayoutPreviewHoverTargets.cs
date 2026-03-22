@@ -11,6 +11,7 @@ namespace Doji.PackageAuthoring.Editor.Wizards.UI {
     internal static class RepositoryLayoutPreviewHoverTargets {
         public const string RepoCopyrightHolder = nameof(RepoCopyrightHolder);
         public const string RepoLicenseType = nameof(RepoLicenseType);
+        public const string IncludeRepositoryReadme = nameof(IncludeRepositoryReadme);
         public const string PackageName = nameof(PackageName);
         public const string PackageDisplayName = nameof(PackageDisplayName);
         public const string AssemblyName = nameof(AssemblyName);
@@ -24,6 +25,7 @@ namespace Doji.PackageAuthoring.Editor.Wizards.UI {
         public const string IncludeMinimumUnityVersion = nameof(IncludeMinimumUnityVersion);
         public const string MinimumUnityVersion = nameof(MinimumUnityVersion);
         public const string CreateDocsFolder = nameof(CreateDocsFolder);
+        public const string IncludePackageReadme = nameof(IncludePackageReadme);
         public const string CreateSamplesFolder = nameof(CreateSamplesFolder);
         public const string CreateEditorFolder = nameof(CreateEditorFolder);
         public const string CreateTestsFolder = nameof(CreateTestsFolder);

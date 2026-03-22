@@ -483,8 +483,10 @@ namespace Doji.PackageAuthoring.Editor.Wizards {
                 GeneratedProjectScaffoldingUtility.CreateFile(licensePath, license);
             }
 
-            string readmePath = Path.Combine(RootDirectory, "README.md");
-            GeneratedProjectScaffoldingUtility.CreateFile(readmePath, Ctx.GetRepositoryReadme());
+            if (RepoSettings.IncludeReadme) {
+                string readmePath = Path.Combine(RootDirectory, "README.md");
+                GeneratedProjectScaffoldingUtility.CreateFile(readmePath, Ctx.GetRepositoryReadme());
+            }
         }
 
         private void CreatePackageFiles(string path) {
@@ -492,8 +494,10 @@ namespace Doji.PackageAuthoring.Editor.Wizards {
             // `package.json` is regenerated because optional samples and dependencies directly affect its contents.
             GeneratedProjectScaffoldingUtility.CreateFile(packageManifestPath, Ctx.GetPackageManifest(), overwrite: true);
 
-            string readmePath = Path.Combine(path, "README.md");
-            GeneratedProjectScaffoldingUtility.CreateFile(readmePath, Ctx.GetPackageReadme());
+            if (PackageSettings.IncludeReadme) {
+                string readmePath = Path.Combine(path, "README.md");
+                GeneratedProjectScaffoldingUtility.CreateFile(readmePath, Ctx.GetPackageReadme());
+            }
 
             string changelogPath = Path.Combine(path, "CHANGELOG.md");
             GeneratedProjectScaffoldingUtility.CreateFile(changelogPath, Ctx.GetChangelog());

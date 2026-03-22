@@ -33,6 +33,7 @@ MonoBehaviour:
     <MinimumUnityMinor>k__BackingField: 
     <MinimumUnityRelease>k__BackingField: 
     <CreateDocsFolder>k__BackingField: 1
+    <IncludeReadme>k__BackingField: 1
     <CreateSamplesFolder>k__BackingField: 0
     <CreateEditorFolder>k__BackingField: 0
     <CreateTestsFolder>k__BackingField: 0
@@ -43,3 +44,4 @@ MonoBehaviour:
   <RepoDefaults>k__BackingField:
     <CopyrightHolder>k__BackingField: Julien Kipp
     <LicenseType>k__BackingField: 2
+    <IncludeReadme>k__BackingField: 1

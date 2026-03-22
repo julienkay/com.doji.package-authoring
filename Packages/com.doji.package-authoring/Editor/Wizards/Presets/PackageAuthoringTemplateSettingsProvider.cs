@@ -15,6 +15,9 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Presets {
         private static readonly GUIContent GitIgnoreTemplateLabel = new(
             ".gitignore",
             "Template content written to generated project .gitignore files.");
+        private static readonly GUIContent PackageReadmeTemplateLabel = new(
+            "Package README",
+            "Template content written to generated package README.md files.");
         private static readonly GUIContent RepositoryReadmeTemplateLabel = new(
             "Repository README",
             "Template content written to generated repository README.md files.");
@@ -73,6 +76,17 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Presets {
             return new SettingsProvider("Project/Doji/Package Authoring/Templates/Package/.gitignore", SettingsScope.Project) {
                 guiHandler = _ => DrawGitIgnoreSection(),
                 deactivateHandler = SaveGitIgnoreSettingsOnDeactivate
+            };
+        }
+
+        /// <summary>
+        /// Creates the child settings provider for the generated package README template.
+        /// </summary>
+        [SettingsProvider]
+        public static SettingsProvider CreatePackageReadmeTemplateProvider() {
+            return new SettingsProvider("Project/Doji/Package Authoring/Templates/Package/README", SettingsScope.Project) {
+                guiHandler = _ => DrawPackageReadmeSection(),
+                deactivateHandler = SavePackageReadmeSettingsOnDeactivate,
             };
         }
 
@@ -159,6 +173,24 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Presets {
         }
 
         /// <summary>
+        /// Draws the editable package README template with token guidance and explicit project-settings persistence.
+        /// </summary>
+        private static void DrawPackageReadmeSection() {
+            PackageReadmeTemplateSettings settings = PackageReadmeTemplateSettings.Instance;
+            using SerializedObject serializedSettings = new SerializedObject(settings);
+            serializedSettings.Update();
+
+            PackageAuthoringGui.DrawSection("Package README Template", () => {
+                EditorGUILayout.LabelField(PackageReadmeTemplateLabel, EditorStyles.wordWrappedMiniLabel);
+                SerializedProperty contentProperty = serializedSettings.FindProperty(ContentField);
+                DrawTemplateTextArea(contentProperty, minHeight: 220f);
+            });
+
+            ApplyAndSaveOnChangeOrUndo(serializedSettings, settings.SaveSettings);
+            _pendingUndoRedoSave = false;
+        }
+
+        /// <summary>
         /// Draws the editable repository README template with token guidance and explicit project-settings persistence.
         /// </summary>
         private static void DrawRepositoryReadmeSection() {
@@ -168,10 +200,6 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Presets {
 
             PackageAuthoringGui.DrawSection("Repository README Template", () => {
                 EditorGUILayout.LabelField(RepositoryReadmeTemplateLabel, EditorStyles.wordWrappedMiniLabel);
-                EditorGUILayout.Space(3f);
-                EditorGUILayout.HelpBox(
-                    Templates.TemplateTokenResolver.SupportedTokensHelpText,
-                    MessageType.None);
                 SerializedProperty contentProperty = serializedSettings.FindProperty(ContentField);
                 DrawTemplateTextArea(contentProperty, minHeight: 260f);
             });
@@ -190,10 +218,6 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Presets {
 
             PackageAuthoringGui.DrawSection("Custom License Template", () => {
                 EditorGUILayout.LabelField(CustomLicenseTemplateLabel, EditorStyles.wordWrappedMiniLabel);
-                EditorGUILayout.Space(3f);
-                EditorGUILayout.HelpBox(
-                    Templates.TemplateTokenResolver.SupportedTokensHelpText,
-                    MessageType.None);
                 SerializedProperty contentProperty = serializedSettings.FindProperty(ContentField);
                 DrawTemplateTextArea(contentProperty, minHeight: 220f);
             });
@@ -376,6 +400,13 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Presets {
         /// </summary>
         private static void SaveGitIgnoreSettingsOnDeactivate() {
             GitIgnoreTemplateSettings.Instance.SaveSettings();
+        }
+
+        /// <summary>
+        /// Persists the package README template when the settings page is left.
+        /// </summary>
+        private static void SavePackageReadmeSettingsOnDeactivate() {
+            PackageReadmeTemplateSettings.Instance.SaveSettings();
         }
 
         /// <summary>

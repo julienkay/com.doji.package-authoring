@@ -36,6 +36,8 @@ namespace Doji.PackageAuthoring.Editor.Wizards {
 
         private static readonly string CreateDocsFolderField =
             $"<{nameof(PackageSettings.CreateDocsFolder)}>k__BackingField";
+        private static readonly string IncludeReadmeField =
+            $"<{nameof(PackageSettings.IncludeReadme)}>k__BackingField";
 
         private static readonly string CreateSamplesFolderField =
             $"<{nameof(PackageSettings.CreateSamplesFolder)}>k__BackingField";
@@ -50,7 +52,7 @@ namespace Doji.PackageAuthoring.Editor.Wizards {
 
         /// <inheritdoc />
         public override float GetPropertyHeight(SerializedProperty property, GUIContent label) {
-            int lineCount = 13;
+            int lineCount = 14;
             if (property.FindPropertyRelative(IncludeAuthorField).boolValue) {
                 lineCount += 2;
             }
@@ -159,6 +161,11 @@ namespace Doji.PackageAuthoring.Editor.Wizards {
                 new GUIContent("Documentation URL"),
                 RepositoryLayoutPreviewHoverTargets.DocumentationUrl);
 
+            DrawField(
+                ref row,
+                property.FindPropertyRelative(IncludeReadmeField),
+                new GUIContent("Include Package README"),
+                RepositoryLayoutPreviewHoverTargets.IncludePackageReadme);
             DrawField(
                 ref row,
                 property.FindPropertyRelative(CreateDocsFolderField),

@@ -58,7 +58,7 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Templates {
         /// Builds the package README.
         /// </summary>
         public static string GetPackageReadme(this PackageContext ctx) {
-            return ReadmeTemplate.GetPackageReadme(ctx);
+            return PackageReadmeTemplateSettings.Instance.GetResolvedContent(ctx);
         }
 
         /// <summary>

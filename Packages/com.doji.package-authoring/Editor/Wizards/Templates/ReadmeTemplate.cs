@@ -1,8 +1,13 @@
 namespace Doji.PackageAuthoring.Editor.Wizards.Templates {
     /// <summary>
-    /// Builds README files for the generated package repository.
+    /// Provides the built-in default content for generated package and repository README templates.
     /// </summary>
     public static class ReadmeTemplate {
+        public const string PackageReadmeDefaultContent = @"# {{PACKAGE_NAME}}
+
+{{PACKAGE_DESCRIPTION}}
+";
+
         public const string RepositoryReadmeDefaultContent = @"# {{PROJECT_NAME}}
 
 {{PACKAGE_DESCRIPTION}}
@@ -17,9 +22,5 @@ Add the package via UPM using:
 
 Document the public workflow, setup steps, and examples here.
 ";
-
-        public static string GetPackageReadme(PackageContext ctx) {
-            return $"# {ctx.Package.PackageName}\n\n{ctx.Package.Description}";
-        }
     }
 }

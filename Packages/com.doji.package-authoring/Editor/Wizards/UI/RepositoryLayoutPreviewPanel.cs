@@ -208,6 +208,8 @@ namespace Doji.PackageAuthoring.Editor.Wizards.UI {
                     return MatchesContent(node, data.Context.Repo.CopyrightHolder) || MatchesPath(node, "LICENSE");
                 case RepositoryLayoutPreviewHoverTargets.RepoLicenseType:
                     return MatchesPath(node, "LICENSE");
+                case RepositoryLayoutPreviewHoverTargets.IncludeRepositoryReadme:
+                    return MatchesPath(node, "README.md");
                 case RepositoryLayoutPreviewHoverTargets.PackageName:
                     return MatchesContent(node, data.Context.Package.PackageName) ||
                            MatchesPath(node, data.PackageName);
@@ -233,6 +235,8 @@ namespace Doji.PackageAuthoring.Editor.Wizards.UI {
                     return MatchesPath(node, $"{data.PackageName}/package.json");
                 case RepositoryLayoutPreviewHoverTargets.CreateDocsFolder:
                     return MatchesPath(node, "docs") || MatchesPrefix(node, "docs/");
+                case RepositoryLayoutPreviewHoverTargets.IncludePackageReadme:
+                    return MatchesPath(node, $"{data.PackageName}/README.md");
                 case RepositoryLayoutPreviewHoverTargets.CreateSamplesFolder:
                     return MatchesPath(node, $"{data.PackageName}/Samples~") ||
                            MatchesPrefix(node, $"{data.PackageName}/Samples~/");
@@ -512,11 +516,13 @@ namespace Doji.PackageAuthoring.Editor.Wizards.UI {
                 root.Children.Add(CreateGeneratedFileNode("LICENSE", "LICENSE", license, RepositoryLayoutGroup.Repo));
             }
 
-            root.Children.Add(CreateGeneratedFileNode(
-                "README.md",
-                "README.md",
-                data.Context.GetRepositoryReadme(),
-                RepositoryLayoutGroup.Repo));
+            if (data.Context.Repo.IncludeReadme) {
+                root.Children.Add(CreateGeneratedFileNode(
+                    "README.md",
+                    "README.md",
+                    data.Context.GetRepositoryReadme(),
+                    RepositoryLayoutGroup.Repo));
+            }
             root.Children.Add(BuildCompanionProjectNode(data));
 
             return root;
@@ -600,11 +606,13 @@ namespace Doji.PackageAuthoring.Editor.Wizards.UI {
                 package.Children.Add(editor);
             }
 
-            package.Children.Add(CreateGeneratedFileNode(
-                "README.md",
-                $"{packageRoot}/README.md",
-                data.Context.GetPackageReadme(),
-                RepositoryLayoutGroup.Package));
+            if (data.Context.Package.IncludeReadme) {
+                package.Children.Add(CreateGeneratedFileNode(
+                    "README.md",
+                    $"{packageRoot}/README.md",
+                    data.Context.GetPackageReadme(),
+                    RepositoryLayoutGroup.Package));
+            }
 
             RepositoryLayoutNode runtime = CreateDirectoryNode("Runtime", $"{packageRoot}/Runtime", RepositoryLayoutGroup.Package);
             runtime.Children.Add(CreateGeneratedFileNode(

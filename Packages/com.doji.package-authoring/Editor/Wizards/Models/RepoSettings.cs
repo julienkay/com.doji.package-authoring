@@ -20,6 +20,12 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Models {
         public LicenseType LicenseType { get; set; } = LicenseType.None;
 
         /// <summary>
+        /// Whether to generate a repository-level <c>README.md</c> file.
+        /// </summary>
+        [field: SerializeField]
+        public bool IncludeReadme { get; set; } = true;
+
+        /// <summary>
         /// Copies all repository-facing values from another settings instance.
         /// </summary>
         /// <param name="other">The source settings to copy from.</param>
@@ -30,6 +36,7 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Models {
 
             CopyrightHolder = other.CopyrightHolder;
             LicenseType = other.LicenseType;
+            IncludeReadme = other.IncludeReadme;
         }
     }
 }

@@ -98,6 +98,12 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Models {
         public bool CreateDocsFolder { get; set; } = true;
 
         /// <summary>
+        /// Whether to generate a <c>README.md</c> file inside the package root.
+        /// </summary>
+        [field: SerializeField]
+        public bool IncludeReadme { get; set; } = true;
+
+        /// <summary>
         /// Whether to include a <c>Samples~</c> folder.
         /// </summary>
         [field: SerializeField]
@@ -145,6 +151,7 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Models {
             MinimumUnityMinor = other.MinimumUnityMinor;
             MinimumUnityRelease = other.MinimumUnityRelease;
             CreateDocsFolder = other.CreateDocsFolder;
+            IncludeReadme = other.IncludeReadme;
             CreateSamplesFolder = other.CreateSamplesFolder;
             CreateEditorFolder = other.CreateEditorFolder;
             CreateTestsFolder = other.CreateTestsFolder;

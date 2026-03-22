@@ -23,6 +23,12 @@ namespace Doji.PackageAuthoring.Editor.Wizards.UI {
         /// <summary>
         /// Draws the editable field and overlays token-highlighted rich text for the current value.
         /// </summary>
+        /// <remarks>
+        /// The label must respect the caller's current IMGUI indentation so it lines up with surrounding inspector UI,
+        /// but the actual text field area must render with zero indent. Unity otherwise reapplies indentation inside
+        /// the child control, which shifts the text background and overlay content to the right when callers have
+        /// already increased <see cref="EditorGUI.indentLevel"/>.
+        /// </remarks>
         /// <param name="position">Full IMGUI rect including the label prefix area.</param>
         /// <param name="label">Field label drawn through Unity's standard prefix-label handling.</param>
         /// <param name="value">Current plain-text field value.</param>
@@ -33,20 +39,28 @@ namespace Doji.PackageAuthoring.Editor.Wizards.UI {
             int controlId = GUIUtility.GetControlID(FocusType.Keyboard, position);
             Rect fieldRect = EditorGUI.PrefixLabel(position, controlId, label);
 
-            Color originalContentColor = GUI.contentColor;
-            GUI.contentColor = TransparentColor;
-            string updatedValue = EditorGUI.TextField(fieldRect, value);
-            GUI.contentColor = originalContentColor;
+            int originalIndentLevel = EditorGUI.indentLevel;
+            EditorGUI.indentLevel = 0;
 
-            GUIStyle overlayStyle = new(EditorStyles.label) {
-                alignment = TextAnchor.MiddleLeft,
-                clipping = TextClipping.Clip,
-                padding = EditorStyles.textField.padding,
-                richText = true
-            };
-            overlayStyle.normal.textColor = EditorStyles.label.normal.textColor;
-            GUI.Label(fieldRect, TokenHighlightRichTextFormatter.Build(updatedValue), overlayStyle);
-            return updatedValue;
+            try {
+                Color originalContentColor = GUI.contentColor;
+                GUI.contentColor = TransparentColor;
+                string updatedValue = EditorGUI.TextField(fieldRect, value);
+                GUI.contentColor = originalContentColor;
+
+                GUIStyle overlayStyle = new(EditorStyles.label) {
+                    alignment = TextAnchor.MiddleLeft,
+                    clipping = TextClipping.Clip,
+                    padding = EditorStyles.textField.padding,
+                    richText = true
+                };
+                overlayStyle.normal.textColor = EditorStyles.label.normal.textColor;
+                GUI.Label(fieldRect, TokenHighlightRichTextFormatter.Build(updatedValue), overlayStyle);
+                return updatedValue;
+            }
+            finally {
+                EditorGUI.indentLevel = originalIndentLevel;
+            }
         }
     }
 }

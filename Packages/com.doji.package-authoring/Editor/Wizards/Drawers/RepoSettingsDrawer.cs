@@ -51,7 +51,6 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Drawers {
             EditorGUI.LabelField(row, RepositoryFilesSectionLabel, EditorStyles.boldLabel);
             row.y += EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
 
-            EditorGUI.indentLevel++;
             DrawField(
                 ref row,
                 property.FindPropertyRelative(CopyrightHolderField),
@@ -81,8 +80,6 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Drawers {
                     RepositoryUrlLabel);
                 EditorGUI.indentLevel--;
             }
-
-            EditorGUI.indentLevel--;
 
             EditorGUI.EndProperty();
         }

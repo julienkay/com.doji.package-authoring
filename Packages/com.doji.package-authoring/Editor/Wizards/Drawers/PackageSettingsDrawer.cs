@@ -115,7 +115,7 @@ namespace Doji.PackageAuthoring.Editor.Wizards {
                 RepositoryLayoutPreviewHoverTargets.IncludeAuthor);
             if (includeAuthorProperty.boolValue) {
                 EditorGUI.indentLevel++;
-                DrawField(
+                DrawTokenAwareTextField(
                     ref row,
                     property.FindPropertyRelative(AuthorUrlField),
                     new GUIContent("URL"),

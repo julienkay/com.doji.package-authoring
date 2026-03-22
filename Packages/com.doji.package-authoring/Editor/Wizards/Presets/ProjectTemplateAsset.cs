@@ -94,4 +94,57 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Presets {
                 saveAsText);
         }
     }
+
+    /// <summary>
+    /// Base asset for project-scoped templates that know how to persist themselves back into <c>ProjectSettings</c>.
+    /// </summary>
+    internal abstract class ProjectTemplateSettingsAsset : ProjectTemplateAsset {
+        /// <summary>
+        /// Serialized project settings path used when this template asset is saved.
+        /// </summary>
+        protected abstract string AssetPath { get; }
+
+        /// <summary>
+        /// Saves the current template settings instance back into the project settings asset.
+        /// </summary>
+        public void SaveSettings() {
+            SaveSettingsAsset(AssetPath);
+        }
+    }
+
+    /// <summary>
+    /// Generic singleton-style loader for project-scoped template settings stored under <c>ProjectSettings</c>.
+    /// </summary>
+    internal abstract class ProjectTemplateSettingsBase<T> : ProjectTemplateSettingsAsset
+        where T : ProjectTemplateSettingsBase<T> {
+        private static T _instance;
+
+        /// <summary>
+        /// Shared project settings asset instance for this template settings type.
+        /// </summary>
+        public static T Instance => _instance ??= GetOrCreateSettings();
+
+        protected virtual void InitializeSettings() {
+            EnsureDefaultContent();
+        }
+
+        private void OnDisable() {
+            if (_instance == this) {
+                _instance = null;
+            }
+        }
+
+        private static T GetOrCreateSettings() {
+            T settings = LoadOrCreateSettings<T>(GetAssetPath());
+            settings.InitializeSettings();
+            return settings;
+        }
+
+        private static string GetAssetPath() {
+            T templateSettings = CreateInstance<T>();
+            string assetPath = templateSettings.AssetPath;
+            Object.DestroyImmediate(templateSettings);
+            return assetPath;
+        }
+    }
 }

@@ -8,8 +8,9 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Presets {
         /// </summary>
         public static void SaveAllProjectSettings() {
             PackageAuthoringProjectSettings.Instance.SaveSettings();
-            GitIgnoreTemplateSettings.Instance.SaveSettings();
-            CustomLicenseTemplateSettings.Instance.SaveSettings();
+            SaveTemplateSettings(
+                GitIgnoreTemplateSettings.Instance,
+                CustomLicenseTemplateSettings.Instance);
             SaveDocumentationTemplateSettings();
         }
 
@@ -17,16 +18,17 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Presets {
         /// Saves all documentation template and branding settings back into <c>ProjectSettings</c>.
         /// </summary>
         public static void SaveDocumentationTemplateSettings() {
-            DocsGitIgnoreTemplateSettings.Instance.SaveSettings();
-            DocsApiGitIgnoreTemplateSettings.Instance.SaveSettings();
-            DocsApiIndexTemplateSettings.Instance.SaveSettings();
-            DocsDocfxJsonTemplateSettings.Instance.SaveSettings();
-            DocsDocfxPdfJsonTemplateSettings.Instance.SaveSettings();
-            DocsFilterConfigTemplateSettings.Instance.SaveSettings();
-            DocsIndexTemplateSettings.Instance.SaveSettings();
-            DocsRootTocTemplateSettings.Instance.SaveSettings();
-            DocsManualTocTemplateSettings.Instance.SaveSettings();
-            DocsPdfTocTemplateSettings.Instance.SaveSettings();
+            SaveTemplateSettings(
+                DocsGitIgnoreTemplateSettings.Instance,
+                DocsApiGitIgnoreTemplateSettings.Instance,
+                DocsApiIndexTemplateSettings.Instance,
+                DocsDocfxJsonTemplateSettings.Instance,
+                DocsDocfxPdfJsonTemplateSettings.Instance,
+                DocsFilterConfigTemplateSettings.Instance,
+                DocsIndexTemplateSettings.Instance,
+                DocsRootTocTemplateSettings.Instance,
+                DocsManualTocTemplateSettings.Instance,
+                DocsPdfTocTemplateSettings.Instance);
             DocsBrandingImageSettings.Instance.SaveSettings();
         }
 
@@ -34,17 +36,30 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Presets {
         /// Restores all documentation templates to the package defaults and saves the updated project settings assets.
         /// </summary>
         public static void ReapplyDocumentationTemplateDefaults() {
-            DocsGitIgnoreTemplateSettings.Instance.RestoreDefaultContent();
-            DocsApiGitIgnoreTemplateSettings.Instance.RestoreDefaultContent();
-            DocsApiIndexTemplateSettings.Instance.RestoreDefaultContent();
-            DocsDocfxJsonTemplateSettings.Instance.RestoreDefaultContent();
-            DocsDocfxPdfJsonTemplateSettings.Instance.RestoreDefaultContent();
-            DocsFilterConfigTemplateSettings.Instance.RestoreDefaultContent();
-            DocsIndexTemplateSettings.Instance.RestoreDefaultContent();
-            DocsRootTocTemplateSettings.Instance.RestoreDefaultContent();
-            DocsManualTocTemplateSettings.Instance.RestoreDefaultContent();
-            DocsPdfTocTemplateSettings.Instance.RestoreDefaultContent();
+            RestoreDefaultContents(
+                DocsGitIgnoreTemplateSettings.Instance,
+                DocsApiGitIgnoreTemplateSettings.Instance,
+                DocsApiIndexTemplateSettings.Instance,
+                DocsDocfxJsonTemplateSettings.Instance,
+                DocsDocfxPdfJsonTemplateSettings.Instance,
+                DocsFilterConfigTemplateSettings.Instance,
+                DocsIndexTemplateSettings.Instance,
+                DocsRootTocTemplateSettings.Instance,
+                DocsManualTocTemplateSettings.Instance,
+                DocsPdfTocTemplateSettings.Instance);
             SaveDocumentationTemplateSettings();
+        }
+
+        private static void RestoreDefaultContents(params ProjectTemplateAsset[] templateSettings) {
+            foreach (ProjectTemplateAsset templateSetting in templateSettings) {
+                templateSetting.RestoreDefaultContent();
+            }
+        }
+
+        private static void SaveTemplateSettings(params ProjectTemplateSettingsAsset[] templateSettings) {
+            foreach (ProjectTemplateSettingsAsset templateSetting in templateSettings) {
+                templateSetting.SaveSettings();
+            }
         }
     }
 }

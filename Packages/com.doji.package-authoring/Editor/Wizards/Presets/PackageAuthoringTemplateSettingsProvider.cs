@@ -7,6 +7,7 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Presets {
     /// Registers and renders the Project Settings page for editable generation templates.
     /// </summary>
     internal static class PackageAuthoringTemplateSettingsProvider {
+        private static bool _hasInitializedDocumentationTemplateSettings;
         private static bool _pendingUndoRedoSave;
         private static readonly string ContentField = $"<{nameof(GitIgnoreTemplateSettings.Content)}>k__BackingField";
         private static readonly string FaviconTextureField = $"<{nameof(DocsBrandingImageSettings.FaviconTexture)}>k__BackingField";
@@ -139,6 +140,8 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Presets {
         /// Draws the documentation template settings page, mixing editable project overrides with locked built-in templates.
         /// </summary>
         private static void DrawDocumentationTemplatesSection() {
+            EnsureDocumentationTemplateSettingsInitialized();
+
             EditorGUILayout.LabelField(DocumentationTemplatesLabel, EditorStyles.wordWrappedMiniLabel);
             EditorGUILayout.Space(3f);
 
@@ -155,6 +158,23 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Presets {
             DrawReadOnlyTemplateAssetSection("docs/pdf/toc.yml", DocsPdfTocTemplateSettings.Instance, 120f);
 
             _pendingUndoRedoSave = false;
+        }
+
+        /// <summary>
+        /// Persists all documentation template settings once before the documentation page first renders.
+        /// </summary>
+        /// <remarks>
+        /// Documentation template settings are loaded lazily and can exist only as transient in-memory defaults until a
+        /// save path is exercised. Initializing them here ensures a fresh project gets concrete <c>ProjectSettings</c>
+        /// assets for both editable and locked documentation templates the first time this page is opened.
+        /// </remarks>
+        private static void EnsureDocumentationTemplateSettingsInitialized() {
+            if (_hasInitializedDocumentationTemplateSettings) {
+                return;
+            }
+
+            PackageAuthoringProjectSettingsApi.SaveDocumentationTemplateSettings();
+            _hasInitializedDocumentationTemplateSettings = true;
         }
 
         /// <summary>

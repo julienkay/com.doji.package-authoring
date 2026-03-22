@@ -9,5 +9,7 @@
     "email": "support@doji-tech.com"
   },
   "documentationUrl": "https://docs.doji-tech.com/com.doji.package-authoring/",
-  "dependencies": {}
+  "dependencies": {
+    "com.unity.nuget.newtonsoft-json": "3.2.2"
+  }
 }

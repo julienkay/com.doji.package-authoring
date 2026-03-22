@@ -4,7 +4,9 @@
       "version": "file:com.doji.package-authoring",
       "depth": 0,
       "source": "embedded",
-      "dependencies": {}
+      "dependencies": {
+        "com.unity.nuget.newtonsoft-json": "3.2.2"
+      }
     },
     "com.unity.burst": {
       "version": "1.8.28",

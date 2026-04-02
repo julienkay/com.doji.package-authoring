@@ -35,32 +35,32 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Drawers {
             DrawField(
                 ref row,
                 property.FindPropertyRelative(CompanyNameField),
-                new GUIContent("Company Name"),
+                PackageAuthoringFieldLabels.Project.CompanyName,
                 RepositoryLayoutPreviewHoverTargets.ProjectCompanyName);
             DrawField(
                 ref row,
                 property.FindPropertyRelative(ProductNameField),
-                new GUIContent(state.ProductLabel),
+                PackageAuthoringFieldLabels.Project.ProductName(state.ProductLabel),
                 RepositoryLayoutPreviewHoverTargets.ProductName);
             DrawField(
                 ref row,
                 property.FindPropertyRelative(VersionField),
-                new GUIContent("Version"),
+                PackageAuthoringFieldLabels.Project.Version,
                 RepositoryLayoutPreviewHoverTargets.Version);
             DrawField(
                 ref row,
                 property.FindPropertyRelative(PreferredEditorField),
-                new GUIContent("Preferred Editor"));
+                PackageAuthoringFieldLabels.Project.PreferredEditor);
             DrawField(
                 ref row,
                 property.FindPropertyRelative(GenerateAgentsFileField),
-                new GUIContent("Generate AGENTS.md"));
+                PackageAuthoringFieldLabels.Project.GenerateAgentsFile);
 
             if (state.IncludeTargetLocation) {
                 DrawField(
                     ref row,
                     property.FindPropertyRelative(TargetLocationField),
-                    new GUIContent("Target Location"),
+                    PackageAuthoringFieldLabels.Project.TargetLocation,
                     RepositoryLayoutPreviewHoverTargets.TargetLocation);
             }
 

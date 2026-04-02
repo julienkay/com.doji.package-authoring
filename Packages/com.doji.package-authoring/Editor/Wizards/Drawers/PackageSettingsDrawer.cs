@@ -47,7 +47,6 @@ namespace Doji.PackageAuthoring.Editor.Wizards {
 
         private static readonly string CreateTestsFolderField =
             $"<{nameof(PackageSettings.CreateTestsFolder)}>k__BackingField";
-
         private static readonly string DependenciesField = $"<{nameof(PackageSettings.Dependencies)}>k__BackingField";
 
         /// <inheritdoc />
@@ -79,51 +78,51 @@ namespace Doji.PackageAuthoring.Editor.Wizards {
             DrawField(
                 ref row,
                 property.FindPropertyRelative(PackageNameField),
-                new GUIContent("Identifier"),
+                PackageAuthoringFieldLabels.Package.Identifier,
                 RepositoryLayoutPreviewHoverTargets.PackageName);
             DrawField(
                 ref row,
                 property.FindPropertyRelative(PackageDisplayNameField),
-                new GUIContent("Package Name", "User-facing package display name written to package.json."),
+                PackageAuthoringFieldLabels.Package.PackageName,
                 RepositoryLayoutPreviewHoverTargets.PackageDisplayName);
             DrawField(
                 ref row,
                 property.FindPropertyRelative(AssemblyNameField),
-                new GUIContent("Assembly Name"),
+                PackageAuthoringFieldLabels.Package.AssemblyName,
                 RepositoryLayoutPreviewHoverTargets.AssemblyName);
             DrawField(
                 ref row,
                 property.FindPropertyRelative(NamespaceNameField),
-                new GUIContent("Namespace"),
+                PackageAuthoringFieldLabels.Package.Namespace,
                 RepositoryLayoutPreviewHoverTargets.NamespaceName);
             DrawField(
                 ref row,
                 property.FindPropertyRelative(DescriptionField),
-                new GUIContent("Description"),
+                PackageAuthoringFieldLabels.Package.Description,
                 RepositoryLayoutPreviewHoverTargets.Description);
             DrawField(
                 ref row,
                 property.FindPropertyRelative(CompanyNameField),
-                new GUIContent("Company Name"),
+                PackageAuthoringFieldLabels.Package.CompanyName,
                 RepositoryLayoutPreviewHoverTargets.PackageCompanyName);
 
             SerializedProperty includeAuthorProperty = property.FindPropertyRelative(IncludeAuthorField);
             DrawField(
                 ref row,
                 includeAuthorProperty,
-                new GUIContent("Include Author Metadata"),
+                PackageAuthoringFieldLabels.Package.IncludeAuthorMetadata,
                 RepositoryLayoutPreviewHoverTargets.IncludeAuthor);
             if (includeAuthorProperty.boolValue) {
                 EditorGUI.indentLevel++;
                 DrawTokenAwareTextField(
                     ref row,
                     property.FindPropertyRelative(AuthorUrlField),
-                    new GUIContent("URL"),
+                    PackageAuthoringFieldLabels.Package.AuthorUrl,
                     RepositoryLayoutPreviewHoverTargets.AuthorUrl);
                 DrawField(
                     ref row,
                     property.FindPropertyRelative(AuthorEmailField),
-                    new GUIContent("Email"),
+                    PackageAuthoringFieldLabels.Package.AuthorEmail,
                     RepositoryLayoutPreviewHoverTargets.AuthorEmail);
                 EditorGUI.indentLevel--;
             }
@@ -133,24 +132,24 @@ namespace Doji.PackageAuthoring.Editor.Wizards {
             DrawField(
                 ref row,
                 includeUnityVersionProperty,
-                new GUIContent("Minimum Unity Version"),
+                PackageAuthoringFieldLabels.Package.MinimumUnityVersion,
                 RepositoryLayoutPreviewHoverTargets.IncludeMinimumUnityVersion);
             if (includeUnityVersionProperty.boolValue) {
                 EditorGUI.indentLevel++;
                 DrawField(
                     ref row,
                     property.FindPropertyRelative(MinimumUnityMajorField),
-                    new GUIContent("Major"),
+                    PackageAuthoringFieldLabels.Package.MinimumUnityMajor,
                     RepositoryLayoutPreviewHoverTargets.MinimumUnityVersion);
                 DrawField(
                     ref row,
                     property.FindPropertyRelative(MinimumUnityMinorField),
-                    new GUIContent("Minor"),
+                    PackageAuthoringFieldLabels.Package.MinimumUnityMinor,
                     RepositoryLayoutPreviewHoverTargets.MinimumUnityVersion);
                 DrawField(
                     ref row,
                     property.FindPropertyRelative(MinimumUnityReleaseField),
-                    new GUIContent("Release"),
+                    PackageAuthoringFieldLabels.Package.MinimumUnityRelease,
                     RepositoryLayoutPreviewHoverTargets.MinimumUnityVersion);
                 EditorGUI.indentLevel--;
             }
@@ -158,33 +157,33 @@ namespace Doji.PackageAuthoring.Editor.Wizards {
             DrawTokenAwareTextField(
                 ref row,
                 property.FindPropertyRelative(DocumentationUrlField),
-                new GUIContent("Documentation URL"),
+                PackageAuthoringFieldLabels.Package.DocumentationUrl,
                 RepositoryLayoutPreviewHoverTargets.DocumentationUrl);
 
             DrawField(
                 ref row,
                 property.FindPropertyRelative(IncludeReadmeField),
-                new GUIContent("Include Package README"),
+                PackageAuthoringFieldLabels.Package.IncludePackageReadme,
                 RepositoryLayoutPreviewHoverTargets.IncludePackageReadme);
             DrawField(
                 ref row,
                 property.FindPropertyRelative(CreateDocsFolderField),
-                new GUIContent("Create Documentation Folder"),
+                PackageAuthoringFieldLabels.Package.CreateDocumentationFolder,
                 RepositoryLayoutPreviewHoverTargets.CreateDocsFolder);
             DrawField(
                 ref row,
                 property.FindPropertyRelative(CreateSamplesFolderField),
-                new GUIContent("Create Samples Folder"),
+                PackageAuthoringFieldLabels.Package.CreateSamplesFolder,
                 RepositoryLayoutPreviewHoverTargets.CreateSamplesFolder);
             DrawField(
                 ref row,
                 property.FindPropertyRelative(CreateEditorFolderField),
-                new GUIContent("Create Editor Folder"),
+                PackageAuthoringFieldLabels.Package.CreateEditorFolder,
                 RepositoryLayoutPreviewHoverTargets.CreateEditorFolder);
             DrawField(
                 ref row,
                 property.FindPropertyRelative(CreateTestsFolderField),
-                new GUIContent("Create Tests Folder"),
+                PackageAuthoringFieldLabels.Package.CreateTestsFolder,
                 RepositoryLayoutPreviewHoverTargets.CreateTestsFolder);
 
             row.y += 8f - EditorGUIUtility.standardVerticalSpacing;
@@ -196,7 +195,7 @@ namespace Doji.PackageAuthoring.Editor.Wizards {
             EditorGUI.PropertyField(
                 new Rect(row.x, row.y, row.width, dependenciesHeight),
                 dependenciesProperty,
-                new GUIContent("Dependencies"),
+                PackageAuthoringFieldLabels.Package.Dependencies,
                 includeChildren: true);
             RepositoryLayoutPreviewHoverContext.SetHoveredTargetsIfHovered(
                 new Rect(row.x, row.y, row.width, dependenciesHeight),

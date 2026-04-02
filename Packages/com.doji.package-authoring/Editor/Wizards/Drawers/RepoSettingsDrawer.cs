@@ -1,5 +1,4 @@
 using Doji.PackageAuthoring.Editor.Wizards.Models;
-using Doji.PackageAuthoring.Editor.Wizards.Templates;
 using UnityEditor;
 using UnityEngine;
 using Doji.PackageAuthoring.Editor.Wizards.UI;
@@ -19,19 +18,6 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Drawers {
         private static readonly string IncludeReadmeField = $"<{nameof(RepoSettings.IncludeReadme)}>k__BackingField";
         private static readonly string LicenseTypeField = $"<{nameof(RepoSettings.LicenseType)}>k__BackingField";
         private static readonly string RepositoryUrlField = $"<{nameof(RepoSettings.RepositoryUrl)}>k__BackingField";
-        private static readonly GUIContent RepositoryFilesSectionLabel = EditorGUIUtility.TrTextContent("Repository Files");
-
-        private static readonly GUIContent LicenseTypeLabel = EditorGUIUtility.TrTextContent(
-            "Open Source License",
-            "Controls the generated license template.");
-
-        private static readonly GUIContent RepositoryUrlLabel = EditorGUIUtility.TrTextContent(
-            "Remote URL",
-            $"Optional URL assigned to the repository's origin remote after git initialization. {TemplateTokenResolver.SupportedTokensTooltipSuffix}");
-
-        private static readonly GUIContent InitializeGitRepositoryLabel = EditorGUIUtility.TrTextContent(
-            "Initialize Git Repository",
-            "Controls whether the generated repository runs git init and creates an initial commit.");
 
         /// <inheritdoc />
         public override float GetPropertyHeight(SerializedProperty property, GUIContent label) {
@@ -48,36 +34,36 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Drawers {
             Rect row = new(position.x, position.y, position.width, EditorGUIUtility.singleLineHeight);
 
             EditorGUI.BeginProperty(position, label, property);
-            EditorGUI.LabelField(row, RepositoryFilesSectionLabel, EditorStyles.boldLabel);
+            EditorGUI.LabelField(row, PackageAuthoringFieldLabels.Repository.FilesSection, EditorStyles.boldLabel);
             row.y += EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
 
             DrawField(
                 ref row,
                 property.FindPropertyRelative(CopyrightHolderField),
-                new GUIContent("Copyright Holder"),
+                PackageAuthoringFieldLabels.Repository.CopyrightHolder,
                 RepositoryLayoutPreviewHoverTargets.RepoCopyrightHolder);
             DrawField(
                 ref row,
                 property.FindPropertyRelative(IncludeReadmeField),
-                new GUIContent("Include README"),
+                PackageAuthoringFieldLabels.Repository.IncludeReadme,
                 RepositoryLayoutPreviewHoverTargets.IncludeRepositoryReadme);
             DrawField(
                 ref row,
                 property.FindPropertyRelative(LicenseTypeField),
-                LicenseTypeLabel,
+                PackageAuthoringFieldLabels.Repository.LicenseType,
                 RepositoryLayoutPreviewHoverTargets.RepoLicenseType);
             SerializedProperty initializeGitRepositoryProperty =
                 property.FindPropertyRelative(InitializeGitRepositoryField);
             DrawField(
                 ref row,
                 initializeGitRepositoryProperty,
-                InitializeGitRepositoryLabel);
+                PackageAuthoringFieldLabels.Repository.InitializeGitRepository);
             if (initializeGitRepositoryProperty.boolValue) {
                 EditorGUI.indentLevel++;
                 DrawTokenAwareTextField(
                     ref row,
                     property.FindPropertyRelative(RepositoryUrlField),
-                    RepositoryUrlLabel);
+                    PackageAuthoringFieldLabels.Repository.RepositoryUrl);
                 EditorGUI.indentLevel--;
             }
 

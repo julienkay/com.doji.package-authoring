@@ -62,6 +62,13 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Templates {
         }
 
         /// <summary>
+        /// Builds the repository AGENTS instructions file.
+        /// </summary>
+        public static string GetAgentsInstructions(this PackageContext ctx) {
+            return AgentsTemplateSettings.Instance.GetResolvedContent(ctx);
+        }
+
+        /// <summary>
         /// Builds the repository README.
         /// </summary>
         public static string GetRepositoryReadme(this PackageContext ctx) {

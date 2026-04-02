@@ -44,6 +44,7 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Presets {
             PackageReadmeTemplateSettings.Instance,
             GitIgnoreTemplateSettings.Instance,
             CustomLicenseTemplateSettings.Instance,
+            AgentsTemplateSettings.Instance,
             RepositoryReadmeTemplateSettings.Instance,
             DocsGitIgnoreTemplateSettings.Instance,
             DocsApiGitIgnoreTemplateSettings.Instance,

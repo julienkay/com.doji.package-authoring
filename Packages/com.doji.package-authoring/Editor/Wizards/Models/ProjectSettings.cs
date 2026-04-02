@@ -42,6 +42,12 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Models {
         public PreferredEditor PreferredEditor { get; set; } = PreferredEditor.None;
 
         /// <summary>
+        /// Whether generated repositories should include an <c>AGENTS.md</c> instructions file.
+        /// </summary>
+        [field: SerializeField]
+        public bool GenerateAgentsFile { get; set; }
+
+        /// <summary>
         /// Base output folder used when scaffolding projects from the editor windows.
         /// </summary>
         [field: SerializeField]
@@ -60,6 +66,7 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Models {
             ProductName = other.ProductName;
             Version = other.Version;
             PreferredEditor = other.PreferredEditor;
+            GenerateAgentsFile = other.GenerateAgentsFile;
             TargetLocation = other.TargetLocation;
         }
     }

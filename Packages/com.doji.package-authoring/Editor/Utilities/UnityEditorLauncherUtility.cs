@@ -126,5 +126,6 @@ namespace Doji.PackageAuthoring.Editor.Utilities {
         private static string Quote(string value) {
             return $"\"{value.Replace("\"", "\\\"")}\"";
         }
+
     }
 }

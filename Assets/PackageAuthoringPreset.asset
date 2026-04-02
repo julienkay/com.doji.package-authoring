@@ -17,6 +17,7 @@ MonoBehaviour:
     <ProductName>k__BackingField: Package Authoring
     <Version>k__BackingField: 1.0.0
     <PreferredEditor>k__BackingField: 0
+    <GenerateAgentsFile>k__BackingField: 0
     <TargetLocation>k__BackingField: ../
   <PackageDefaults>k__BackingField:
     <PackageName>k__BackingField: com.doji.package-authoring

@@ -21,6 +21,9 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Presets {
         private static readonly GUIContent RepositoryReadmeTemplateLabel = new(
             "Repository README",
             "Template content written to generated repository README.md files.");
+        private static readonly GUIContent AgentsTemplateLabel = new(
+            "Repository AGENTS",
+            "Template content written to generated repository AGENTS.md files.");
         private static readonly GUIContent CustomLicenseTemplateLabel = new(
             "Custom License",
             "Template content written to generated repository LICENSE files when Open Source License is set to Custom.");
@@ -113,6 +116,17 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Presets {
         }
 
         /// <summary>
+        /// Creates the child settings provider for the generated repository AGENTS template.
+        /// </summary>
+        [SettingsProvider]
+        public static SettingsProvider CreateAgentsTemplateProvider() {
+            return new SettingsProvider("Project/Doji/Package Authoring/Templates/Repository/AGENTS", SettingsScope.Project) {
+                guiHandler = _ => DrawAgentsSection(),
+                deactivateHandler = SaveAgentsSettingsOnDeactivate,
+            };
+        }
+
+        /// <summary>
         /// Creates the child settings provider for generated documentation scaffold templates.
         /// </summary>
         [SettingsProvider]
@@ -200,6 +214,24 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Presets {
 
             PackageAuthoringGui.DrawSection("Repository README Template", () => {
                 EditorGUILayout.LabelField(RepositoryReadmeTemplateLabel, EditorStyles.wordWrappedMiniLabel);
+                SerializedProperty contentProperty = serializedSettings.FindProperty(ContentField);
+                DrawTemplateTextArea(contentProperty, minHeight: 260f);
+            });
+
+            ApplyAndSaveOnChangeOrUndo(serializedSettings, settings.SaveSettings);
+            _pendingUndoRedoSave = false;
+        }
+
+        /// <summary>
+        /// Draws the editable repository AGENTS template with token guidance and explicit project-settings persistence.
+        /// </summary>
+        private static void DrawAgentsSection() {
+            AgentsTemplateSettings settings = AgentsTemplateSettings.Instance;
+            using SerializedObject serializedSettings = new SerializedObject(settings);
+            serializedSettings.Update();
+
+            PackageAuthoringGui.DrawSection("Repository AGENTS Template", () => {
+                EditorGUILayout.LabelField(AgentsTemplateLabel, EditorStyles.wordWrappedMiniLabel);
                 SerializedProperty contentProperty = serializedSettings.FindProperty(ContentField);
                 DrawTemplateTextArea(contentProperty, minHeight: 260f);
             });
@@ -414,6 +446,13 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Presets {
         /// </summary>
         private static void SaveRepositoryReadmeSettingsOnDeactivate() {
             RepositoryReadmeTemplateSettings.Instance.SaveSettings();
+        }
+
+        /// <summary>
+        /// Persists the repository AGENTS template when the settings page is left.
+        /// </summary>
+        private static void SaveAgentsSettingsOnDeactivate() {
+            AgentsTemplateSettings.Instance.SaveSettings();
         }
 
         /// <summary>

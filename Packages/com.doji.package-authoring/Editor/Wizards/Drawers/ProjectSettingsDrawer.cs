@@ -13,6 +13,7 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Drawers {
         private static readonly string ProductNameField = $"<{nameof(ProjectSettings.ProductName)}>k__BackingField";
         private static readonly string VersionField = $"<{nameof(ProjectSettings.Version)}>k__BackingField";
         private static readonly string PreferredEditorField = $"<{nameof(ProjectSettings.PreferredEditor)}>k__BackingField";
+        private static readonly string GenerateAgentsFileField = $"<{nameof(ProjectSettings.GenerateAgentsFile)}>k__BackingField";
 
         private static readonly string TargetLocationField =
             $"<{nameof(ProjectSettings.TargetLocation)}>k__BackingField";
@@ -20,7 +21,7 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Drawers {
         /// <inheritdoc />
         public override float GetPropertyHeight(SerializedProperty property, GUIContent label) {
             ProjectSettingsDrawerContext.State state = ProjectSettingsDrawerContext.Current;
-            int lineCount = state.IncludeTargetLocation ? 5 : 4;
+            int lineCount = state.IncludeTargetLocation ? 6 : 5;
             return (EditorGUIUtility.singleLineHeight * lineCount) +
                    (EditorGUIUtility.standardVerticalSpacing * (lineCount - 1));
         }
@@ -50,6 +51,10 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Drawers {
                 ref row,
                 property.FindPropertyRelative(PreferredEditorField),
                 new GUIContent("Preferred Editor"));
+            DrawField(
+                ref row,
+                property.FindPropertyRelative(GenerateAgentsFileField),
+                new GUIContent("Generate AGENTS.md"));
 
             if (state.IncludeTargetLocation) {
                 DrawField(

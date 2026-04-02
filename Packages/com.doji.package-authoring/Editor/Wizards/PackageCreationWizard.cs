@@ -486,6 +486,14 @@ namespace Doji.PackageAuthoring.Editor.Wizards {
                 GeneratedProjectScaffoldingUtility.CreateFile(licensePath, license);
             }
 
+            string agentsInstructions = ProjectSettings.GenerateAgentsFile
+                ? Ctx.GetAgentsInstructions()
+                : string.Empty;
+            if (!string.IsNullOrWhiteSpace(agentsInstructions)) {
+                string agentsPath = Path.Combine(RootDirectory, "AGENTS.md");
+                GeneratedProjectScaffoldingUtility.CreateFile(agentsPath, agentsInstructions);
+            }
+
             if (RepoSettings.IncludeReadme) {
                 string readmePath = Path.Combine(RootDirectory, "README.md");
                 GeneratedProjectScaffoldingUtility.CreateFile(readmePath, Ctx.GetRepositoryReadme());

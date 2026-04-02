@@ -170,30 +170,31 @@ namespace Doji.PackageAuthoring.Editor.Wizards {
             _windowSerializedObject.Update();
             GUILayout.Space(10f);
 
-            using (EditorGUILayout.ScrollViewScope scrollView = new EditorGUILayout.ScrollViewScope(
-                       _contentScrollPosition,
-                       GUILayout.ExpandHeight(true))) {
-                _contentScrollPosition = scrollView.scrollPosition;
+            using (new EditorGUILayout.HorizontalScope(GUILayout.ExpandHeight(true))) {
+                using (EditorGUILayout.ScrollViewScope scrollView = new EditorGUILayout.ScrollViewScope(
+                           _contentScrollPosition,
+                           GUILayout.ExpandWidth(true),
+                           GUILayout.ExpandHeight(true))) {
+                    _contentScrollPosition = scrollView.scrollPosition;
 
-                EditorGUILayout.BeginHorizontal();
-                EditorGUILayout.BeginVertical(GUILayout.ExpandWidth(true));
-                DrawPackageDefinitionSection();
+                    EditorGUILayout.BeginVertical(GUILayout.ExpandWidth(true));
+                    DrawPackageDefinitionSection();
 
-                GUILayout.Space(8f);
-                DrawRepoSettingsSection();
+                    GUILayout.Space(8f);
+                    DrawRepoSettingsSection();
 
-                GUILayout.Space(8f);
-                DrawCompanionProjectSection();
+                    GUILayout.Space(8f);
+                    DrawCompanionProjectSection();
 
-                GUILayout.Space(8f);
-                PackageAuthoringGui.DrawSection("Output", DrawOutputSection);
-                EditorGUILayout.EndVertical();
+                    GUILayout.Space(8f);
+                    PackageAuthoringGui.DrawSection("Output", DrawOutputSection);
+                    EditorGUILayout.EndVertical();
+                }
 
                 GUILayout.Space(10f);
                 _defaultsSerializedObject.ApplyModifiedProperties();
                 _windowSerializedObject.ApplyModifiedProperties();
                 DrawRepositoryLayoutPreviewPanel();
-                EditorGUILayout.EndHorizontal();
             }
 
             _defaultsSerializedObject.ApplyModifiedProperties();

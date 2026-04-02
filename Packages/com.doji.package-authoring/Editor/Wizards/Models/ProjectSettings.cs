@@ -3,6 +3,16 @@ using UnityEngine;
 
 namespace Doji.PackageAuthoring.Editor.Wizards.Models {
     /// <summary>
+    /// Selects which Unity IDE integration package should be installed into generated projects.
+    /// </summary>
+    public enum PreferredEditor {
+        None,
+        VisualStudio,
+        VisualStudioCode,
+        Rider
+    }
+
+    /// <summary>
     /// Shared project-facing settings used by both the standalone and companion project wizards.
     /// </summary>
     [Serializable]
@@ -26,6 +36,12 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Models {
         public string Version { get; set; } = "1.0.0";
 
         /// <summary>
+        /// IDE integration package added to generated project manifests for script-opening and project sync.
+        /// </summary>
+        [field: SerializeField]
+        public PreferredEditor PreferredEditor { get; set; } = PreferredEditor.None;
+
+        /// <summary>
         /// Base output folder used when scaffolding projects from the editor windows.
         /// </summary>
         [field: SerializeField]
@@ -43,6 +59,7 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Models {
             CompanyName = other.CompanyName;
             ProductName = other.ProductName;
             Version = other.Version;
+            PreferredEditor = other.PreferredEditor;
             TargetLocation = other.TargetLocation;
         }
     }

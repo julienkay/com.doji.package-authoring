@@ -1,5 +1,6 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Doji.PackageAuthoring.Editor.Wizards.Models;
 using static Doji.PackageAuthoring.Editor.Utilities.JsonBuilder;
 
 namespace Doji.PackageAuthoring.Editor.Wizards.Templates {
@@ -19,7 +20,6 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Templates {
         private static JObject GetProjectDependencies(PackageContext ctx) {
             JObject deps = new JObject {
                 [ctx.Package.PackageName] = $"file:../../../{ctx.Package.PackageName}",
-                ["com.unity.ide.visualstudio"] = "2.0.27",
                 ["com.unity.ugui"] = "2.0.0",
                 ["com.unity.modules.ai"] = "1.0.0",
                 ["com.unity.modules.androidjni"] = "1.0.0",
@@ -46,7 +46,22 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Templates {
                 ["com.unity.modules.xr"] = "1.0.0"
             };
 
+            AddPreferredEditorDependency(deps, ctx.Project.PreferredEditor);
             return new JObject(deps.Properties());
+        }
+
+        private static void AddPreferredEditorDependency(JObject deps, PreferredEditor preferredEditor) {
+            switch (preferredEditor) {
+                case PreferredEditor.VisualStudio:
+                    deps["com.unity.ide.visualstudio"] = "2.0.27";
+                    break;
+                case PreferredEditor.VisualStudioCode:
+                    deps["com.unity.ide.vscode"] = "1.2.5";
+                    break;
+                case PreferredEditor.Rider:
+                    deps["com.unity.ide.rider"] = "3.0.39";
+                    break;
+            }
         }
     }
 }

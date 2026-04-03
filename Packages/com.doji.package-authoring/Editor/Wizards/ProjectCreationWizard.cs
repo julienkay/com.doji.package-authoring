@@ -1,4 +1,3 @@
-using System;
 using System.IO;
 using UnityEditor;
 using UnityEngine;
@@ -203,14 +202,15 @@ namespace Doji.PackageAuthoring.Editor.Wizards {
         /// Copies the template project into the chosen location and optionally opens it in Unity.
         /// </summary>
         private void CreateProjectStructure() {
-            using IDisposable _ = GeneratedProjectScaffoldingUtility.ApplyTemporaryProjectSettings(
-                ProjectSettings,
-                _ => BuildApplicationIdentifier(),
-                ProjectSettings.ProductName);
             GeneratedProjectScaffoldingUtility.CopyTemplateProjectBaseline(
                 ProjectDirectory,
                 CurrentGitIgnoreTemplate,
                 ProjectManifestTemplate.GetProjectManifest(ProjectSettings));
+            GeneratedProjectScaffoldingUtility.ApplyGeneratedProjectSettings(
+                ProjectDirectory,
+                ProjectSettings,
+                BuildApplicationIdentifier(),
+                BuildRootNamespace());
 
             Debug.Log($"Project created successfully at {ProjectDirectory}");
 
@@ -220,7 +220,13 @@ namespace Doji.PackageAuthoring.Editor.Wizards {
         }
 
         private string BuildApplicationIdentifier() {
-            return $"com.{ProjectSettings.CompanyName.ToLower().Replace(" ", "")}.{ProjectSettings.ProductName.ToLower()}";
+            return GeneratedProjectScaffoldingUtility.BuildDefaultApplicationIdentifier(
+                ProjectSettings.CompanyName,
+                ProjectSettings.ProductName);
+        }
+
+        private string BuildRootNamespace() {
+            return GeneratedProjectScaffoldingUtility.SanitizeRootNamespace(ProjectSettings.ProductName);
         }
     }
 }

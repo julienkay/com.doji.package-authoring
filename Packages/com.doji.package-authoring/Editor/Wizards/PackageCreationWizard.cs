@@ -473,14 +473,17 @@ namespace Doji.PackageAuthoring.Editor.Wizards {
         /// Copies the template Unity project and points its manifest back to the generated local package.
         /// </summary>
         private void CreateProjectStructure() {
-            using IDisposable _ = GeneratedProjectScaffoldingUtility.ApplyTemporaryProjectSettings(
-                ProjectSettings,
-                _ => PackageSettings.PackageName,
-                PackageSettings.NamespaceName);
             GeneratedProjectScaffoldingUtility.CopyTemplateProjectBaseline(
                 ProjectDirectory,
                 CurrentGitIgnoreTemplate,
                 Ctx.GetProjectManifest());
+            GeneratedProjectScaffoldingUtility.ApplyGeneratedProjectSettings(
+                ProjectDirectory,
+                ProjectSettings,
+                GeneratedProjectScaffoldingUtility.BuildDefaultApplicationIdentifier(
+                    ProjectSettings.CompanyName,
+                    ProjectSettings.ProductName),
+                GeneratedProjectScaffoldingUtility.SanitizeRootNamespace(PackageSettings.NamespaceName));
         }
 
         private void CreateRootFiles() {

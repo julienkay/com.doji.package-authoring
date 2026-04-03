@@ -7,6 +7,7 @@ using Doji.PackageAuthoring.Editor.Wizards.Models;
 using Doji.PackageAuthoring.Editor.Wizards.Presets;
 using Doji.PackageAuthoring.Editor.Wizards.Templates;
 using Doji.PackageAuthoring.Editor.Wizards.UI;
+using static Doji.PackageAuthoring.Editor.Utilities.GuidUtility;
 
 namespace Doji.PackageAuthoring.Editor.Wizards {
     /// <summary>
@@ -460,7 +461,7 @@ namespace Doji.PackageAuthoring.Editor.Wizards {
             }
 
             if (PackageSettings.CreateTestsFolder) {
-                Directory.CreateDirectory(Path.Combine(PackageDirectory, "Tests"));
+                GeneratedProjectScaffoldingUtility.CreateFolderWithMeta(Path.Combine(PackageDirectory, "Tests"));
             }
 
             // Package metadata is written after the folder layout is in place so optional folders can influence it.
@@ -508,15 +509,25 @@ namespace Doji.PackageAuthoring.Editor.Wizards {
         private void CreatePackageFiles(string path) {
             string packageManifestPath = Path.Combine(path, "package.json");
             // `package.json` is regenerated because optional samples and dependencies directly affect its contents.
-            GeneratedProjectScaffoldingUtility.CreateFile(packageManifestPath, Ctx.GetPackageManifest(), overwrite: true);
+            GeneratedProjectScaffoldingUtility.CreateFileWithMeta(
+                packageManifestPath,
+                Ctx.GetPackageManifest(),
+                AssetMetaTemplate.GetPackageManifestMeta(NewMetaGuid()),
+                overwrite: true);
 
             if (PackageSettings.IncludeReadme) {
                 string readmePath = Path.Combine(path, "README.md");
-                GeneratedProjectScaffoldingUtility.CreateFile(readmePath, Ctx.GetPackageReadme());
+                GeneratedProjectScaffoldingUtility.CreateFileWithMeta(
+                    readmePath,
+                    Ctx.GetPackageReadme(),
+                    AssetMetaTemplate.GetTextAssetMeta(NewMetaGuid()));
             }
 
             string changelogPath = Path.Combine(path, "CHANGELOG.md");
-            GeneratedProjectScaffoldingUtility.CreateFile(changelogPath, Ctx.GetChangelog());
+            GeneratedProjectScaffoldingUtility.CreateFileWithMeta(
+                changelogPath,
+                Ctx.GetChangelog(),
+                AssetMetaTemplate.GetTextAssetMeta(NewMetaGuid()));
         }
 
         /// <summary>
@@ -551,7 +562,10 @@ namespace Doji.PackageAuthoring.Editor.Wizards {
         /// </summary>
         private void CreateAssemblyInfo(string path) {
             string assemblyInfoPath = Path.Combine(path, "AssemblyInfo.cs");
-            GeneratedProjectScaffoldingUtility.CreateFile(assemblyInfoPath, Ctx.GetAssemblyInfo());
+            GeneratedProjectScaffoldingUtility.CreateFileWithMeta(
+                assemblyInfoPath,
+                Ctx.GetAssemblyInfo(),
+                AssetMetaTemplate.GetMonoScriptMeta(NewMetaGuid()));
         }
 
         /// <summary>
@@ -559,7 +573,7 @@ namespace Doji.PackageAuthoring.Editor.Wizards {
         /// </summary>
         private void CreateRuntimeFolder() {
             string runtimePath = Path.Combine(PackageDirectory, "Runtime");
-            Directory.CreateDirectory(runtimePath);
+            GeneratedProjectScaffoldingUtility.CreateFolderWithMeta(runtimePath);
             string runtimeAssemblyGuid = CreateRuntimeAsmDef(runtimePath);
             _runtimeAssemblyGuid = runtimeAssemblyGuid;
             CreateAssemblyInfo(runtimePath);
@@ -570,7 +584,7 @@ namespace Doji.PackageAuthoring.Editor.Wizards {
         /// </summary>
         private void CreateEditorFolder() {
             string editorPath = Path.Combine(PackageDirectory, "Editor");
-            Directory.CreateDirectory(editorPath);
+            GeneratedProjectScaffoldingUtility.CreateFolderWithMeta(editorPath);
             CreateEditorAsmDef(editorPath, _runtimeAssemblyGuid);
         }
 
@@ -579,16 +593,17 @@ namespace Doji.PackageAuthoring.Editor.Wizards {
         /// </summary>
         private void CreateSamplesFolder() {
             string samplesPath = Path.Combine(PackageDirectory, "Samples~");
-            Directory.CreateDirectory(samplesPath);
+            GeneratedProjectScaffoldingUtility.CreateFolderWithMeta(samplesPath);
 
-            Directory.CreateDirectory(Path.Combine(samplesPath, "00-SharedSampleAssets"));
-            Directory.CreateDirectory(Path.Combine(samplesPath, "01-BasicSample"));
+            GeneratedProjectScaffoldingUtility.CreateFolderWithMeta(Path.Combine(samplesPath, "00-SharedSampleAssets"));
+            GeneratedProjectScaffoldingUtility.CreateFolderWithMeta(Path.Combine(samplesPath, "01-BasicSample"));
             CreateSamplesAsmDef(samplesPath, _runtimeAssemblyGuid);
 
             // Keep the starter sample in a numbered folder so package manager ordering is predictable.
-            GeneratedProjectScaffoldingUtility.CreateFile(
+            GeneratedProjectScaffoldingUtility.CreateFileWithMeta(
                 Path.Combine(samplesPath, "01-BasicSample", "BasicSample.cs"),
-                Ctx.GetSampleScript());
+                Ctx.GetSampleScript(),
+                AssetMetaTemplate.GetMonoScriptMeta(NewMetaGuid()));
         }
 
         /// <summary>
@@ -669,7 +684,7 @@ namespace Doji.PackageAuthoring.Editor.Wizards {
         /// </summary>
         /// <returns>GUID written into the generated asmdef meta file.</returns>
         private string CreateAsmDefWithMeta(string asmDefPath, string content) {
-            string guid = Guid.NewGuid().ToString("N");
+            string guid = NewMetaGuid();
             GeneratedProjectScaffoldingUtility.CreateFile(asmDefPath, content, overwrite: true);
             GeneratedProjectScaffoldingUtility.CreateFile(
                 $"{asmDefPath}.meta",

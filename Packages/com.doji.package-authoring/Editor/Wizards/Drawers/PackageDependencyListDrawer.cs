@@ -22,7 +22,7 @@ namespace Doji.PackageAuthoring.Editor.Wizards {
 
         private static readonly Dictionary<string, State> States = new();
 
-        private static class Styles {
+        private static class Content {
             public static readonly GUIContent Version =
                 EditorGUIUtility.TrTextContent("Version", "Must follow SemVer (ex: 1.0.0-preview.1).");
 
@@ -124,11 +124,11 @@ namespace Doji.PackageAuthoring.Editor.Wizards {
                 float width = rect.width;
                 rect.x += 4f;
                 rect.width = width / 3f * 2f - 2f;
-                GUI.Label(rect, Styles.Package, EditorStyles.label);
+                GUI.Label(rect, Content.Package, EditorStyles.label);
 
                 rect.x += width / 3f * 2f;
                 rect.width = width / 3f - 4f;
-                GUI.Label(rect, Styles.Version, EditorStyles.label);
+                GUI.Label(rect, Content.Version, EditorStyles.label);
             }
 
             private void DrawDependencyElement(Rect rect, int index, bool isActive, bool isFocused) {

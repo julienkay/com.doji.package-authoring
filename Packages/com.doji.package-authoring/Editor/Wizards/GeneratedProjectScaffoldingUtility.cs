@@ -3,6 +3,8 @@ using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 using Doji.PackageAuthoring.Editor.Wizards.Models;
+using Doji.PackageAuthoring.Editor.Wizards.Templates;
+using static Doji.PackageAuthoring.Editor.Utilities.GuidUtility;
 
 namespace Doji.PackageAuthoring.Editor.Wizards {
     /// <summary>
@@ -189,6 +191,31 @@ namespace Doji.PackageAuthoring.Editor.Wizards {
             }
 
             File.WriteAllText(path, content);
+        }
+
+        /// <summary>
+        /// Writes scaffolded content and a matching Unity meta file for generated assets whose importer is known up front.
+        /// </summary>
+        /// <param name="path">Asset path to create.</param>
+        /// <param name="content">Asset content to write.</param>
+        /// <param name="metaContent">Companion meta file content.</param>
+        /// <param name="overwrite">Whether existing files should be replaced.</param>
+        public static void CreateFileWithMeta(string path, string content, string metaContent, bool overwrite = false) {
+            CreateFile(path, content, overwrite);
+            CreateFile($"{path}.meta", metaContent, overwrite);
+        }
+
+        /// <summary>
+        /// Creates a generated folder and a matching Unity folder meta file.
+        /// </summary>
+        /// <param name="path">Directory path to create.</param>
+        /// <param name="overwriteMeta">Whether an existing meta file should be replaced.</param>
+        public static void CreateFolderWithMeta(string path, bool overwriteMeta = false) {
+            Directory.CreateDirectory(path);
+            CreateFile(
+                $"{path}.meta",
+                AssetMetaTemplate.GetFolderMeta(NewMetaGuid()),
+                overwriteMeta);
         }
 
         /// <summary>

@@ -169,7 +169,7 @@ This is the documentation for the Scripting APIs of this package.";
 - exclude:
     uidRegex: ^{{NAMESPACE_NAME_REGEX}}\.Samples";
 
-        public const string IndexDefaultContent = @"# {{PROJECT_NAME}}
+        public const string IndexDefaultContent = @"# {{PACKAGE_NAME}}
 
 {{PACKAGE_DESCRIPTION}}";
 
@@ -180,7 +180,7 @@ This is the documentation for the Scripting APIs of this package.";
   homepage: api/index.md
 ";
 
-        public const string ManualTocDefaultContent = @"- name: {{PROJECT_NAME}}
+        public const string ManualTocDefaultContent = @"- name: {{PACKAGE_NAME}}
   href: ../index.md
 ";
 

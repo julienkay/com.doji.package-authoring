@@ -1,46 +1,38 @@
 # Manual
 
-`com.doji.package-authoring` is an editor-only Unity package, so the DocFX site for this repository is built from the C# sources under `com.doji.package-authoring`.
+`com.doji.package-authoring` provides Unity editor tooling for scaffolding reusable UPM packages, companion Unity projects, and the repository files that support them.
 
-## Build On macOS
+## What This Package Does
 
-Install DocFX as a global .NET tool if it is not already available:
+The package is centered around two editor windows:
 
-```bash
-dotnet tool install -g docfx
-```
+- `Tools/Package Creation Wizard` creates a repository that contains a UPM package, optional supporting folders, and a companion Unity project.
+- `Tools/Project Creation Wizard` creates a standalone Unity project from the shared project defaults.
 
-Use the repo wrapper on macOS. It points DocFX at Homebrew's real `.NET` SDK location under `/opt/homebrew/opt/dotnet/libexec`, which avoids the SDK lookup failure from the default shim:
+The package also adds project-scoped defaults and template editors under `Project Settings > Doji > Package Authoring`.
 
-```bash
-./scripts/docfx.sh docs/docfx.json
-```
+## Recommended Reading Order
 
-Build the HTML site from the repository root:
+- [Package Creation Wizard](package-creation-wizard.md) for the end-to-end workflow and the generated repository shape.
+- [Package Creation Wizard Settings](package-creation-wizard-settings.md) for a field-by-field reference of every setting shown in the main wizard window.
+- [Defaults And Presets](defaults-and-presets.md) for project defaults, preset assets, and how values are shared across tools.
+- [Templates](templates.md) for repository, package, and documentation template customization.
+- [Companion And Standalone Projects](projects.md) for how generated Unity projects are assembled.
 
-```bash
-./scripts/docfx.sh docs/docfx.json
-```
+## Key Concepts
 
-Preview the generated site locally:
+### Project Defaults
 
-```bash
-./scripts/docfx.sh serve docs/_site
-```
+The settings page at `Project Settings > Doji > Package Authoring` stores the baseline values used when a new wizard window opens. These defaults are saved per Unity project.
 
-DocFX prints the local URL after the server starts. Stop it with `Ctrl+C`.
+### Presets
 
-## PDF Output
+Preset assets capture a reusable package-authoring profile. In the package creation wizard, the package/repository side and the companion-project side each have their own preset button so you can apply only the relevant portion of a preset.
 
-Build the PDF-oriented output with:
+### Templates
 
-```bash
-./scripts/docfx.sh docs/docfx-pdf.json
-```
+Generated text files such as `README.md`, `AGENTS.md`, `LICENSE`, and the DocFX scaffold are backed by editable project-scoped templates. Template placeholders are resolved from the current package, repository, and project values at generation time.
 
-The generated PDF is written under `docs/_site/pdf/com.doji.package-authoring.pdf`.
+## API Reference
 
-## Notes
-
-- The API filter includes the `Doji.PackageAuthoring.Editor` namespaces because this package exposes editor tooling rather than runtime components.
-- Generated API YAML files stay ignored under `docs/api/`, so you can rebuild locally without committing intermediate artifacts.
+The [Scripting API](../api/index.md) documents the editor-facing types exposed by the package.

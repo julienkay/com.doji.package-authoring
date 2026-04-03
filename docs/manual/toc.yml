@@ -1,2 +1,12 @@
 - name: com.doji.package-authoring
   href: index.md
+- name: Package Creation Wizard
+  href: package-creation-wizard.md
+- name: Package Creation Wizard Settings
+  href: package-creation-wizard-settings.md
+- name: Defaults And Presets
+  href: defaults-and-presets.md
+- name: Templates
+  href: templates.md
+- name: Companion And Standalone Projects
+  href: projects.md

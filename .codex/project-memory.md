@@ -8,26 +8,26 @@
 
 ## Current Product Shape
 
-- The main package under development is `Packages/com.doji.package-authoring`.
+- The main package under development is `com.doji.package-authoring`.
 - That package owns the editor tooling for project creation, package repository creation, generated metadata/templates, and reusable authoring defaults.
-- The repository also contains host-project baseline assets and settings used by the template project itself, including `Assets/Input`, `Assets/Settings`, `ProjectSettings`, and `Packages/manifest.json`.
+- The repository also contains host-project baseline assets and settings used by the template project itself under `projects/Package Authoring`, including `Assets/Input`, `Assets/Settings`, `ProjectSettings`, and `Packages/manifest.json`.
 
 ## Package Audit Scope
 
-- Treat `Packages/com.doji.package-authoring` as the only shipped/publishable artifact for package-readiness reviews.
-- Do not flag repository-root `Assets/`, `ProjectSettings/`, or ad hoc local preset assets as publish-blocking package issues unless the user explicitly asks for whole-repo cleanup.
+- Treat `com.doji.package-authoring` as the only shipped/publishable artifact for package-readiness reviews.
+- Do not flag `projects/Package Authoring/Assets/`, `projects/Package Authoring/ProjectSettings/`, or ad hoc local preset assets as publish-blocking package issues unless the user explicitly asks for whole-repo cleanup.
 - Non-committed local assets such as personal presets are not part of the package audit scope.
 
 ## Source Of Truth
 
-- Prefer `Packages/com.doji.package-authoring` for package-authoring behavior and package-owned implementation work.
-- Use repository-root `Assets/`, `ProjectSettings`, and `Packages/manifest.json` when the task is explicitly about template-host support assets or generator baseline configuration.
+- Prefer `com.doji.package-authoring` for package-authoring behavior and package-owned implementation work.
+- Use `projects/Package Authoring/Assets/`, `projects/Package Authoring/ProjectSettings`, and `projects/Package Authoring/Packages/manifest.json` when the task is explicitly about template-host support assets or generator baseline configuration.
 
 ## Repository Structure
 
-- `Packages/com.doji.package-authoring/Editor/Wizards` contains the main authoring flows, models, drawers, presets, and templates.
-- `Packages/com.doji.package-authoring/Editor/Utilities` contains supporting editor utilities such as Git, launcher, JSON, and image helpers.
-- `Assets/Editor` contains template-project-level editor helpers.
+- `com.doji.package-authoring/Editor/Wizards` contains the main authoring flows, models, drawers, presets, and templates.
+- `com.doji.package-authoring/Editor/Utilities` contains supporting editor utilities such as Git, launcher, JSON, and image helpers.
+- `projects/Package Authoring/Assets/Editor` contains template-project-level editor helpers.
 - `docs/` is for human-facing documentation, not durable agent memory.
 
 ## Current Intentional Decisions
@@ -58,4 +58,4 @@
 ## Audit History Notes
 
 - A previous audit over-reported issues from the template host project. Future audits should scope findings to the shipped package first.
-- Remaining high-signal concerns should focus on package-owned hardcoded assumptions or brittle generation behavior inside `Packages/com.doji.package-authoring`.
+- Remaining high-signal concerns should focus on package-owned hardcoded assumptions or brittle generation behavior inside `com.doji.package-authoring`.

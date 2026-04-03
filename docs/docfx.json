@@ -49,7 +49,10 @@
     "output": "_site",
     "globalMetadataFiles": [],
     "globalMetadata": {
-      "_disableContribution": true
+      "_disableContribution": true,
+      "_appTitle": "com.doji.package-authoring",
+      "_appName": "com.doji.package-authoring",
+      "_enableSearch": true
     },
     "fileMetadataFiles": [],
     "template": [

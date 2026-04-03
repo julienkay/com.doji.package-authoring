@@ -9,9 +9,9 @@ Use this skill for changes to the package-creation repository layout preview hov
 
 The workflow spans three places:
 
-1. `Packages/com.doji.package-authoring/Editor/Wizards/UI/RepositoryLayoutPreviewHoverTargets.cs`
+1. `com.doji.package-authoring/Editor/Wizards/UI/RepositoryLayoutPreviewHoverTargets.cs`
    Add or update the semantic target id.
-2. `Packages/com.doji.package-authoring/Editor/Wizards/UI/RepositoryLayoutPreviewPanel.cs`
+2. `com.doji.package-authoring/Editor/Wizards/UI/RepositoryLayoutPreviewPanel.cs`
    Map that target in `MatchesTarget(...)`.
 3. The relevant drawer or window
    Publish the target from the drawn IMGUI rects via `RepositoryLayoutPreviewHoverContext.SetHoveredTargetsIfHovered(...)`.

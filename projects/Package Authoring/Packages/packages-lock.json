@@ -1,9 +1,9 @@
 {
   "dependencies": {
     "com.doji.package-authoring": {
-      "version": "file:com.doji.package-authoring",
+      "version": "file:../../../com.doji.package-authoring",
       "depth": 0,
-      "source": "embedded",
+      "source": "local",
       "dependencies": {
         "com.unity.nuget.newtonsoft-json": "3.2.2"
       }

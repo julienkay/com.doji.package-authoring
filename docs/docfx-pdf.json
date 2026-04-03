@@ -57,7 +57,9 @@
       "_disableContribution": true,
       "pdf": true,
       "pdfTocPage": true,
-      "pdfFileName": "com.doji.package-authoring.pdf"
+      "pdfFileName": "com.doji.package-authoring.pdf",
+      "_appTitle": "com.doji.package-authoring",
+      "_appName": "com.doji.package-authoring"
     },
     "fileMetadataFiles": [],
     "template": [

@@ -5,7 +5,7 @@ This repository is a Unity 6 template project for bootstrapping either:
 - a new Unity application project
 - a reusable Unity package with an accompanying sample project
 
-The repo is centered around custom editor tooling in [`Assets/Editor`](/Users/julienkipp/Unity/UnityProjectTemplate/Assets/Editor) rather than gameplay code. It also contains template-project assets and settings used to support authoring and validation inside this repository.
+The repo is centered around custom editor tooling in [`com.doji.package-authoring/Editor`](/Users/julienkipp/Unity/UnityProjectTemplate/com.doji.package-authoring/Editor) and a host Unity project under [`projects/Package Authoring`](/Users/julienkipp/Unity/UnityProjectTemplate/projects/Package%20Authoring) used to support authoring and validation inside this repository.
 
 For durable repository context, conventions, and architectural notes that should survive local IDE or assistant history, see [`.codex/project-memory.md`](/Users/julienkipp/Unity/UnityProjectTemplate/.codex/project-memory.md).
 
@@ -30,16 +30,17 @@ The project is currently configured for Unity `6000.3.5f1`.
 
 Key folders:
 
-- [`Assets/Editor`](/Users/julienkipp/Unity/UnityProjectTemplate/Assets/Editor): editor windows and text/template generators for project and package scaffolding
-- [`Assets/Input`](/Users/julienkipp/Unity/UnityProjectTemplate/Assets/Input): template-project Input System actions asset
-- [`Assets/Settings`](/Users/julienkipp/Unity/UnityProjectTemplate/Assets/Settings): template-project URP renderer, pipeline, and volume profile assets
-- [`Packages`](/Users/julienkipp/Unity/UnityProjectTemplate/Packages): Unity package manifest for the template project itself
-- [`ProjectSettings`](/Users/julienkipp/Unity/UnityProjectTemplate/ProjectSettings): template-project settings and generator defaults
+- [`com.doji.package-authoring`](/Users/julienkipp/Unity/UnityProjectTemplate/com.doji.package-authoring): the reusable package under development
+- [`projects/Package Authoring/Assets/Editor`](/Users/julienkipp/Unity/UnityProjectTemplate/projects/Package%20Authoring/Assets/Editor): host-project editor helpers
+- [`projects/Package Authoring/Assets/Input`](/Users/julienkipp/Unity/UnityProjectTemplate/projects/Package%20Authoring/Assets/Input): template-project Input System actions asset
+- [`projects/Package Authoring/Assets/Settings`](/Users/julienkipp/Unity/UnityProjectTemplate/projects/Package%20Authoring/Assets/Settings): template-project URP renderer, pipeline, and volume profile assets
+- [`projects/Package Authoring/Packages`](/Users/julienkipp/Unity/UnityProjectTemplate/projects/Package%20Authoring/Packages): Unity package manifest for the host project
+- [`projects/Package Authoring/ProjectSettings`](/Users/julienkipp/Unity/UnityProjectTemplate/projects/Package%20Authoring/ProjectSettings): template-project settings and generator defaults
 - [`docs`](/Users/julienkipp/Unity/UnityProjectTemplate/docs): placeholder docs directory for future documentation work
 
 ## How To Use
 
-1. Open the repository in Unity `6000.3.5f1`.
+1. Open [`projects/Package Authoring`](/Users/julienkipp/Unity/UnityProjectTemplate/projects/Package%20Authoring) in Unity `6000.3.10f1`.
 2. Use the Unity menu:
    - `Tools/Project Creation Wizard`
    - `Tools/Package Creation Wizard`

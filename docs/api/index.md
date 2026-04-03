@@ -1,2 +1,2 @@
 # Scripting API
-This is the documentation for the Scripting APIs of this package.
+This reference covers the public editor APIs exposed by `com.doji.package-authoring`.

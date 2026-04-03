@@ -6,6 +6,4 @@ apiRules:
     uidRegex: ^Global
     type: Namespace
 - exclude:
-    uidRegex: ^Doji\.PackageAuthoring\.Editor
-- exclude:
     uidRegex: ^Doji\.PackageAuthoring\.Samples

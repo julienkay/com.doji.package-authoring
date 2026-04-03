@@ -1,53 +1,85 @@
+using System.IO;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Doji.PackageAuthoring.Editor.Wizards.Models;
-using static Doji.PackageAuthoring.Editor.Utilities.JsonBuilder;
+using UnityEngine;
 
 namespace Doji.PackageAuthoring.Editor.Wizards.Templates {
     /// <summary>
-    /// Builds the companion project's Unity manifest.
+    /// Builds generated Unity project manifests from the baseline project manifest plus scaffold-specific overrides.
     /// </summary>
     public static class ProjectManifestTemplate {
-        public static string GetProjectManifest(PackageContext ctx) {
-            JObject json = Obj(
-                Prop("dependencies", GetProjectDependencies(ctx)),
-                PropIf(ctx.Package.CreateTestsFolder, "testables", Arr(ctx.Package.PackageName))
-            );
+        private static readonly string[] IdePackageIds = {
+            "com.unity.ide.visualstudio",
+            "com.unity.ide.vscode",
+            "com.unity.ide.rider"
+        };
 
+        /// <summary>
+        /// Builds a generated project manifest from the baseline project manifest plus project-specific overrides.
+        /// </summary>
+        public static string GetProjectManifest(ProjectSettings projectSettings) {
+            JObject json = LoadBaselineManifest();
+            json["dependencies"] = GetProjectDependencies(projectSettings, json["dependencies"] as JObject);
+            json.Remove("testables");
             return json.ToString(Formatting.Indented);
         }
 
-        private static JObject GetProjectDependencies(PackageContext ctx) {
-            JObject deps = new JObject {
-                [ctx.Package.PackageName] = $"file:../../../{ctx.Package.PackageName}",
-                ["com.unity.ugui"] = "2.0.0",
-                ["com.unity.modules.ai"] = "1.0.0",
-                ["com.unity.modules.androidjni"] = "1.0.0",
-                ["com.unity.modules.animation"] = "1.0.0",
-                ["com.unity.modules.assetbundle"] = "1.0.0",
-                ["com.unity.modules.audio"] = "1.0.0",
-                ["com.unity.modules.imageconversion"] = "1.0.0",
-                ["com.unity.modules.imgui"] = "1.0.0",
-                ["com.unity.modules.jsonserialize"] = "1.0.0",
-                ["com.unity.modules.particlesystem"] = "1.0.0",
-                ["com.unity.modules.physics"] = "1.0.0",
-                ["com.unity.modules.physics2d"] = "1.0.0",
-                ["com.unity.modules.screencapture"] = "1.0.0",
-                ["com.unity.modules.tilemap"] = "1.0.0",
-                ["com.unity.modules.ui"] = "1.0.0",
-                ["com.unity.modules.uielements"] = "1.0.0",
-                ["com.unity.modules.unitywebrequest"] = "1.0.0",
-                ["com.unity.modules.unitywebrequestassetbundle"] = "1.0.0",
-                ["com.unity.modules.unitywebrequestaudio"] = "1.0.0",
-                ["com.unity.modules.unitywebrequesttexture"] = "1.0.0",
-                ["com.unity.modules.unitywebrequestwww"] = "1.0.0",
-                ["com.unity.modules.video"] = "1.0.0",
-                ["com.unity.modules.vr"] = "1.0.0",
-                ["com.unity.modules.xr"] = "1.0.0"
-            };
+        public static string GetProjectManifest(PackageContext ctx) {
+            JObject json = LoadBaselineManifest();
+            json["dependencies"] = GetProjectDependencies(ctx.Project, json["dependencies"] as JObject);
 
-            AddPreferredEditorDependency(deps, ctx.Project.PreferredEditor);
-            return new JObject(deps.Properties());
+            if (ctx.Package.CreateTestsFolder) {
+                json["testables"] = new JArray(ctx.Package.PackageName);
+            } else {
+                json.Remove("testables");
+            }
+
+            ((JObject)json["dependencies"])[ctx.Package.PackageName] = $"file:../../../{ctx.Package.PackageName}";
+            return json.ToString(Formatting.Indented);
+        }
+
+        private static JObject GetProjectDependencies(ProjectSettings projectSettings, JObject baselineDependencies) {
+            JObject deps = baselineDependencies != null
+                ? new JObject(baselineDependencies)
+                : new JObject();
+
+            AddIncludedPackages(deps, projectSettings?.IncludedPackages);
+            RemoveIdeDependencies(deps);
+            AddPreferredEditorDependency(deps, projectSettings?.PreferredEditor ?? PreferredEditor.None);
+            return deps;
+        }
+
+        private static JObject LoadBaselineManifest() {
+            string manifestPath = Path.Combine("Packages", "manifest.json");
+            if (!File.Exists(manifestPath)) {
+                Debug.LogWarning($"Baseline manifest not found at {manifestPath}. Falling back to an empty manifest.");
+                return new JObject();
+            }
+
+            return JObject.Parse(File.ReadAllText(manifestPath));
+        }
+
+        private static void RemoveIdeDependencies(JObject deps) {
+            foreach (string packageId in IdePackageIds) {
+                deps.Remove(packageId);
+            }
+        }
+
+        private static void AddIncludedPackages(JObject deps, PackageDependencyList includedPackages) {
+            if (includedPackages?.Items == null) {
+                return;
+            }
+
+            foreach (PackageDependencyEntry package in includedPackages.Items) {
+                string packageName = package?.PackageName?.Trim();
+                string version = package?.Version?.Trim();
+                if (string.IsNullOrWhiteSpace(packageName) || string.IsNullOrWhiteSpace(version)) {
+                    continue;
+                }
+
+                deps[packageName] = version;
+            }
         }
 
         private static void AddPreferredEditorDependency(JObject deps, PreferredEditor preferredEditor) {

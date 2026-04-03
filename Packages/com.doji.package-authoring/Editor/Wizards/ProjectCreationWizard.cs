@@ -5,6 +5,7 @@ using UnityEngine;
 using Doji.PackageAuthoring.Editor.Utilities;
 using Doji.PackageAuthoring.Editor.Wizards.Models;
 using Doji.PackageAuthoring.Editor.Wizards.Presets;
+using Doji.PackageAuthoring.Editor.Wizards.Templates;
 using Doji.PackageAuthoring.Editor.Wizards.UI;
 
 namespace Doji.PackageAuthoring.Editor.Wizards {
@@ -14,6 +15,8 @@ namespace Doji.PackageAuthoring.Editor.Wizards {
     public class ProjectCreationWizard : EditorWindow {
         private const string SessionStateKey = "Doji.PackageAuthoring.ProjectCreationWizard.SessionState";
         private const string ProjectSectionPresetTooltip = "Apply project defaults or a preset asset.";
+        private const string ProjectSectionTooltip =
+            "The generated project starts from this template project's baseline. The generated project includes the project container, a generated Assets folder, copied Packages and ProjectSettings, and a generated .gitignore. These values customize the generated project where product metadata is written.";
 
         private static readonly string ProductNameField =
             $"<{nameof(Doji.PackageAuthoring.Editor.Wizards.Models.ProjectSettings.ProductName)}>k__BackingField";
@@ -163,7 +166,7 @@ namespace Doji.PackageAuthoring.Editor.Wizards {
                 _defaultsSerializedObject,
                 _autoOpenAfterCreationProperty,
                 "Project Settings",
-                "The project",
+                ProjectSectionTooltip,
                 ProjectSectionPresetTooltip,
                 ShowPresetMenu);
         }
@@ -204,7 +207,10 @@ namespace Doji.PackageAuthoring.Editor.Wizards {
                 ProjectSettings,
                 _ => BuildApplicationIdentifier(),
                 ProjectSettings.ProductName);
-            GeneratedProjectScaffoldingUtility.CopyTemplateProjectBaseline(ProjectDirectory, CurrentGitIgnoreTemplate);
+            GeneratedProjectScaffoldingUtility.CopyTemplateProjectBaseline(
+                ProjectDirectory,
+                CurrentGitIgnoreTemplate,
+                ProjectManifestTemplate.GetProjectManifest(ProjectSettings));
 
             Debug.Log($"Project created successfully at {ProjectDirectory}");
 

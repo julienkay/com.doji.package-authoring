@@ -255,6 +255,8 @@ namespace Doji.PackageAuthoring.Editor.Wizards.UI {
                            MatchesPath(node, $"projects/{data.CompanionProjectName}");
                 case RepositoryLayoutPreviewHoverTargets.Version:
                     return MatchesContent(node, data.Context.Project.Version);
+                case RepositoryLayoutPreviewHoverTargets.ProjectManifest:
+                    return MatchesPath(node, $"projects/{data.CompanionProjectName}/Packages/manifest.json");
                 case RepositoryLayoutPreviewHoverTargets.TargetLocation:
                     return MatchesPath(node, rootDirectoryName);
                 default:

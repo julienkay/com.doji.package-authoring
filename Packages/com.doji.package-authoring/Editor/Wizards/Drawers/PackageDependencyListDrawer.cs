@@ -34,18 +34,38 @@ namespace Doji.PackageAuthoring.Editor.Wizards {
         public override float GetPropertyHeight(SerializedProperty property, GUIContent label) {
             State state = GetState(property);
             state.OverflowMode = PackageSettingsDrawerContext.Current.OverflowMode;
-            return state.DependenciesList.GetHeight();
+            return GetLabelHeight(label) + state.DependenciesList.GetHeight();
         }
 
         /// <inheritdoc />
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label) {
             State state = GetState(property);
             state.OverflowMode = PackageSettingsDrawerContext.Current.OverflowMode;
-            Rect listRect = new(position.x, position.y, position.width, state.DependenciesList.GetHeight());
 
             EditorGUI.BeginProperty(position, label, property);
+            Rect contentRect = DrawLabel(position, label);
+            Rect listRect = new(contentRect.x, contentRect.y, contentRect.width, state.DependenciesList.GetHeight());
             state.DependenciesList.DoList(listRect);
             EditorGUI.EndProperty();
+        }
+
+        private static Rect DrawLabel(Rect position, GUIContent label) {
+            if (label == null || GUIContent.none == label || string.IsNullOrWhiteSpace(label.text)) {
+                return position;
+            }
+
+            Rect titleRect = new(position.x, position.y, position.width, EditorGUIUtility.singleLineHeight);
+            EditorGUI.LabelField(titleRect, label, EditorStyles.label);
+            float y = titleRect.yMax + EditorGUIUtility.standardVerticalSpacing;
+            return new Rect(position.x, y, position.width, Mathf.Max(0f, position.yMax - y));
+        }
+
+        private static float GetLabelHeight(GUIContent label) {
+            if (label == null || GUIContent.none == label || string.IsNullOrWhiteSpace(label.text)) {
+                return 0f;
+            }
+
+            return EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
         }
 
         private static State GetState(SerializedProperty property) {

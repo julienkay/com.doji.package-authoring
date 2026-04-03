@@ -33,6 +33,7 @@ namespace Doji.PackageAuthoring.Editor.Wizards.UI {
         public const string ProjectCompanyName = nameof(ProjectCompanyName);
         public const string ProductName = nameof(ProductName);
         public const string Version = nameof(Version);
+        public const string ProjectManifest = nameof(ProjectManifest);
         public const string TargetLocation = nameof(TargetLocation);
     }
 }

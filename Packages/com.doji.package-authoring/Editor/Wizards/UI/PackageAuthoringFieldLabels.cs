@@ -15,7 +15,16 @@ namespace Doji.PackageAuthoring.Editor.Wizards.UI {
                 new("Version", "Version applied to generated project and package metadata.");
 
             public static GUIContent PreferredEditor { get; } =
-                new("Preferred Editor", "IDE integration package added to generated companion project manifests.");
+                new("Preferred Editor", "IDE integration package added to generated project manifests.");
+
+            public static GUIContent IncludedPackages { get; } =
+                new("Included Packages", "Packages merged into generated project manifests after the baseline manifest and preferred IDE integration are applied.");
+
+            public static GUIContent IncludedPackagesInfo { get; } =
+                new("These packages are added on top of the template project's baseline manifest.");
+
+            public static GUIContent Advanced { get; } =
+                new("Advanced");
 
             public static GUIContent GenerateAgentsFile { get; } =
                 new("Generate AGENTS.md", "Controls whether generated repositories include an AGENTS.md instructions file at the repository root.");

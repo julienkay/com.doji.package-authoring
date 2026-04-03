@@ -26,7 +26,7 @@ namespace Doji.PackageAuthoring.Editor.Wizards.UI {
         /// Draws a boxed section with a bold header and body content.
         /// </summary>
         public static void DrawSection(
-            string title,
+            GUIContent title,
             Action drawContent,
             Action drawHeaderAction = null,
             GUIStyle titleStyle = null) {
@@ -38,6 +38,17 @@ namespace Doji.PackageAuthoring.Editor.Wizards.UI {
             EditorGUILayout.Space(3f);
             drawContent?.Invoke();
             EditorGUILayout.EndVertical();
+        }
+
+        /// <summary>
+        /// Draws a boxed section with a plain-text title.
+        /// </summary>
+        public static void DrawSection(
+            string title,
+            Action drawContent,
+            Action drawHeaderAction = null,
+            GUIStyle titleStyle = null) {
+            DrawSection(new GUIContent(title), drawContent, drawHeaderAction, titleStyle);
         }
 
         /// <summary>
@@ -121,14 +132,13 @@ namespace Doji.PackageAuthoring.Editor.Wizards.UI {
             bool includeTargetLocation = true,
             Action drawHeaderAction = null,
             Action drawFooter = null) {
-            using IDisposable _ = ProjectSettingsDrawerContext.Push(productLabel, includeTargetLocation);
-            DrawSection(title, () => {
-                EditorGUILayout.PropertyField(
-                    FindProjectDefaultsProperty(profileObject),
-                    GUIContent.none,
-                    includeChildren: true);
-                drawFooter?.Invoke();
-            }, drawHeaderAction);
+            DrawProjectSettingsSection(
+                profileObject,
+                new GUIContent(title),
+                productLabel,
+                includeTargetLocation,
+                drawHeaderAction,
+                drawFooter);
         }
 
         /// <summary>
@@ -138,41 +148,47 @@ namespace Doji.PackageAuthoring.Editor.Wizards.UI {
             SerializedObject profileObject,
             SerializedProperty autoOpenAfterCreationProperty,
             string title,
-            string templateProjectLabel,
+            string sectionTooltip,
             string presetTooltip,
             Action<Rect> onPresetClicked) {
             DrawProjectSettingsSection(
                 profileObject,
-                title,
+                new GUIContent(title, sectionTooltip),
                 productLabel: "Project Name",
                 includeTargetLocation: false,
                 drawHeaderAction: () => DrawSectionHeaderPresetButton(
                     presetTooltip,
                     onPresetClicked),
-                drawFooter: () => DrawGeneratedProjectSettingsFooter(
-                    autoOpenAfterCreationProperty,
-                    templateProjectLabel));
-        }
-
-        /// <summary>
-        /// Draws the shared note that explains which template baseline is copied into generated Unity projects.
-        /// </summary>
-        public static void DrawProjectTemplateBaselineNote(string projectLabel) {
-            EditorGUILayout.HelpBox(
-                $"{projectLabel} starts from this template project's baseline. That generated project includes the project container, a generated Assets folder, copied Packages and ProjectSettings, and a generated .gitignore. These values customize the generated project where product metadata is written.",
-                MessageType.None);
+                drawFooter: () => DrawGeneratedProjectSettingsFooter(autoOpenAfterCreationProperty));
         }
 
         /// <summary>
         /// Draws the footer shared by generated-project settings sections.
         /// </summary>
-        public static void DrawGeneratedProjectSettingsFooter(
-            SerializedProperty autoOpenAfterCreationProperty,
-            string templateProjectLabel) {
+        public static void DrawGeneratedProjectSettingsFooter(SerializedProperty autoOpenAfterCreationProperty) {
             EditorGUILayout.PropertyField(
                 autoOpenAfterCreationProperty,
                 new GUIContent("Auto-Open After Creation"));
-            DrawProjectTemplateBaselineNote(templateProjectLabel);
+        }
+
+        /// <summary>
+        /// Draws the project-defaults section for the provided serialized profile.
+        /// </summary>
+        public static void DrawProjectSettingsSection(
+            SerializedObject profileObject,
+            GUIContent title,
+            string productLabel = "Product Name",
+            bool includeTargetLocation = true,
+            Action drawHeaderAction = null,
+            Action drawFooter = null) {
+            using IDisposable _ = ProjectSettingsDrawerContext.Push(productLabel, includeTargetLocation);
+            DrawSection(title, () => {
+                EditorGUILayout.PropertyField(
+                    FindProjectDefaultsProperty(profileObject),
+                    GUIContent.none,
+                    includeChildren: true);
+                drawFooter?.Invoke();
+            }, drawHeaderAction);
         }
 
         /// <summary>

@@ -15,6 +15,8 @@ namespace Doji.PackageAuthoring.Editor.Wizards {
     public class PackageCreationWizard : EditorWindow {
         private const string SessionStateKey = "Doji.PackageAuthoring.PackageCreationWizard.SessionState";
         private const string PackageSectionPresetTooltip = "Apply package defaults or a package preset asset.";
+        private const string CompanionProjectSectionTooltip =
+            "The companion project starts from this template project's baseline. The generated project includes the project container, a generated Assets folder, copied Packages and ProjectSettings, and a generated .gitignore. These values customize the generated project where product metadata is written.";
 
         private const string CompanionProjectPresetTooltip =
             "Apply project defaults or a preset asset to the companion project.";
@@ -306,7 +308,7 @@ namespace Doji.PackageAuthoring.Editor.Wizards {
                 _defaultsSerializedObject,
                 _autoOpenAfterCreationProperty,
                 "Companion Project",
-                "The companion project",
+                CompanionProjectSectionTooltip,
                 CompanionProjectPresetTooltip,
                 ShowCompanionProjectPresetMenu);
         }

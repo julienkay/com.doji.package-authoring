@@ -42,6 +42,12 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Models {
         public PreferredEditor PreferredEditor { get; set; } = PreferredEditor.None;
 
         /// <summary>
+        /// Additional packages merged into generated project manifests on top of the copied baseline manifest.
+        /// </summary>
+        [field: SerializeField]
+        public PackageDependencyList IncludedPackages { get; set; } = new();
+
+        /// <summary>
         /// Whether generated repositories should include an <c>AGENTS.md</c> instructions file.
         /// </summary>
         [field: SerializeField]
@@ -66,6 +72,8 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Models {
             ProductName = other.ProductName;
             Version = other.Version;
             PreferredEditor = other.PreferredEditor;
+            IncludedPackages ??= new PackageDependencyList();
+            IncludedPackages.CopyFrom(other.IncludedPackages);
             GenerateAgentsFile = other.GenerateAgentsFile;
             TargetLocation = other.TargetLocation;
         }

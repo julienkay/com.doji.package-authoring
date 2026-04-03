@@ -17,6 +17,8 @@ MonoBehaviour:
     <ProductName>k__BackingField: My Project
     <Version>k__BackingField: 1.0.0
     <PreferredEditor>k__BackingField: 0
+    <IncludedPackages>k__BackingField:
+      <Items>k__BackingField: []
     <GenerateAgentsFile>k__BackingField: 0
     <TargetLocation>k__BackingField: ../
   <PackageDefaults>k__BackingField:

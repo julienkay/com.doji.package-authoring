@@ -593,7 +593,7 @@ namespace Doji.PackageAuthoring.Editor.Wizards {
         /// </summary>
         private void CreateSamplesFolder() {
             string samplesPath = Path.Combine(PackageDirectory, "Samples~");
-            GeneratedProjectScaffoldingUtility.CreateFolderWithMeta(samplesPath);
+            Directory.CreateDirectory(samplesPath);
 
             GeneratedProjectScaffoldingUtility.CreateFolderWithMeta(Path.Combine(samplesPath, "00-SharedSampleAssets"));
             GeneratedProjectScaffoldingUtility.CreateFolderWithMeta(Path.Combine(samplesPath, "01-BasicSample"));

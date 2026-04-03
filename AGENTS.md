@@ -12,6 +12,7 @@ Prefer these locations:
 - `Assets/`: project assets and editor tooling that support the template project
 - `Assets/Input` and `Assets/Settings`: baseline assets intended to be copied into generated projects
 - `ProjectSettings` and `Packages/manifest.json`: default Unity project configuration for generated outputs
+- `.codex/skills/`: project-specific skills; when a task matches one, read and follow the relevant `SKILL.md`
 
 Prefer working in existing package folders when functionality is package-owned.
 

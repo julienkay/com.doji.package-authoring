@@ -55,31 +55,6 @@ For package-authoring behavior, `Packages/com.doji.package-authoring` should be 
 - Public and non-obvious internal C# types should carry XML summaries.
 - This repository should keep durable project context in tracked documentation rather than relying on local IDE or agent history.
 
-## Repository Layout Preview Hover Mapping
-
-The package-creation UI includes a repository layout preview that can softly highlight generated files or folders when related form fields are hovered.
-
-The hover-target workflow spans three places:
-
-- `Packages/com.doji.package-authoring/Editor/Wizards/UI/RepositoryLayoutPreviewHoverTargets.cs`
-  Holds the semantic hover target ids.
-- `Packages/com.doji.package-authoring/Editor/Wizards/UI/RepositoryLayoutPreviewPanel.cs`
-  Resolves each target id to one or more preview rows in `MatchesTarget(...)`.
-- the relevant drawers or editor windows
-  Publish active hover targets through `RepositoryLayoutPreviewHoverContext.SetHoveredTargetsIfHovered(...)`.
-
-When adding a new hover mapping:
-
-1. Add a new semantic target constant in `RepositoryLayoutPreviewHoverTargets`.
-2. Add the corresponding `case` in `RepositoryLayoutPreviewPanel.MatchesTarget(...)`.
-3. Wire the target from every IMGUI rect that should trigger the preview highlight.
-
-Guidelines:
-
-- Prefer semantic names such as `ProjectManifest` instead of file-path-shaped names.
-- For composite controls, attach hover targets to all visible rects that should behave as one field.
-- If a custom control has custom height or foldout behavior, keep hover wiring aligned with the same drawn rects.
-
 ## Current Defaults And Branding
 
 The current defaults are still Doji-branded in several places, including package metadata and project settings presets. Notable examples:

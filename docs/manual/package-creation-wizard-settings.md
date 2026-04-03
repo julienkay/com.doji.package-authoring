@@ -4,6 +4,8 @@ This page documents every user-facing setting in the main `Tools/Package Creatio
 
 ## Package Definition
 
+![Package definition section](../images/manual/package-definition-section.png)
+
 ### Identifier
 
 The package identifier becomes the generated `package.json` `name` value. It also becomes:
@@ -176,6 +178,8 @@ If the current package name does not yet match a known exact package, the row ca
 
 ## Repo Settings
 
+![Repository settings section](../images/manual/repo-settings-section.png)
+
 ### Copyright Holder
 
 This value is used by generated repository-level copyright and license content.
@@ -220,6 +224,8 @@ If provided, it is resolved through the standard template-token system and then 
 ## Companion Project
 
 The `Companion Project` section uses the shared project settings UI, but inside the package creation wizard it intentionally hides the target location field because the companion project always lives inside the generated repository.
+
+![Companion project section](../images/manual/companion-project-section.png)
 
 ### Company Name
 
@@ -296,6 +302,8 @@ When disabled, the files are still generated, but the wizard does not launch the
 
 The `Output` section is read-only except for `Target Location`.
 
+![Output section and repository layout preview](../images/manual/output-and-preview-section.png)
+
 It shows:
 
 - `Target Location`
@@ -318,5 +326,7 @@ The companion project folder is:
 ## Repository Layout Preview
 
 The live repository layout preview is not just decoration. It reflects the current toggle state and helps confirm which files and folders each setting will add or remove.
+
+![Repository layout preview detail](../images/manual/repository-layout-preview-detail.png)
 
 Hovering related fields in the form highlights the matching area of the preview, including package metadata, docs, readmes, samples, editor files, tests, and companion-project output.

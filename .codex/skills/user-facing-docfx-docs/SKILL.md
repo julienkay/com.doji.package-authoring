@@ -46,6 +46,23 @@ Prefer task-oriented docs first, then reference depth:
 3. Reference pages for dense UI surfaces such as wizard settings
 4. Supporting pages for templates, presets/defaults, and generated output
 
+Default to visuals-first documentation:
+
+- if a screenshot explains a UI section faster than prose, place the image before the explanation
+- when documenting a specific editor window section, include a screenshot of that section
+- if a page introduces a major workflow surface, include an overview screenshot near the top
+- create placeholder PNGs in `docs/images/` when the final screenshots are not available yet, and reference them from the markdown immediately
+
+Screenshot best practices:
+
+- prefer cropped, purpose-specific screenshots over one huge full-screen capture when the page is about a specific section
+- keep the relevant control visible in the first screenful; do not make the reader hunt for the thing being discussed
+- use one overview screenshot for orientation, then smaller section screenshots for detailed reference pages
+- when a screenshot is meant to explain a toggle, foldout, or preset menu, capture it in the state being described
+- keep filenames descriptive and stable, usually `<page-topic>-<section>.png`
+- when adding a placeholder, use the final intended filename so the real screenshot can replace it without markdown changes
+- keep alt text functional and specific, describing the UI surface shown rather than repeating the heading verbatim
+
 For wizard documentation:
 
 - document every visible setting in the main window
@@ -66,6 +83,7 @@ For template documentation:
 - Update `docs/manual/toc.yml` when adding or reordering manual pages.
 - Keep the tone practical and explicit. Avoid filler marketing language.
 - Prefer concrete file names, menu paths, and generated output paths.
+- Put screenshot placeholders under `docs/images/`, preferably grouped by topic such as `docs/images/manual/`.
 
 ## Verification checklist
 
@@ -75,4 +93,5 @@ Before finishing:
 - confirm every new manual page is linked from `docs/manual/toc.yml`
 - confirm `docs/index.md` still matches the manual structure
 - confirm user-facing pages do not contain maintainer-only DocFX build instructions
+- confirm image references resolve to actual files under `docs/images/`
 - if stale served output is involved, remember that `docfx serve docs/_site` serves existing generated files and does not rebuild them

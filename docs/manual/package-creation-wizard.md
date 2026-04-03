@@ -4,6 +4,8 @@ The package creation wizard is the main entry point for generating a reusable pa
 
 Open it from `Tools/Package Creation Wizard`.
 
+![Package creation wizard overview](../images/manual/package-creation-wizard-overview.png)
+
 ## What It Generates
 
 The wizard creates a repository root named after the package identifier and then fills it with:
@@ -18,6 +20,8 @@ When enabled, the wizard also initializes a git repository and can assign an `or
 ## Main Sections
 
 The window is organized into four editable sections and a live preview:
+
+![Package creation wizard sections](../images/manual/package-creation-wizard-sections.png)
 
 - `Package Definition` controls the package manifest and package-owned folders.
 - `Repo Settings` controls repository-level files such as the license and root README.
@@ -91,6 +95,8 @@ It is built from the template project's baseline assets, packages, and project s
 
 The package creation wizard has two preset scopes:
 
+![Package wizard preset buttons](../images/manual/package-creation-wizard-presets.png)
+
 - the `Package Definition` preset button applies package and repository values
 - the `Companion Project` preset button applies project-facing values
 
@@ -99,6 +105,8 @@ This split is intentional. It lets you keep package/repository presets separate 
 ## Live Output Preview
 
 The `Output` section shows the resolved paths derived from the current settings:
+
+![Package wizard output and repository preview](../images/manual/package-creation-wizard-output-preview.png)
 
 - target location
 - repository root

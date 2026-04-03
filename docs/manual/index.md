@@ -1,5 +1,7 @@
 # Manual
 
+![Manual overview](../images/manual/documentation-home-hero.png)
+
 `com.doji.package-authoring` provides Unity editor tooling for scaffolding reusable UPM packages, companion Unity projects, and the repository files that support them.
 
 ## What This Package Does

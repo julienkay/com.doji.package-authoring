@@ -6,6 +6,8 @@ The package-authoring tools separate persistent project defaults from reusable p
 
 Open `Project Settings > Doji > Package Authoring` to edit the project-wide defaults.
 
+![Project settings defaults page](../images/manual/project-defaults-page.png)
+
 These defaults are stored in `ProjectSettings/PackageAuthoringProjectSettings.asset` and are used whenever a wizard opens without applying a preset first.
 
 The page contains three blocks:
@@ -30,6 +32,8 @@ Changing project defaults does not retroactively update repositories or projects
 
 Preset assets let you capture a reusable authoring profile inside the Unity project.
 
+![Package authoring preset asset](../images/manual/package-authoring-preset-asset.png)
+
 Create one from:
 
 - `Assets > Create > Doji > Package Authoring Preset`
@@ -42,9 +46,13 @@ A preset stores package, repository, and project values together.
 
 The title bar of `Project Settings > Doji > Package Authoring` includes a preset button. Applying a preset there copies the preset values into the project defaults and saves them.
 
+![Project settings preset menu](../images/manual/project-settings-preset-menu.png)
+
 ### In Package Creation Wizard
 
 The wizard intentionally exposes two preset buttons:
+
+![Package wizard preset menu](../images/manual/package-wizard-preset-menu.png)
 
 - `Package Definition` preset button
 - `Companion Project` preset button

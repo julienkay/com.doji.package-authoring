@@ -4,6 +4,8 @@ The package-authoring tools generate several repository and package files from p
 
 Open them from `Project Settings > Doji > Package Authoring > Templates`.
 
+![Templates landing page](../images/manual/templates-landing-page.png)
+
 ## Template Categories
 
 The template settings are grouped into:
@@ -34,6 +36,8 @@ Tokens are resolved from the current package, repository, and project settings a
 
 ## Package Templates
 
+![Package templates page](../images/manual/package-templates-page.png)
+
 ### `.gitignore`
 
 Path:
@@ -51,6 +55,8 @@ Path:
 This template becomes the package root `README.md` when `Include Package README` is enabled.
 
 ## Repository Templates
+
+![Repository templates page](../images/manual/repository-templates-page.png)
 
 ### `README`
 
@@ -84,6 +90,8 @@ Path:
 
 - `Project Settings > Doji > Package Authoring > Templates > Documentation (DocFX)`
 
+![Documentation templates page](../images/manual/documentation-templates-page.png)
+
 This page controls the files generated under the repository `docs/` folder when `Create Documentation Folder` is enabled.
 
 The documentation template set includes:
@@ -105,6 +113,8 @@ See [Companion And Standalone Projects](projects.md) for how generated projects 
 ### Documentation Branding
 
 The documentation settings page can also write branding outputs under `docs/images`.
+
+![Documentation branding fields](../images/manual/documentation-branding-fields.png)
 
 - `Favicon Source` is used to generate `docs/images/favicon.ico`
 - `Logo Source` is used to generate `docs/images/logo.png`

@@ -65,9 +65,5 @@ namespace Doji.PackageAuthoring.Editor.Wizards.UI {
         /// </summary>
         public string RepositoryGitIgnoreTemplate { get; set; }
 
-        /// <summary>
-        /// Whether the companion project preview should include the copied lock file from the template project.
-        /// </summary>
-        public bool IncludePackagesLockFile { get; set; }
     }
 }

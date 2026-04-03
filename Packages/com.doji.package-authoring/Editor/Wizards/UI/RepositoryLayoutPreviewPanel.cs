@@ -691,13 +691,6 @@ namespace Doji.PackageAuthoring.Editor.Wizards.UI {
                 $"projects/{data.CompanionProjectName}/Packages/manifest.json",
                 data.Context.GetProjectManifest(),
                 RepositoryLayoutGroup.Project));
-            if (data.IncludePackagesLockFile) {
-                packages.Children.Add(CreateTemplateFileNode(
-                    "packages-lock.json",
-                    $"projects/{data.CompanionProjectName}/Packages/packages-lock.json",
-                    "Packages/packages-lock.json",
-                    RepositoryLayoutGroup.Project));
-            }
 
             project.Children.Add(packages);
             project.Children.Add(CreateDirectoryNode(
@@ -1008,7 +1001,6 @@ namespace Doji.PackageAuthoring.Editor.Wizards.UI {
                 AppendValue(signature, data.IncludeRepositoryGitIgnore);
                 AppendValue(signature, data.IncludeAgentsFile);
                 AppendValue(signature, data.RepositoryGitIgnoreTemplate);
-                AppendValue(signature, data.IncludePackagesLockFile);
                 AppendContextValues(signature, data.Context);
                 return new PreviewSnapshotKey(signature.ToString());
             }

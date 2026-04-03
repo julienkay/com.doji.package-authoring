@@ -10,6 +10,11 @@ namespace Doji.PackageAuthoring.Editor.Wizards {
     /// </summary>
     internal static class GeneratedProjectScaffoldingUtility {
         /// <summary>
+        /// Keeps local package inheritance disabled until the behavior is intentionally exposed again.
+        /// </summary>
+        internal const bool IncludeLocalPackagesByDefault = false;
+
+        /// <summary>
         /// Builds the default reverse-DNS application identifier used by generated Unity projects.
         /// </summary>
         /// <param name="companyName">Company name used for the middle reverse-DNS segment.</param>
@@ -92,7 +97,7 @@ namespace Doji.PackageAuthoring.Editor.Wizards {
             string manifestContent = null) {
             Directory.CreateDirectory(projectDirectory);
             Directory.CreateDirectory(Path.Combine(projectDirectory, "Assets"));
-            CopyDirectory("Packages", Path.Combine(projectDirectory, "Packages"));
+            CopyPackagesBaseline(Path.Combine(projectDirectory, "Packages"));
             CopyDirectory("ProjectSettings", Path.Combine(projectDirectory, "ProjectSettings"));
 
             if (!string.IsNullOrWhiteSpace(gitIgnoreContent)) {
@@ -104,6 +109,31 @@ namespace Doji.PackageAuthoring.Editor.Wizards {
                     Path.Combine(projectDirectory, "Packages", "manifest.json"),
                     manifestContent,
                     overwrite: true);
+            }
+        }
+
+        /// <summary>
+        /// Copies the package-manager baseline and optionally preserves the template project's local package lock file.
+        /// </summary>
+        /// <param name="destinationDir">Destination <c>Packages</c> directory in the generated project.</param>
+        public static void CopyPackagesBaseline(string destinationDir) {
+            const string sourceDir = "Packages";
+            if (!Directory.Exists(sourceDir)) {
+                UnityEngine.Debug.LogWarning($"Source directory {sourceDir} does not exist. Skipping copy.");
+                return;
+            }
+
+            Directory.CreateDirectory(destinationDir);
+
+            foreach (string file in Directory.GetFiles(sourceDir)) {
+                string fileName = Path.GetFileName(file);
+                if (!IncludeLocalPackagesByDefault
+                    && string.Equals(fileName, "packages-lock.json", StringComparison.OrdinalIgnoreCase)) {
+                    continue;
+                }
+
+                string destinationFile = Path.Combine(destinationDir, fileName);
+                CopyFile(file, destinationFile);
             }
         }
 

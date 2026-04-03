@@ -40,14 +40,35 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Templates {
         }
 
         private static JObject GetProjectDependencies(ProjectSettings projectSettings, JObject baselineDependencies) {
-            JObject deps = baselineDependencies != null
-                ? new JObject(baselineDependencies)
-                : new JObject();
+            JObject deps = GetSanitizedBaselineDependencies(baselineDependencies);
 
             AddIncludedPackages(deps, projectSettings?.IncludedPackages);
             RemoveIdeDependencies(deps);
             AddPreferredEditorDependency(deps, projectSettings?.PreferredEditor ?? PreferredEditor.None);
             return deps;
+        }
+
+        private static JObject GetSanitizedBaselineDependencies(JObject baselineDependencies) {
+            JObject sanitizedDependencies = new();
+            if (baselineDependencies == null) {
+                return sanitizedDependencies;
+            }
+
+            foreach (JProperty dependency in baselineDependencies.Properties()) {
+                if (dependency.Value.Type != JTokenType.String) {
+                    continue;
+                }
+
+                string version = dependency.Value.Value<string>();
+                if (!GeneratedProjectScaffoldingUtility.IncludeLocalPackagesByDefault
+                    && IsLocalPackageReference(version)) {
+                    continue;
+                }
+
+                sanitizedDependencies[dependency.Name] = version;
+            }
+
+            return sanitizedDependencies;
         }
 
         private static JObject LoadBaselineManifest() {
@@ -80,6 +101,11 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Templates {
 
                 deps[packageName] = version;
             }
+        }
+
+        private static bool IsLocalPackageReference(string version) {
+            return !string.IsNullOrWhiteSpace(version)
+                   && version.StartsWith("file:", System.StringComparison.OrdinalIgnoreCase);
         }
 
         private static void AddPreferredEditorDependency(JObject deps, PreferredEditor preferredEditor) {

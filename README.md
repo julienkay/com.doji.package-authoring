@@ -7,7 +7,7 @@ This repository is a Unity 6 template project for bootstrapping either:
 
 The repo is centered around custom editor tooling in [`Assets/Editor`](/Users/julienkipp/Unity/UnityProjectTemplate/Assets/Editor) rather than gameplay code. It also contains template-project assets and settings used to support authoring and validation inside this repository.
 
-For durable repository context, conventions, and architectural notes that should survive local IDE or assistant history, see [`docs/ProjectContext.md`](/Users/julienkipp/Unity/UnityProjectTemplate/docs/ProjectContext.md).
+For durable repository context, conventions, and architectural notes that should survive local IDE or assistant history, see [`.codex/project-memory.md`](/Users/julienkipp/Unity/UnityProjectTemplate/.codex/project-memory.md).
 
 ## What This Repo Includes
 

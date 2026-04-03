@@ -18,8 +18,16 @@ Prefer these locations:
 - `{{PACKAGE_NAME}}/`: local package under development
 - `projects/{{PROJECT_NAME}}/Assets`: companion-project assets and test scenes
 - `projects/{{PROJECT_NAME}}/ProjectSettings` and `projects/{{PROJECT_NAME}}/Packages/manifest.json`: companion-project configuration for generated outputs
+- `.codex/skills/`: project-specific skills; when a task matches one, read and follow the relevant `SKILL.md`
+- `.codex/project-memory.md`: durable project memory and agent-oriented project context
 
 Prefer working in the package folder when functionality is package-owned.
+
+## Project Memory
+
+Keep durable project memory in `.codex/project-memory.md`.
+
+Do not create or maintain a second long-lived project memory file under `docs/`.
 
 ## Conventions
 

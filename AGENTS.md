@@ -13,8 +13,15 @@ Prefer these locations:
 - `Assets/Input` and `Assets/Settings`: baseline assets intended to be copied into generated projects
 - `ProjectSettings` and `Packages/manifest.json`: default Unity project configuration for generated outputs
 - `.codex/skills/`: project-specific skills; when a task matches one, read and follow the relevant `SKILL.md`
+- `.codex/project-memory.md`: durable project memory and agent-oriented project context
 
 Prefer working in existing package folders when functionality is package-owned.
+
+## Project Memory
+
+Keep durable project memory in `.codex/project-memory.md`.
+
+Do not create or maintain a second long-lived project memory file under `docs/`.
 
 ## Conventions
 

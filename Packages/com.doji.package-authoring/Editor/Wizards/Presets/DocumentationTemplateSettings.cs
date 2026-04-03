@@ -6,8 +6,6 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Presets {
     /// Stores the project settings asset paths used by generated documentation scaffold templates.
     /// </summary>
     internal static class DocumentationTemplateAssetPaths {
-        public const string DefaultLogoTextureAsset = "Packages/com.doji.package-authoring/Editor/Defaults/Documentation/logo-template.png";
-        public const string DefaultFaviconTextureAsset = "Packages/com.doji.package-authoring/Editor/Defaults/Documentation/favicon-template.png";
         public const string DocsGitIgnore = "ProjectSettings/PackageAuthoringDocsGitIgnoreTemplate.asset";
         public const string DocsApiGitIgnore = "ProjectSettings/PackageAuthoringDocsApiGitIgnoreTemplate.asset";
         public const string DocsApiIndex = "ProjectSettings/PackageAuthoringDocsApiIndexTemplate.asset";
@@ -19,6 +17,14 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Presets {
         public const string DocsManualToc = "ProjectSettings/PackageAuthoringDocsManualTocTemplate.asset";
         public const string DocsPdfToc = "ProjectSettings/PackageAuthoringDocsPdfTocTemplate.asset";
         public const string DocsBrandingImage = "ProjectSettings/PackageAuthoringDocsBrandingImage.asset";
+    }
+
+    /// <summary>
+    /// Stores GUIDs for built-in package assets used as documentation branding defaults.
+    /// </summary>
+    internal static class DocumentationTemplateAssetGuids {
+        public const string DefaultLogoTextureAsset = "bfd9b7566b204ad3ab36d52013f02dce";
+        public const string DefaultFaviconTextureAsset = "a5bc8f2cf1ab46f79af8cdad680f2cd0";
     }
 
     /// <summary>
@@ -182,8 +188,18 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Presets {
         }
 
         private void AssignDefaultTextures() {
-            FaviconTexture = AssetDatabase.LoadAssetAtPath<Texture2D>(DocumentationTemplateAssetPaths.DefaultFaviconTextureAsset);
-            LogoTexture = AssetDatabase.LoadAssetAtPath<Texture2D>(DocumentationTemplateAssetPaths.DefaultLogoTextureAsset);
+            FaviconTexture = LoadTextureFromGuid(DocumentationTemplateAssetGuids.DefaultFaviconTextureAsset);
+            LogoTexture = LoadTextureFromGuid(DocumentationTemplateAssetGuids.DefaultLogoTextureAsset);
+        }
+
+        private static Texture2D LoadTextureFromGuid(string guid) {
+            string assetPath = AssetDatabase.GUIDToAssetPath(guid);
+            if (string.IsNullOrEmpty(assetPath)) {
+                Debug.LogWarning($"Could not resolve documentation default texture GUID '{guid}'.");
+                return null;
+            }
+
+            return AssetDatabase.LoadAssetAtPath<Texture2D>(assetPath);
         }
     }
 }

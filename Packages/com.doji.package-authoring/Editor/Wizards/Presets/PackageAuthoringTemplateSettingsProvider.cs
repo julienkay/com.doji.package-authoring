@@ -179,7 +179,7 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Presets {
 
             PackageAuthoringGui.DrawSection(".gitignore Template", () => {
                 SerializedProperty contentProperty = serializedSettings.FindProperty(ContentField);
-                DrawTemplateTextArea(contentProperty, minHeight: 420f);
+                DrawTemplateTextArea(contentProperty, ".gitignore", minHeight: 420f);
             });
 
             ApplyAndSaveOnChangeOrUndo(serializedSettings, settings.SaveSettings);
@@ -197,7 +197,7 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Presets {
             PackageAuthoringGui.DrawSection("Package README Template", () => {
                 EditorGUILayout.LabelField(PackageReadmeTemplateLabel, EditorStyles.wordWrappedMiniLabel);
                 SerializedProperty contentProperty = serializedSettings.FindProperty(ContentField);
-                DrawTemplateTextArea(contentProperty, minHeight: 220f);
+                DrawTemplateTextArea(contentProperty, "Package README", minHeight: 220f);
             });
 
             ApplyAndSaveOnChangeOrUndo(serializedSettings, settings.SaveSettings);
@@ -215,7 +215,7 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Presets {
             PackageAuthoringGui.DrawSection("Repository README Template", () => {
                 EditorGUILayout.LabelField(RepositoryReadmeTemplateLabel, EditorStyles.wordWrappedMiniLabel);
                 SerializedProperty contentProperty = serializedSettings.FindProperty(ContentField);
-                DrawTemplateTextArea(contentProperty, minHeight: 260f);
+                DrawTemplateTextArea(contentProperty, "Repository README", minHeight: 260f);
             });
 
             ApplyAndSaveOnChangeOrUndo(serializedSettings, settings.SaveSettings);
@@ -233,7 +233,7 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Presets {
             PackageAuthoringGui.DrawSection("Repository AGENTS Template", () => {
                 EditorGUILayout.LabelField(AgentsTemplateLabel, EditorStyles.wordWrappedMiniLabel);
                 SerializedProperty contentProperty = serializedSettings.FindProperty(ContentField);
-                DrawTemplateTextArea(contentProperty, minHeight: 260f);
+                DrawTemplateTextArea(contentProperty, "Repository AGENTS", minHeight: 260f);
             });
 
             ApplyAndSaveOnChangeOrUndo(serializedSettings, settings.SaveSettings);
@@ -251,7 +251,7 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Presets {
             PackageAuthoringGui.DrawSection("Custom License Template", () => {
                 EditorGUILayout.LabelField(CustomLicenseTemplateLabel, EditorStyles.wordWrappedMiniLabel);
                 SerializedProperty contentProperty = serializedSettings.FindProperty(ContentField);
-                DrawTemplateTextArea(contentProperty, minHeight: 220f);
+                DrawTemplateTextArea(contentProperty, "Custom License", minHeight: 220f);
             });
 
             ApplyAndSaveOnChangeOrUndo(serializedSettings, settings.SaveSettings);
@@ -316,7 +316,7 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Presets {
 
             PackageAuthoringGui.DrawSection(title, () => {
                 SerializedProperty contentProperty = serializedSettings.FindProperty(ContentField);
-                DrawTemplateTextArea(contentProperty, minHeight);
+                DrawTemplateTextArea(contentProperty, title, minHeight);
             });
 
             ApplyAndSaveOnChangeOrUndo(serializedSettings, saveSettings);
@@ -340,7 +340,7 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Presets {
                 title,
                 () => {
                     SerializedProperty contentProperty = serializedSettings.FindProperty(ContentField);
-                    DrawReadOnlyTemplateTextArea(contentProperty?.stringValue, minHeight);
+                    DrawReadOnlyTemplateTextArea(contentProperty?.stringValue, title, minHeight);
                 },
                 drawHeaderAction: DrawReadOnlyHeaderLock,
                 titleStyle: readOnlyHeaderStyle);
@@ -353,9 +353,11 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Presets {
         /// The actual text rendering lives in <see cref="InlineRichTextTextArea"/> so the settings provider only manages
         /// serialized-property synchronization and change detection here.
         /// </remarks>
-        private static void DrawTemplateTextArea(SerializedProperty contentProperty, float minHeight) {
+        /// <param name="controlKey">Stable key used to preserve the template editor scroll position.</param>
+        /// <param name="minHeight">Visible text-area viewport height.</param>
+        private static void DrawTemplateTextArea(SerializedProperty contentProperty, string controlKey, float minHeight) {
             string currentContent = contentProperty.stringValue ?? string.Empty;
-            string updatedContent = InlineRichTextTextArea.DrawLayout(currentContent, minHeight);
+            string updatedContent = InlineRichTextTextArea.DrawLayout(controlKey, currentContent, minHeight);
             if (!string.Equals(updatedContent, currentContent, System.StringComparison.Ordinal)) {
                 contentProperty.stringValue = updatedContent;
             }
@@ -368,10 +370,13 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Presets {
         /// Built-in templates must look non-editable without using a real disabled text area because disabled IMGUI controls
         /// stop supporting text selection and copy.
         /// </remarks>
-        private static void DrawReadOnlyTemplateTextArea(string content, float minHeight) {
+        /// <param name="controlKey">Stable key used to preserve the template viewer scroll position.</param>
+        /// <param name="minHeight">Visible text-area viewport height.</param>
+        private static void DrawReadOnlyTemplateTextArea(string content, string controlKey, float minHeight) {
             content ??= string.Empty;
             Color baseTextColor = EditorStyles.label.normal.textColor;
             InlineRichTextTextArea.DrawReadOnlyLayout(
+                controlKey,
                 content,
                 minHeight,
                 new Color(baseTextColor.r, baseTextColor.g, baseTextColor.b, 0.6f));

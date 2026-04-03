@@ -56,6 +56,11 @@ namespace Doji.PackageAuthoring.Editor.Wizards.UI {
         public bool IncludeRepositoryGitIgnore { get; set; }
 
         /// <summary>
+        /// Whether the repository preview should include a generated <c>AGENTS.md</c>.
+        /// </summary>
+        public bool IncludeAgentsFile { get; set; }
+
+        /// <summary>
         /// Template content shown for the generated companion-project <c>.gitignore</c>.
         /// </summary>
         public string RepositoryGitIgnoreTemplate { get; set; }

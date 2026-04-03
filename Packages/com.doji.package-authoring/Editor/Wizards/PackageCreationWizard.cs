@@ -347,6 +347,7 @@ namespace Doji.PackageAuthoring.Editor.Wizards {
                 IncludeEditorFolder = CurrentCreateEditorFolder,
                 IncludeTestsFolder = CurrentCreateTestsFolder,
                 IncludeRepositoryGitIgnore = !string.IsNullOrWhiteSpace(CurrentGitIgnoreTemplate),
+                IncludeAgentsFile = ProjectSettings.GenerateAgentsFile,
                 RepositoryGitIgnoreTemplate = CurrentGitIgnoreTemplate,
                 IncludePackagesLockFile = File.Exists(
                     Path.Combine(Directory.GetCurrentDirectory(), "Packages", "packages-lock.json"))

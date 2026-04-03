@@ -175,7 +175,8 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Drawers {
             DrawField(
                 ref row,
                 generateAgentsFileProperty,
-                PackageAuthoringFieldLabels.Project.GenerateAgentsFile);
+                PackageAuthoringFieldLabels.Project.GenerateAgentsFile,
+                RepositoryLayoutPreviewHoverTargets.GenerateAgentsFile);
         }
 
         private static float GetIncludedPackagesFieldHeight(

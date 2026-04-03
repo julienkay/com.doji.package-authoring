@@ -34,6 +34,7 @@ namespace Doji.PackageAuthoring.Editor.Wizards.UI {
         public const string ProductName = nameof(ProductName);
         public const string Version = nameof(Version);
         public const string ProjectManifest = nameof(ProjectManifest);
+        public const string GenerateAgentsFile = nameof(GenerateAgentsFile);
         public const string TargetLocation = nameof(TargetLocation);
     }
 }

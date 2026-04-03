@@ -257,6 +257,8 @@ namespace Doji.PackageAuthoring.Editor.Wizards.UI {
                     return MatchesContent(node, data.Context.Project.Version);
                 case RepositoryLayoutPreviewHoverTargets.ProjectManifest:
                     return MatchesPath(node, $"projects/{data.CompanionProjectName}/Packages/manifest.json");
+                case RepositoryLayoutPreviewHoverTargets.GenerateAgentsFile:
+                    return MatchesPath(node, "AGENTS.md");
                 case RepositoryLayoutPreviewHoverTargets.TargetLocation:
                     return MatchesPath(node, rootDirectoryName);
                 default:
@@ -525,6 +527,15 @@ namespace Doji.PackageAuthoring.Editor.Wizards.UI {
                     data.Context.GetRepositoryReadme(),
                     RepositoryLayoutGroup.Repo));
             }
+
+            if (data.IncludeAgentsFile) {
+                root.Children.Add(CreateGeneratedFileNode(
+                    "AGENTS.md",
+                    "AGENTS.md",
+                    data.Context.GetAgentsInstructions(),
+                    RepositoryLayoutGroup.Repo));
+            }
+
             root.Children.Add(BuildCompanionProjectNode(data));
 
             return root;
@@ -995,6 +1006,7 @@ namespace Doji.PackageAuthoring.Editor.Wizards.UI {
                 AppendValue(signature, data.IncludeEditorFolder);
                 AppendValue(signature, data.IncludeTestsFolder);
                 AppendValue(signature, data.IncludeRepositoryGitIgnore);
+                AppendValue(signature, data.IncludeAgentsFile);
                 AppendValue(signature, data.RepositoryGitIgnoreTemplate);
                 AppendValue(signature, data.IncludePackagesLockFile);
                 AppendContextValues(signature, data.Context);

@@ -18,3 +18,5 @@ and this package adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Registry-aware autocomplete suggestions with source badges, version hints, and scrollable overflow handling inside Project Settings and wizard UIs.
 - Configurable repository initialization, remote URL templating, optional readme generation, configurable documentation branding assets, and configurable preferred editor selection for generated companion projects.
 - Unity `.meta` file generation for scaffolded package assets so generated repositories preserve expected Unity asset metadata.
+- Public editor scripting API through `Doji.PackageAuthoring.PackageAuthoringApi` for generating standalone Unity projects and package repositories from code.
+- Public settings models under `Doji.PackageAuthoring.Models` for configuring generated projects, packages, repository metadata, preferred editor packages, and explicit manifest dependencies.

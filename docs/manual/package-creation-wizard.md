@@ -4,9 +4,9 @@ The package creation wizard is the main entry point for generating a reusable pa
 
 Open it from `Tools/Package Creation Wizard`.
 
-![Package creation wizard overview](../images/manual/package-creation-wizard-overview.png)
+![Package creation wizard overview](../images/manual/documentation-home-hero.webp)
 
-## What It Generates
+## What The Wizard Produces
 
 The wizard creates a repository root named after the package identifier and then fills it with:
 
@@ -17,11 +17,13 @@ The wizard creates a repository root named after the package identifier and then
 
 When enabled, the wizard also initializes a git repository and can assign an `origin` remote URL.
 
-## Main Sections
+A generated repository includes the package itself, repository support files, and a companion Unity project for development and validation.
+
+## What You Decide In The Window
 
 The window is organized into four editable sections and a live preview:
 
-![Package creation wizard sections](../images/manual/package-creation-wizard-sections.png)
+![Package creation wizard sections](../images/manual/package-creation-wizard-sections.webp)
 
 - `Package Definition` controls the package manifest and package-owned folders.
 - `Repo Settings` controls repository-level files such as the license and root README.
@@ -29,7 +31,9 @@ The window is organized into four editable sections and a live preview:
 - `Output` shows the resolved filesystem paths.
 - `Repository Layout Preview` shows the generated repository structure and reacts to the field you hover in the form.
 
-## How The Workflow Fits Together
+Field-by-field behavior is covered in [Package Creation Wizard Settings](package-creation-wizard-settings.md).
+
+## How The Generation Flow Works
 
 The package definition and repository settings determine what is generated under the repository root and package folder. The companion-project section then creates a Unity project that starts from the template project's baseline and points back to the generated local package.
 
@@ -44,7 +48,11 @@ In practice, the wizard does the following:
 7. Optionally runs git initialization and creates the initial commit.
 8. Optionally opens the generated companion project in the current Unity editor.
 
-## Package-Owned Output
+## What The Repository Contains
+
+The generated output is easiest to think about in three ownership layers: package, repository, and companion project.
+
+### Package-Owned Output
 
 The generated package always includes:
 
@@ -65,7 +73,7 @@ Depending on your toggles, it can also include:
 - `Samples~/01-BasicSample/BasicSample.cs`
 - `Tests/`
 
-## Repository-Owned Output
+### Repository-Owned Output
 
 The repository root can include:
 
@@ -77,7 +85,7 @@ The repository root can include:
 
 The `docs/` scaffold contains the DocFX configuration, root pages, API landing page, and DocFX table-of-contents files described in [Templates](templates.md).
 
-## Companion Project Output
+### Companion Project Output
 
 The companion project is written under `projects/<Project Name>`.
 
@@ -91,29 +99,33 @@ It is built from the template project's baseline assets, packages, and project s
 - a local file reference to the generated package
 - the package as a `testable` package when the package `Tests` folder is enabled
 
-## Preset Buttons In The Wizard
+## Preset Buttons
 
 The package creation wizard has two preset scopes:
 
-![Package wizard preset buttons](../images/manual/package-creation-wizard-presets.png)
+![Package wizard preset buttons](../images/manual/package-creation-wizard-presets.webp)
 
 - the `Package Definition` preset button applies package and repository values
 - the `Companion Project` preset button applies project-facing values
 
-This split is intentional. It lets you keep package/repository presets separate from project-specific presets when those concerns change at different rates.
+The package and repository side can change independently from the companion-project side, so the wizard keeps those preset scopes separate.
 
-## Live Output Preview
+You can either apply [Project Defaults](defaults-and-presets.md#project-defaults) or custom [Presets](defaults-and-presets.md#preset-assets):
+
+![Package wizard preset button options](../images/manual/package-creation-wizard-presets_options.webp)
+
+## Output Preview
 
 The `Output` section shows the resolved paths derived from the current settings:
 
-![Package wizard output and repository preview](../images/manual/package-creation-wizard-output-preview.png)
+![Package wizard output and repository preview](../images/manual/package-creation-wizard-output-preview.webp)
 
 - target location
 - repository root
 - package folder
 - companion project folder
 
-The preview updates as you type, so it is the fastest way to confirm that the identifier and project name produce the folder layout you expect.
+The preview updates as you type and catches naming mistakes before generation, especially when the package identifier or project name drives multiple folder paths.
 
 ## Before You Click Create Package
 
@@ -125,4 +137,4 @@ Check these decisions before generation:
 - the optional folders reflect what you actually intend to ship or maintain
 - the repository URL, if used, resolves correctly after token replacement
 
-For a field-by-field breakdown of the entire window, continue to [Package Creation Wizard Settings](package-creation-wizard-settings.md).
+Field-by-field behavior is covered in [Wizard Settings](package-creation-wizard-settings.md).

@@ -1,15 +1,18 @@
-# com.doji.package-authoring
+# Package Authoring
 
-![Documentation landing page overview](images/manual/documentation-home-hero.png)
+![Documentation landing page overview](images/manual/documentation-home-hero.webp)
 
 Unity editor tooling for scaffolding UPM packages and their companion sample projects.
 
-Use the manual for workflow guidance, wizard reference material, template customization, and project-default configuration. Use the scripting API reference for the generated editor-facing API pages.
+This documentation is split into two parts:
+
+- the manual for workflows, settings, templates, and generated output
+- the scripting API for the editor-facing code reference
 
 ## Start Here
 
-- [Manual](manual/index.md)
-- [Package Creation Wizard](manual/package-creation-wizard.md)
-- [Package Creation Wizard Settings](manual/package-creation-wizard-settings.md)
-- [Templates](manual/templates.md)
-- [Scripting API](api/index.md)
+- [Manual](manual/index.md) if you want the guided entry point
+- [Package Creation Wizard](manual/package-creation-wizard.md) if you want to understand the main workflow first
+- [Package Creation Wizard Settings](manual/package-creation-wizard-settings.md) if you need the full field-by-field reference
+- [Templates](manual/templates.md) if you want to customize generated files
+- [Scripting API](api/index.md) if you need the generated code reference

@@ -4,7 +4,7 @@ The package-authoring tools generate several repository and package files from p
 
 Open them from `Project Settings > Doji > Package Authoring > Templates`.
 
-![Templates landing page](../images/manual/templates-landing-page.png)
+![Templates landing page](../images/manual/templates-landing-page.webp)
 
 ## Template Categories
 
@@ -14,7 +14,7 @@ The template settings are grouped into:
 - `Repository`
 - `Documentation (DocFX)`
 
-The top-level `Templates` page also shows the supported placeholder tokens.
+The top-level `Templates` page also shows the supported placeholder tokens that can be reused across editable templates.
 
 ## Supported Tokens
 
@@ -36,7 +36,9 @@ Tokens are resolved from the current package, repository, and project settings a
 
 ## Package Templates
 
-![Package templates page](../images/manual/package-templates-page.png)
+![Package templates page](../images/manual/package-templates-page.webp)
+
+These templates affect files generated inside the package itself or directly into generated Unity projects.
 
 ### `.gitignore`
 
@@ -56,7 +58,9 @@ This template becomes the package root `README.md` when `Include Package README`
 
 ## Repository Templates
 
-![Repository templates page](../images/manual/repository-templates-page.png)
+![Repository templates page](../images/manual/repository-templates-page.webp)
+
+These templates affect files written at the repository root.
 
 ### `README`
 
@@ -90,9 +94,9 @@ Path:
 
 - `Project Settings > Doji > Package Authoring > Templates > Documentation (DocFX)`
 
-![Documentation templates page](../images/manual/documentation-templates-page.png)
+![Documentation templates page](../images/manual/documentation-templates-page.webp)
 
-This page controls the files generated under the repository `docs/` folder when `Create Documentation Folder` is enabled.
+The generated `docs/` folder is created when `Create Documentation Folder` is enabled.
 
 The documentation template set includes:
 
@@ -114,7 +118,7 @@ See [Companion And Standalone Projects](projects.md) for how generated projects 
 
 The documentation settings page can also write branding outputs under `docs/images`.
 
-![Documentation branding fields](../images/manual/documentation-branding-fields.png)
+![Documentation branding fields](../images/manual/documentation-branding-fields.webp)
 
 - `Favicon Source` is used to generate `docs/images/favicon.ico`
 - `Logo Source` is used to generate `docs/images/logo.png`
@@ -122,6 +126,8 @@ The documentation settings page can also write branding outputs under `docs/imag
 If no source textures are configured, the documentation scaffold is still created, but the image outputs are skipped.
 
 ### Editable Documentation Files
+
+These are the files you will most commonly customize when you want different generated docs output between repositories.
 
 #### `docs/docfx.json`
 
@@ -150,15 +156,17 @@ The default filter is tokenized around the package namespace so it can adapt to 
 
 This is the generated documentation landing page for the repository docs site.
 
-Use it for high-level package-facing documentation, overview text, and links into the manual and API reference.
+High-level package-facing documentation, overview text, and links into the manual and API reference.
 
 #### `docs/api/index.md`
 
 This is the generated landing page for the API reference section.
 
-Use it to set expectations for the scripting API pages that DocFX generates from the package source.
+Introductory text for the scripting API pages that DocFX generates from the package source.
 
 ### Locked Documentation Files
+
+These files are still part of the generated docs scaffold, but they are provided as built-in content rather than editable project overrides.
 
 #### `docs/.gitignore`
 
@@ -180,7 +188,7 @@ This built-in manual table of contents provides the manual section entry point f
 
 This built-in PDF table of contents controls the PDF-oriented navigation tree used by the DocFX PDF build.
 
-## Editable Versus Locked Templates
+## Why Some Templates Are Editable And Others Are Locked
 
 The template editor distinguishes between:
 
@@ -203,7 +211,7 @@ Examples:
 
 ## Good Template Practices
 
-Use templates for content that should be consistent across repositories, not for values that already have dedicated settings.
+Templates are best for content that should stay consistent across repositories, not for values that already have dedicated settings.
 
 In practice:
 

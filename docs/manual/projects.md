@@ -47,7 +47,7 @@ This is what makes the companion project immediately useful for package developm
 
 The standalone project creation wizard uses the same project baseline and dependency-merging logic, but it does not add a local package dependency because there is no generated package repository around it.
 
-Use this flow when you want a clean Unity project scaffold driven by the same defaults and preset system.
+This flow produces a clean Unity project scaffold driven by the same defaults and preset system, but without the package-repository workflow around it.
 
 ## Preferred Editor Packages
 

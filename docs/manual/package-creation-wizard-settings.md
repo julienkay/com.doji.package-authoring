@@ -1,10 +1,10 @@
 # Package Creation Wizard Settings
 
-This page documents every user-facing setting in the main `Tools/Package Creation Wizard` window.
-
 ## Package Definition
 
-![Package definition section](../images/manual/package-definition-section.png)
+![Package definition section](../images/manual/package-definition-section.webp)
+
+Package identity, generated package structure, and package-level metadata.
 
 ### Identifier
 
@@ -100,7 +100,7 @@ The manifest combines `Major` and `Minor` as `<major>.<minor>`.
 
 An optional Unity release suffix written to `package.json` as `unityRelease` when minimum Unity version support is enabled.
 
-Use this only when you need the package manifest to target a specific release suffix.
+Only needed when the package manifest must target a specific Unity release suffix.
 
 ### Documentation URL
 
@@ -151,7 +151,7 @@ When disabled, no `Samples~` folder or `samples` manifest entry is created.
 
 When enabled, the package gets an `Editor/` folder plus an editor-only asmdef named `<Assembly Name>.Editor.asmdef`.
 
-Use this for editor tooling that should live inside the generated package.
+Intended for editor tooling that should live inside the generated package.
 
 ### Create Tests Folder
 
@@ -178,7 +178,9 @@ If the current package name does not yet match a known exact package, the row ca
 
 ## Repo Settings
 
-![Repository settings section](../images/manual/repo-settings-section.png)
+![Repository settings section](../images/manual/repo-settings-section.webp)
+
+Repository-root files and repository initialization behavior outside the package folder itself.
 
 ### Copyright Holder
 
@@ -225,7 +227,9 @@ If provided, it is resolved through the standard template-token system and then 
 
 The `Companion Project` section uses the shared project settings UI, but inside the package creation wizard it intentionally hides the target location field because the companion project always lives inside the generated repository.
 
-![Companion project section](../images/manual/companion-project-section.png)
+![Companion project section](../images/manual/companion-project-section.webp)
+
+Unity project settings for the generated companion project used for development, validation, and sample usage.
 
 ### Company Name
 
@@ -276,7 +280,7 @@ The generated project manifest removes any preexisting IDE packages from the bas
 
 These entries are merged into the generated companion project manifest after the baseline manifest and preferred editor dependency are applied.
 
-Use this when the generated project needs additional packages beyond the template project's baseline setup.
+Adds packages beyond the template project's baseline setup.
 
 ### Advanced
 
@@ -302,7 +306,7 @@ When disabled, the files are still generated, but the wizard does not launch the
 
 The `Output` section is read-only except for `Target Location`.
 
-![Output section and repository layout preview](../images/manual/output-and-preview-section.png)
+![Output section and repository layout preview](../images/manual/output-and-preview-section.webp)
 
 It shows:
 
@@ -327,6 +331,6 @@ The companion project folder is:
 
 The live repository layout preview is not just decoration. It reflects the current toggle state and helps confirm which files and folders each setting will add or remove.
 
-![Repository layout preview detail](../images/manual/repository-layout-preview-detail.png)
+![Repository layout preview detail](../images/manual/repository-layout-preview-detail.webp)
 
 Hovering related fields in the form highlights the matching area of the preview, including package metadata, docs, readmes, samples, editor files, tests, and companion-project output.

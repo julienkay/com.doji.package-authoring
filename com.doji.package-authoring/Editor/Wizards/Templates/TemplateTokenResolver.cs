@@ -43,6 +43,7 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Templates {
         public const string SupportedTokensReferenceText = @"{{YEAR}}
 {{COPYRIGHT_HOLDER}}
 {{PACKAGE_NAME}}
+{{PACKAGE_DISPLAY_NAME}}
 {{PACKAGE_VERSION}}
 {{PACKAGE_COMPANY}}
 {{PACKAGE_DESCRIPTION}}
@@ -53,7 +54,7 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Templates {
 {{ASSEMBLY_NAME}}";
 
         public const string SupportedTokensHelpText =
-            "Available tokens: {{YEAR}}, {{COPYRIGHT_HOLDER}}, {{PACKAGE_NAME}}, {{PACKAGE_VERSION}}, {{PACKAGE_COMPANY}}, {{PACKAGE_DESCRIPTION}}, {{PROJECT_NAME}}, {{PROJECT_COMPANY}}, {{NAMESPACE_NAME}}, {{NAMESPACE_NAME_REGEX}}, {{ASSEMBLY_NAME}}";
+            "Available tokens: {{YEAR}}, {{COPYRIGHT_HOLDER}}, {{PACKAGE_NAME}}, {{PACKAGE_DISPLAY_NAME}}, {{PACKAGE_VERSION}}, {{PACKAGE_COMPANY}}, {{PACKAGE_DESCRIPTION}}, {{PROJECT_NAME}}, {{PROJECT_COMPANY}}, {{NAMESPACE_NAME}}, {{NAMESPACE_NAME_REGEX}}, {{ASSEMBLY_NAME}}";
 
         public const string SupportedTokensTooltipSuffix = "Supports standard package authoring placeholders.";
 
@@ -61,6 +62,7 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Templates {
             "{{YEAR}}",
             "{{COPYRIGHT_HOLDER}}",
             "{{PACKAGE_NAME}}",
+            "{{PACKAGE_DISPLAY_NAME}}",
             "{{PACKAGE_VERSION}}",
             "{{PACKAGE_COMPANY}}",
             "{{PACKAGE_DESCRIPTION}}",
@@ -168,6 +170,7 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Templates {
                 ["{{YEAR}}"] = currentYear.ToString(),
                 ["{{COPYRIGHT_HOLDER}}"] = repo?.CopyrightHolder ?? string.Empty,
                 ["{{PACKAGE_NAME}}"] = package?.PackageName ?? string.Empty,
+                ["{{PACKAGE_DISPLAY_NAME}}"] = package?.PackageDisplayName ?? string.Empty,
                 ["{{PACKAGE_VERSION}}"] = project?.Version ?? string.Empty,
                 ["{{PACKAGE_COMPANY}}"] = package?.CompanyName ?? string.Empty,
                 ["{{PACKAGE_DESCRIPTION}}"] = package?.Description ?? string.Empty,

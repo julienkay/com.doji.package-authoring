@@ -1,12 +1,18 @@
-- name: com.doji.package-authoring
+- name: Package Authoring
   href: index.md
-- name: Package Creation Wizard
-  href: package-creation-wizard.md
-- name: Package Creation Wizard Settings
-  href: package-creation-wizard-settings.md
-- name: Defaults And Presets
-  href: defaults-and-presets.md
-- name: Templates
-  href: templates.md
-- name: Companion And Standalone Projects
-  href: projects.md
+- name: Package Creation
+  items:
+  - name: Wizard Overview
+    href: package-creation-wizard.md
+  - name: Wizard Settings
+    href: package-creation-wizard-settings.md
+- name: Configuration
+  items:
+  - name: Defaults And Presets
+    href: defaults-and-presets.md
+  - name: Templates
+    href: templates.md
+- name: Projects
+  items:
+  - name: Companion And Standalone Projects
+    href: projects.md

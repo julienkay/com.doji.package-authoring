@@ -23,8 +23,8 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Presets {
     /// Stores GUIDs for built-in package assets used as documentation branding defaults.
     /// </summary>
     internal static class DocumentationTemplateAssetGuids {
-        public const string DefaultLogoTextureAsset = "bfd9b7566b204ad3ab36d52013f02dce";
-        public const string DefaultFaviconTextureAsset = "a5bc8f2cf1ab46f79af8cdad680f2cd0";
+        public const string DefaultFaviconTextureAsset = "bfd9b7566b204ad3ab36d52013f02dce";
+        public const string DefaultLogoTextureAsset = "a5bc8f2cf1ab46f79af8cdad680f2cd0";
     }
 
     /// <summary>

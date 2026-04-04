@@ -12,4 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 0}
   m_Name: 
   m_EditorClassIdentifier: Doji.PackageAuthoring.Editor:Doji.PackageAuthoring.Editor.Wizards.Presets:DocsManualTocTemplateSettings
-  <Content>k__BackingField: "- name: {{PACKAGE_NAME}}\n  href: ../index.md\n"
+  <Content>k__BackingField: "- name: {{PACKAGE_DISPLAY_NAME}}\n  href: ../index.md\n"

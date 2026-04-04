@@ -46,6 +46,42 @@ Prefer task-oriented docs first, then reference depth:
 3. Reference pages for dense UI surfaces such as wizard settings
 4. Supporting pages for templates, presets/defaults, and generated output
 
+Before rewriting a page or section, decide these three things privately:
+
+1. Where does this page sit in the docs flow?
+2. What job should this section do for the future reader?
+3. What is the main point the reader must leave with?
+
+Reflect those answers through refactoring, not explanation:
+
+- change headings so they carry the right question or topic
+- move sections so the reader gets orientation before detail
+- cut repetition that does not help a decision or action
+- replace vague framing with concrete effects, outputs, paths, or UI behavior
+
+Write to the future reader of the docs, not to the current user prompt:
+
+- avoid meta lines such as "this page explains" or "the goal of this page is" unless the orientation is genuinely useful
+- do not narrate your documentation strategy inside the docs
+- show the important consequence directly instead of explaining that you are about to explain it
+- if a sentence sounds like reassurance to the requester rather than guidance to the product user, rewrite or delete it
+- prefer refactoring-style fixes to the prose: rename headings, reorder sections, tighten labels, or replace meta sentences with direct content
+
+The resulting prose should sound like product documentation:
+
+- direct, specific, and user-facing
+- centered on UI behavior, generated output, and reader decisions
+- written as statements of fact, consequences, paths, options, and workflows
+- structured so headings do orientation work and paragraphs do explanatory work
+- free of conversational reassurance, prompt-response tone, or commentary about the writing itself
+
+Prefer showing over telling:
+
+- if the point is that a field changes generated output, show the output it changes
+- if the point is that a toggle reveals nested options, document the conditional behavior directly
+- if the point is that a page is for reference, make the headings and layout reference-friendly instead of saying so
+- if the point is that a workflow is the main entry point, prove it through ordering, screenshots, and link placement
+
 Default to visuals-first documentation:
 
 - if a screenshot explains a UI section faster than prose, place the image before the explanation

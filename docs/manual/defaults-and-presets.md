@@ -6,7 +6,7 @@ The package-authoring tools separate persistent project defaults from reusable p
 
 Open `Project Settings > Doji > Package Authoring` to edit the project-wide defaults.
 
-![Project settings defaults page](../images/manual/project-defaults-page.png)
+![Project settings defaults page](../images/manual/project-defaults-page.webp)
 
 These defaults are stored in `ProjectSettings/PackageAuthoringProjectSettings.asset` and are used whenever a wizard opens without applying a preset first.
 
@@ -18,7 +18,7 @@ The page contains three blocks:
 
 These sections mirror the models used by the package creation and project creation tools.
 
-## What Defaults Affect
+## Why Project Defaults Matter
 
 Project defaults feed:
 
@@ -32,13 +32,15 @@ Changing project defaults does not retroactively update repositories or projects
 
 Preset assets let you capture a reusable authoring profile inside the Unity project.
 
-![Package authoring preset asset](../images/manual/package-authoring-preset-asset.png)
-
 Create one from:
 
 - `Assets > Create > Doji > Package Authoring Preset`
 
-A preset stores package, repository, and project values together.
+![Package authoring preset asset](../images/manual/package-authoring-preset-asset_create.webp)
+
+A preset stores package, repository, and project values together, the exact same way you can author these in the package creation wizard or the default project settings. Use presets when you need more than one repeatable authoring configuration in the same Unity project.
+
+![Package authoring preset asset](../images/manual/package-authoring-preset-asset.webp)
 
 ## Where Presets Can Be Applied
 
@@ -46,26 +48,26 @@ A preset stores package, repository, and project values together.
 
 The title bar of `Project Settings > Doji > Package Authoring` includes a preset button. Applying a preset there copies the preset values into the project defaults and saves them.
 
-![Project settings preset menu](../images/manual/project-settings-preset-menu.png)
+![Project settings preset menu](../images/manual/project-settings-preset-menu.webp)
 
 ### In Package Creation Wizard
 
 The wizard intentionally exposes two preset buttons:
 
-![Package wizard preset menu](../images/manual/package-wizard-preset-menu.png)
+![Package wizard preset menu](../images/manual/package-creation-wizard-presets.webp)
 
 - `Package Definition` preset button
 - `Companion Project` preset button
 
 The package-side button applies the preset's package defaults and repository defaults. The companion-project button applies the preset's project defaults only.
 
-This split keeps repository/package concerns independent from project concerns when you need to mix them.
+This keeps repository/package concerns independent from project concerns.
 
 ### In Project Creation Wizard
 
 The standalone project creation wizard has a preset button for the generated project settings section. Applying a preset there uses only the project-facing portion of the preset.
 
-## Resetting To Project Defaults
+## Resetting Back To Project Defaults
 
 The preset menus do more than apply named preset assets. They also expose the project-default reset action for the relevant scope.
 
@@ -81,7 +83,7 @@ That means:
 - project defaults remain the source for fresh sessions
 - presets are still an explicit apply action, not a hidden background override
 
-## Choosing Between Defaults And Presets
+## When To Use Defaults Vs Presets
 
 Use project defaults when:
 
@@ -94,7 +96,7 @@ Use presets when:
 - you want sharable configurations stored as assets
 - you want to mix one preset for package metadata with different companion-project settings
 
-## Relationship To Templates
+## How This Differs From Templates
 
 Defaults and presets control values. Templates control the text files generated from those values.
 

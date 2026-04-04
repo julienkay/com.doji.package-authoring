@@ -14,10 +14,10 @@
 
 ## How The Package Is Organized
 
-The package is centered around two editor windows:
+The package is centered around two editor windows under the top-level `Package Authoring` menu:
 
-- `Tools/Package Creation Wizard` creates a repository that contains a UPM package, optional supporting folders, and a companion Unity project
-- `Tools/Project Creation Wizard` creates a standalone Unity project from the shared project defaults
+- `Package Authoring/Create Package...` creates a repository that contains a UPM package, optional supporting folders, and a companion Unity project
+- `Package Authoring/Create Project...` creates a standalone Unity project from the shared project defaults
 
 The package also adds project-scoped defaults and template editors under `Project Settings > Doji > Package Authoring`.
 

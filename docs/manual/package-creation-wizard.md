@@ -2,7 +2,7 @@
 
 The package creation wizard is the main entry point for generating a reusable package repository.
 
-Open it from `Tools/Package Creation Wizard`.
+Open it from `Package Authoring/Create Package...`.
 
 ![Package creation wizard overview](../images/manual/documentation-home-hero.webp)
 

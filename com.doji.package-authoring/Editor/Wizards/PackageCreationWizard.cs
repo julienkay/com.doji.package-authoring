@@ -67,7 +67,7 @@ namespace Doji.PackageAuthoring.Wizards {
         /// <summary>
         /// Opens the package creation wizard.
         /// </summary>
-        [MenuItem("Tools/Package Creation Wizard")]
+        [MenuItem("Package Authoring/Create Package...")]
         public static void ShowWindow() {
             PackageCreationWizard window = GetWindow<PackageCreationWizard>();
             window.titleContent = new GUIContent("Package Creation");

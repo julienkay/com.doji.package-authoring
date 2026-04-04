@@ -135,10 +135,13 @@ Notes:
 
 - Run `metadata` before `build` when API docs may have changed, especially after changing public types, namespaces, XML documentation, or assembly-visible API shape.
 - `build` alone does not regenerate this repository's API metadata under `docs/api/`.
-- Run the build after documentation edits so navigation and broken-link issues surface immediately.
+- Run the build after documentation edits so navigation and broken-link issues surface immediately. Treat a successful `build` as the authoritative local verification step.
 - `serve` does not rebuild; it only serves the current `docs/_site` output.
 - If a serve session is already running for the current workspace, prefer reusing it after a fresh build instead of starting duplicates.
-- Report the local preview URL or any build errors back to the user.
+- Do not assume HTTP checks from the current Codex session can reach a DocFX server started by another session. Session-local `curl` failures do not prove the preview is stale or broken.
+- Use HTTP checks such as `curl -I --max-time 2 http://127.0.0.1:8080` only as positive confirmation when they succeed from the current session.
+- If a preview server likely already exists but this session cannot reach it, report that the build succeeded and that preview reachability appears session-local rather than treating it as a DocFX failure.
+- Report the local preview URL or any build errors back to the user. When reusing an existing preview, make it clear whether the URL was confirmed from the current session or inferred from an already-running server.
 - If namespaces or generated API file names changed, stale files can linger in `docs/api/` and `docs/_site/api/`. In that case, clean generated API outputs first while preserving hand-authored files such as `docs/api/index.md` and `docs/api/.gitignore`.
 
 ## Verification checklist
@@ -152,5 +155,6 @@ Before finishing:
 - confirm image references resolve to actual files under `docs/images/`
 - run `./scripts/docfx.sh metadata docs/docfx.json` when API docs may have changed
 - run `./scripts/docfx.sh build docs/docfx.json` unless the user explicitly skips local verification
-- start or refresh `./scripts/docfx.sh serve docs/_site` unless the user explicitly skips local preview
+- start, refresh, or reuse `./scripts/docfx.sh serve docs/_site` unless the user explicitly skips local preview
+- do not treat a failed `curl` from the current session as evidence that an already-running preview server is unusable
 - if stale served output is involved, remember that `docfx serve docs/_site` serves existing generated files and does not rebuild them

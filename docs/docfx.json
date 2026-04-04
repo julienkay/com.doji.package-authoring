@@ -49,14 +49,16 @@
     "output": "_site",
     "globalMetadataFiles": [],
     "globalMetadata": {
+      "_appFaviconPath": "images/favicon.ico",
+      "_appLogoPath": "images/logo.png",
+      "_appLogoUrl": "#",
       "_disableContribution": true,
-      "_appTitle": "com.doji.package-authoring",
-      "_appName": "com.doji.package-authoring",
       "_enableSearch": true
     },
     "fileMetadataFiles": [],
     "template": [
-      "default"
+      "default",
+      "templates/unity"
     ],
     "postProcessors": [],
     "keepFileLink": false,

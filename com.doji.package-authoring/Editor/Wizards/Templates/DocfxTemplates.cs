@@ -73,11 +73,16 @@ This is the documentation for the Scripting APIs of this package.";
     ""output"": ""_site"",
     ""globalMetadataFiles"": [],
     ""globalMetadata"": {
-      ""_disableContribution"": true
+      ""_appFaviconPath"": ""images/favicon.ico"",
+      ""_appLogoPath"": ""images/logo.png"",
+      ""_appLogoUrl"": ""{{DOCUMENTATION_URL}}"",
+      ""_disableContribution"": true,
+      ""_enableSearch"": true
     },
     ""fileMetadataFiles"": [],
     ""template"": [
-      ""default""
+      ""default"",
+      ""templates/unity""
     ],
     ""postProcessors"": [],
     ""keepFileLink"": false,
@@ -141,6 +146,9 @@ This is the documentation for the Scripting APIs of this package.";
     ""output"": ""_site"",
     ""globalMetadataFiles"": [],
     ""globalMetadata"": {
+      ""_appFaviconPath"": ""images/favicon.ico"",
+      ""_appLogoPath"": ""images/logo.png"",
+      ""_appLogoUrl"": ""{{DOCUMENTATION_URL}}"",
       ""_disableContribution"": true,
       ""pdf"": true,
       ""pdfTocPage"": true,
@@ -149,7 +157,7 @@ This is the documentation for the Scripting APIs of this package.";
     ""fileMetadataFiles"": [],
     ""template"": [
       ""default"",
-      ""modern""
+      ""templates/unity""
     ],
     ""postProcessors"": [],
     ""keepFileLink"": false,

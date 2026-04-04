@@ -54,17 +54,18 @@
     "output": "_site",
     "globalMetadataFiles": [],
     "globalMetadata": {
+      "_appFaviconPath": "images/favicon.ico",
+      "_appLogoPath": "images/logo.png",
+      "_appLogoUrl": "#",
       "_disableContribution": true,
       "pdf": true,
       "pdfTocPage": true,
-      "pdfFileName": "com.doji.package-authoring.pdf",
-      "_appTitle": "com.doji.package-authoring",
-      "_appName": "com.doji.package-authoring"
+      "pdfFileName": "com.doji.package-authoring.pdf"
     },
     "fileMetadataFiles": [],
     "template": [
       "default",
-      "modern"
+      "templates/unity"
     ],
     "postProcessors": [],
     "keepFileLink": false,

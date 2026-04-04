@@ -47,6 +47,7 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Templates {
 {{PACKAGE_VERSION}}
 {{PACKAGE_COMPANY}}
 {{PACKAGE_DESCRIPTION}}
+{{DOCUMENTATION_URL}}
 {{PROJECT_NAME}}
 {{PROJECT_COMPANY}}
 {{NAMESPACE_NAME}}
@@ -54,7 +55,7 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Templates {
 {{ASSEMBLY_NAME}}";
 
         public const string SupportedTokensHelpText =
-            "Available tokens: {{YEAR}}, {{COPYRIGHT_HOLDER}}, {{PACKAGE_NAME}}, {{PACKAGE_DISPLAY_NAME}}, {{PACKAGE_VERSION}}, {{PACKAGE_COMPANY}}, {{PACKAGE_DESCRIPTION}}, {{PROJECT_NAME}}, {{PROJECT_COMPANY}}, {{NAMESPACE_NAME}}, {{NAMESPACE_NAME_REGEX}}, {{ASSEMBLY_NAME}}";
+            "Available tokens: {{YEAR}}, {{COPYRIGHT_HOLDER}}, {{PACKAGE_NAME}}, {{PACKAGE_DISPLAY_NAME}}, {{PACKAGE_VERSION}}, {{PACKAGE_COMPANY}}, {{PACKAGE_DESCRIPTION}}, {{DOCUMENTATION_URL}}, {{PROJECT_NAME}}, {{PROJECT_COMPANY}}, {{NAMESPACE_NAME}}, {{NAMESPACE_NAME_REGEX}}, {{ASSEMBLY_NAME}}";
 
         public const string SupportedTokensTooltipSuffix = "Supports standard package authoring placeholders.";
 
@@ -66,6 +67,7 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Templates {
             "{{PACKAGE_VERSION}}",
             "{{PACKAGE_COMPANY}}",
             "{{PACKAGE_DESCRIPTION}}",
+            "{{DOCUMENTATION_URL}}",
             "{{PROJECT_NAME}}",
             "{{PROJECT_COMPANY}}",
             "{{NAMESPACE_NAME}}",
@@ -166,7 +168,7 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Templates {
             RepoSettings repo) {
             int currentYear = DateTime.Now.Year;
 
-            return new Dictionary<string, string> {
+            Dictionary<string, string> tokenValues = new() {
                 ["{{YEAR}}"] = currentYear.ToString(),
                 ["{{COPYRIGHT_HOLDER}}"] = repo?.CopyrightHolder ?? string.Empty,
                 ["{{PACKAGE_NAME}}"] = package?.PackageName ?? string.Empty,
@@ -174,12 +176,35 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Templates {
                 ["{{PACKAGE_VERSION}}"] = project?.Version ?? string.Empty,
                 ["{{PACKAGE_COMPANY}}"] = package?.CompanyName ?? string.Empty,
                 ["{{PACKAGE_DESCRIPTION}}"] = package?.Description ?? string.Empty,
+                ["{{DOCUMENTATION_URL}}"] = string.Empty,
                 ["{{PROJECT_NAME}}"] = project?.ProductName ?? string.Empty,
                 ["{{PROJECT_COMPANY}}"] = project?.CompanyName ?? string.Empty,
                 ["{{NAMESPACE_NAME}}"] = package?.NamespaceName ?? string.Empty,
                 ["{{NAMESPACE_NAME_REGEX}}"] = (package?.NamespaceName ?? string.Empty).Replace(".", @"\."),
                 ["{{ASSEMBLY_NAME}}"] = package?.AssemblyName ?? string.Empty
             };
+
+            tokenValues["{{DOCUMENTATION_URL}}"] = ResolveDocumentationUrl(package?.DocumentationUrl, tokenValues);
+            return tokenValues;
+        }
+
+        private static string ResolveDocumentationUrl(
+            string documentationUrl,
+            IReadOnlyDictionary<string, string> tokenValues) {
+            if (string.IsNullOrWhiteSpace(documentationUrl)) {
+                return "#";
+            }
+
+            string resolvedDocumentationUrl = documentationUrl;
+            foreach (KeyValuePair<string, string> tokenValue in tokenValues) {
+                if (string.Equals(tokenValue.Key, "{{DOCUMENTATION_URL}}", StringComparison.Ordinal)) {
+                    continue;
+                }
+
+                resolvedDocumentationUrl = resolvedDocumentationUrl.Replace(tokenValue.Key, tokenValue.Value ?? string.Empty);
+            }
+
+            return resolvedDocumentationUrl;
         }
     }
 }

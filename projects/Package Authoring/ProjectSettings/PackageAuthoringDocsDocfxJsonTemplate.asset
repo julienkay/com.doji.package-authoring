@@ -25,7 +25,9 @@ MonoBehaviour:
     \"manual/**.md\",\n          \"manual/**/toc.yml\",\n          \"toc.yml\",\n         
     \"*.md\"\n        ]\n      }\n    ],\n    \"resource\": [\n      {\n        \"files\":
     [\n          \"images/**\"\n        ]\n      }\n    ],\n    \"output\": \"_site\",\n   
-    \"globalMetadataFiles\": [],\n    \"globalMetadata\": {\n      \"_disableContribution\":
-    true\n    },\n    \"fileMetadataFiles\": [],\n    \"template\": [\n      \"default\"\n   
-    ],\n    \"postProcessors\": [],\n    \"keepFileLink\": false,\n    \"disableGitFeatures\":
-    false\n  }\n}"
+    \"globalMetadataFiles\": [],\n    \"globalMetadata\": {\n      \"_appFaviconPath\":
+    \"images/favicon.ico\",\n      \"_appLogoPath\": \"images/logo.png\",\n     
+    \"_appLogoUrl\": \"{{DOCUMENTATION_URL}}\",\n      \"_disableContribution\":
+    true,\n      \"_enableSearch\": true\n    },\n    \"fileMetadataFiles\": [],\n   
+    \"template\": [\n      \"default\",\n      \"templates/unity\"\n    ],\n    \"postProcessors\":
+    [],\n    \"keepFileLink\": false,\n    \"disableGitFeatures\": false\n  }\n}"

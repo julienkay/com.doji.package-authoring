@@ -23,9 +23,11 @@ The shared token set is:
 - `{{YEAR}}`
 - `{{COPYRIGHT_HOLDER}}`
 - `{{PACKAGE_NAME}}`
+- `{{PACKAGE_DISPLAY_NAME}}`
 - `{{PACKAGE_VERSION}}`
 - `{{PACKAGE_COMPANY}}`
 - `{{PACKAGE_DESCRIPTION}}`
+- `{{DOCUMENTATION_URL}}`
 - `{{PROJECT_NAME}}`
 - `{{PROJECT_COMPANY}}`
 - `{{NAMESPACE_NAME}}`
@@ -33,6 +35,8 @@ The shared token set is:
 - `{{ASSEMBLY_NAME}}`
 
 Tokens are resolved from the current package, repository, and project settings at generation time.
+
+`{{DOCUMENTATION_URL}}` uses the package `Documentation URL` setting. If that setting is empty, generated DocFX branding links fall back to `#` so the logo stays on the current page instead of pointing at an external site.
 
 ## Package Templates
 

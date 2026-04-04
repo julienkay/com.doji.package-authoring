@@ -26,8 +26,10 @@ MonoBehaviour:
     \"*.md\"\n        ]\n      },\n      {\n        \"files\": [\n          \"pdf/toc.yml\"\n       
     ]\n      }\n    ],\n    \"resource\": [\n      {\n        \"files\": [\n         
     \"images/**\"\n        ]\n      }\n    ],\n    \"output\": \"_site\",\n    \"globalMetadataFiles\":
-    [],\n    \"globalMetadata\": {\n      \"_disableContribution\": true,\n     
-    \"pdf\": true,\n      \"pdfTocPage\": true,\n      \"pdfFileName\": \"{{PACKAGE_NAME}}.pdf\"\n   
-    },\n    \"fileMetadataFiles\": [],\n    \"template\": [\n      \"default\",\n     
-    \"modern\"\n    ],\n    \"postProcessors\": [],\n    \"keepFileLink\": false,\n   
-    \"disableGitFeatures\": false\n  }\n}"
+    [],\n    \"globalMetadata\": {\n      \"_appFaviconPath\": \"images/favicon.ico\",\n     
+    \"_appLogoPath\": \"images/logo.png\",\n      \"_appLogoUrl\": \"{{DOCUMENTATION_URL}}\",\n     
+    \"_disableContribution\": true,\n      \"pdf\": true,\n      \"pdfTocPage\":
+    true,\n      \"pdfFileName\": \"{{PACKAGE_NAME}}.pdf\"\n    },\n    \"fileMetadataFiles\":
+    [],\n    \"template\": [\n      \"default\",\n      \"templates/unity\"\n   
+    ],\n    \"postProcessors\": [],\n    \"keepFileLink\": false,\n    \"disableGitFeatures\":
+    false\n  }\n}"

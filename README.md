@@ -1,94 +1,96 @@
-# Unity Project Template
+<p align="right">
+  <a href="https://www.doji-tech.com/">
+    <img src="https://www.doji-tech.com/assets/favicon.ico" alt="Doji" title="Doji" height="70" />
+  </a>
+</p>
 
-This repository is a Unity 6 template project for bootstrapping either:
+# Package Authoring
 
-- a new Unity application project
-- a reusable Unity package with an accompanying sample project
+Unity editor tooling to create reusable UPM packages, companion Unity projects, and supporting repository files.
 
-The repo is centered around custom editor tooling in [`com.doji.package-authoring/Editor`](/Users/julienkipp/Unity/UnityProjectTemplate/com.doji.package-authoring/Editor) and a host Unity project under [`projects/Package Authoring`](/Users/julienkipp/Unity/UnityProjectTemplate/projects/Package%20Authoring) used to support authoring and validation inside this repository.
+[OpenUPM] · [Asset Store] · [Documentation]
 
-For durable repository context, conventions, and architectural notes that should survive local IDE or assistant history, see [`.codex/project-memory.md`](/Users/julienkipp/Unity/UnityProjectTemplate/.codex/project-memory.md).
+## About
 
-## What This Repo Includes
+This repository is the source for the `com.doji.package-authoring` package.
 
-- `ProjectCreationWizard`: creates a new Unity project by copying `Packages`, `ProjectSettings`, and the root `.gitignore`, creating the project container folders, and temporarily applying product/company/version settings.
-- `PackageCreationWizard`: creates a UPM-style package repository with generated manifests, runtime assembly definitions, optional docs/tests/samples folders, and a local sample Unity project that references the package.
-- Template helpers for common generated files such as `README.md`, `LICENSE`, `package.json`, `AssemblyInfo.cs`, DocFX config, and starter scripts.
-- Default Unity project configuration for:
-  - Universal Render Pipeline
-  - Input System
-  - common built-in Unity modules and IDE integration
+The tooling currently focuses on two editor workflows:
 
-Screenshot placeholder:
-Add an inline image here showing the `Project Creation Wizard` and `Package Creation Wizard` windows, including the main metadata fields and package options.
+- `Package Authoring/Create Package...` generates a package repository with a UPM package, repository files, optional docs, and a companion Unity project.
+- `Tools/Project Creation Wizard` generates a standalone Unity project from the same shared project baseline and settings model.
 
-## Unity Version
+## What It Includes
 
-The project is currently configured for Unity `6000.3.5f1`.
+- `Package Creation Wizard` for creating a new package repository with optional `Editor`, `Samples~`, `Tests`, `docs`, `LICENSE`, `README.md`, and `AGENTS.md` output.
+- `Project Creation Wizard` for creating standalone Unity projects from the maintained baseline in this repo.
+- Presets and project settings providers for authoring defaults, templates, and reusable generation profiles.
+- Package dependency search and manifest generation helpers for companion projects.
+- DocFX documentation templates and generated documentation for the package itself.
 
-## Repo Structure
+## Installation Options
 
-Key folders:
+### [OpenUPM]
 
-- [`com.doji.package-authoring`](/Users/julienkipp/Unity/UnityProjectTemplate/com.doji.package-authoring): the reusable package under development
-- [`projects/Package Authoring/Assets/Editor`](/Users/julienkipp/Unity/UnityProjectTemplate/projects/Package%20Authoring/Assets/Editor): host-project editor helpers
-- [`projects/Package Authoring/Assets/Input`](/Users/julienkipp/Unity/UnityProjectTemplate/projects/Package%20Authoring/Assets/Input): template-project Input System actions asset
-- [`projects/Package Authoring/Assets/Settings`](/Users/julienkipp/Unity/UnityProjectTemplate/projects/Package%20Authoring/Assets/Settings): template-project URP renderer, pipeline, and volume profile assets
-- [`projects/Package Authoring/Packages`](/Users/julienkipp/Unity/UnityProjectTemplate/projects/Package%20Authoring/Packages): Unity package manifest for the host project
-- [`projects/Package Authoring/ProjectSettings`](/Users/julienkipp/Unity/UnityProjectTemplate/projects/Package%20Authoring/ProjectSettings): template-project settings and generator defaults
-- [`docs`](/Users/julienkipp/Unity/UnityProjectTemplate/docs): placeholder docs directory for future documentation work
+CLI: ```openupm add com.doji.package-authoring```
 
-## How To Use
+<details>
+  <summary>Install via the Unity Package Manager UI</summary>
 
-1. Open [`projects/Package Authoring`](/Users/julienkipp/Unity/UnityProjectTemplate/projects/Package%20Authoring) in Unity `6000.3.10f1`.
-2. Use the Unity menu:
-   - `Tools/Project Creation Wizard`
-   - `Tools/Package Creation Wizard`
-3. Fill in the metadata fields and choose the target output location.
-4. Run the wizard to generate the new project or package scaffold outside this template repo.
+  1. In `Edit -> Project Settings -> Package Manager`, add a new scoped registry:
 
-Screenshot placeholder:
-Add an inline image here showing one wizard filled out with realistic example values, especially the output path, identifiers, and enabled optional folders.
+         Name: package.openupm.com
+         URL: https://package.openupm.com
+         Scope(s): com.doji
 
-## Generated Outputs
+  2. Open the Package Manager and switch to `My Registries`.
 
-`ProjectCreationWizard` generates a fresh Unity project folder with copied `Packages` and `ProjectSettings`, a generated `.gitignore`, an `Assets` folder, and project metadata applied.
+  3. Install `com.doji.package-authoring` either by name or by selecting it from the package list.
 
-`PackageCreationWizard` generates a repository shaped roughly like this:
+</details>
+
+### [Asset Store]
+
+### Git URL
+
+Add the package from Git in Unity Package Manager:
 
 ```text
-<root>/
-  <package-name>/
-    Runtime/
-    package.json
-  projects/
-    <sample-project>/
-  README.md
-  LICENSE
-  docs/   # optional
+https://github.com/julienkay/com.doji.package-authoring.git?path=com.doji.package-authoring
 ```
 
-Optional package features include documentation, samples, editor-only code, and tests. The package wizard can also initialize a Git repository and add a GitHub remote.
+### Local Development
 
-Screenshot placeholder:
-Add an inline image here showing the generated repository structure in Finder/Explorer or the Unity Project view, including the package folder and sample project.
+This repository already contains a companion Unity project under [`projects/Package Authoring`][companion-project] for working on the package locally.
 
-## Default Dependencies
+Open that project in Unity `6000.3.10f1` or a compatible Unity 6.3 editor, then use:
 
-The template project currently includes:
+- `Package Authoring/Create Package...`
+- `Tools/Project Creation Wizard`
 
-- `com.unity.render-pipelines.universal`
-- `com.unity.inputsystem`
-- `com.unity.nuget.newtonsoft-json`
-- `com.unity.ide.visualstudio`
+## Repository Layout
 
-Generated packages can also declare custom dependencies through the package wizard UI.
+- [`com.doji.package-authoring`][package-root] contains the package source.
+- [`com.doji.package-authoring/Editor`][package-editor] contains the editor-only implementation, wizards, templates, presets, and supporting utilities.
+- [`projects/Package Authoring`][companion-project] is the host Unity project used to develop and validate the package.
+- [`docs`][docs-root] contains the DocFX manual and API reference source.
 
-Screenshot placeholder:
-Add an inline image here showing the template project's baseline setup in Unity, ideally `Assets/Input`, `Assets/Settings`, or the Package Manager with the main installed packages.
+## Documentation
 
-## Notes
+The package documentation is available at:
 
-- This repo appears to be a working template repository, not a polished distributable product yet.
-- The generated package metadata and remote URLs currently contain Doji/GitHub-specific defaults, so you should expect to customize branding, author info, and repository links before wider reuse.
-- The working tree currently contains local/editor state outside the template source itself, including `.idea` data and Unity-generated folders.
+- [Manual]
+- [Package Creation Wizard]
+- [Templates]
+- [Scripting API]
+
+[OpenUPM]: https://openupm.com/packages/com.doji.package-authoring/
+[Asset Store]: https://assetstore.unity.com/packages/slug/371718
+[Documentation]: https://docs.doji-tech.com/com.doji.package-authoring/
+[Manual]: https://docs.doji-tech.com/com.doji.package-authoring/manual/index.html
+[Package Creation Wizard]: https://docs.doji-tech.com/com.doji.package-authoring/manual/package-creation-wizard.html
+[Templates]: https://docs.doji-tech.com/com.doji.package-authoring/manual/templates.html
+[Scripting API]: https://docs.doji-tech.com/com.doji.package-authoring/api/index.html
+[companion-project]: ./projects/Package%20Authoring
+[package-root]: ./com.doji.package-authoring
+[package-editor]: ./com.doji.package-authoring/Editor
+[docs-root]: ./docs

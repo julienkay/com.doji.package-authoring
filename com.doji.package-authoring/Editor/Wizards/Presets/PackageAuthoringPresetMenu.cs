@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
 using UnityEngine;
-using Doji.PackageAuthoring.Editor.Wizards.Models;
+using Doji.PackageAuthoring.Models;
 
-namespace Doji.PackageAuthoring.Editor.Wizards.Presets {
+namespace Doji.PackageAuthoring.Wizards.Presets {
     /// <summary>
     /// Builds the shared preset context menu used by the wizards and the settings provider.
     /// </summary>

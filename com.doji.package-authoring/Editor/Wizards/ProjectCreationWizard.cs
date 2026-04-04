@@ -1,31 +1,29 @@
 using System.IO;
 using UnityEditor;
 using UnityEngine;
-using Doji.PackageAuthoring.Editor.Utilities;
-using Doji.PackageAuthoring.Editor.Wizards.Models;
-using Doji.PackageAuthoring.Editor.Wizards.Presets;
-using Doji.PackageAuthoring.Editor.Wizards.Templates;
-using Doji.PackageAuthoring.Editor.Wizards.UI;
+using Doji.PackageAuthoring;
+using Doji.PackageAuthoring.Models;
+using Doji.PackageAuthoring.Wizards.Presets;
+using Doji.PackageAuthoring.Wizards.UI;
 
-namespace Doji.PackageAuthoring.Editor.Wizards {
+namespace Doji.PackageAuthoring.Wizards {
     /// <summary>
     /// Editor window that scaffolds a standalone Unity project from the shared project defaults or a preset.
     /// </summary>
-    public class ProjectCreationWizard : EditorWindow {
+    internal class ProjectCreationWizard : EditorWindow {
         private const string SessionStateKey = "Doji.PackageAuthoring.ProjectCreationWizard.SessionState";
         private const string ProjectSectionPresetTooltip = "Apply project defaults or a preset asset.";
         private const string ProjectSectionTooltip =
             "The generated project starts from this template project's baseline. The generated project includes the project container, a generated Assets folder, copied Packages and ProjectSettings, and a generated .gitignore. These values customize the generated project where product metadata is written.";
 
         private static readonly string ProductNameField =
-            $"<{nameof(Doji.PackageAuthoring.Editor.Wizards.Models.ProjectSettings.ProductName)}>k__BackingField";
+            $"<{nameof(Doji.PackageAuthoring.Models.ProjectSettings.ProductName)}>k__BackingField";
 
         private static readonly string TargetLocationField =
-            $"<{nameof(Doji.PackageAuthoring.Editor.Wizards.Models.ProjectSettings.TargetLocation)}>k__BackingField";
+            $"<{nameof(Doji.PackageAuthoring.Models.ProjectSettings.TargetLocation)}>k__BackingField";
 
         [SerializeField] private bool _autoOpenAfterCreation = true;
 
-        private string ProjectDirectory => Path.Combine(ProjectSettings.TargetLocation, ProjectSettings.ProductName);
         private PackageAuthoringProfile _defaults;
         private SerializedObject _defaultsSerializedObject;
         private SerializedObject _windowSerializedObject;
@@ -34,9 +32,6 @@ namespace Doji.PackageAuthoring.Editor.Wizards {
         private PackageAuthoringProfile Defaults => _defaults ??= CreateTemporaryProfile();
         private string ScopedSessionStateKey => WizardSessionStateUtility.GetProjectScopedKey(SessionStateKey);
         private ProjectSettings ProjectSettings => Defaults.ProjectDefaults;
-        private string CurrentGitIgnoreTemplate =>
-            GitIgnoreTemplateSettings.Instance.GetResolvedContent(ProjectSettings);
-
         [MenuItem("Tools/Project Creation Wizard")]
         public static void ShowWindow() {
             GetWindow<ProjectCreationWizard>().titleContent = new GUIContent("Project Creation");
@@ -202,31 +197,7 @@ namespace Doji.PackageAuthoring.Editor.Wizards {
         /// Copies the template project into the chosen location and optionally opens it in Unity.
         /// </summary>
         private void CreateProjectStructure() {
-            GeneratedProjectScaffoldingUtility.CopyTemplateProjectBaseline(
-                ProjectDirectory,
-                CurrentGitIgnoreTemplate,
-                ProjectManifestTemplate.GetProjectManifest(ProjectSettings));
-            GeneratedProjectScaffoldingUtility.ApplyGeneratedProjectSettings(
-                ProjectDirectory,
-                ProjectSettings,
-                BuildApplicationIdentifier(),
-                BuildRootNamespace());
-
-            Debug.Log($"Project created successfully at {ProjectDirectory}");
-
-            if (_autoOpenAfterCreation) {
-                UnityEditorLauncherUtility.TryOpenProjectInCurrentEditor(ProjectDirectory);
-            }
-        }
-
-        private string BuildApplicationIdentifier() {
-            return GeneratedProjectScaffoldingUtility.BuildDefaultApplicationIdentifier(
-                ProjectSettings.CompanyName,
-                ProjectSettings.ProductName);
-        }
-
-        private string BuildRootNamespace() {
-            return GeneratedProjectScaffoldingUtility.SanitizeRootNamespace(ProjectSettings.ProductName);
+            PackageAuthoringGenerationUtility.GenerateProject(ProjectSettings, _autoOpenAfterCreation);
         }
     }
 }

@@ -1,9 +1,9 @@
 using UnityEditor;
 using UnityEngine;
-using Doji.PackageAuthoring.Editor.Wizards.Models;
-using Doji.PackageAuthoring.Editor.Wizards.UI;
+using Doji.PackageAuthoring.Models;
+using Doji.PackageAuthoring.Wizards.UI;
 
-namespace Doji.PackageAuthoring.Editor.Wizards {
+namespace Doji.PackageAuthoring.Wizards.Drawers {
     /// <summary>
     /// Draws the serialized package-settings block and delegates dependency editing to the nested list drawer.
     /// </summary>

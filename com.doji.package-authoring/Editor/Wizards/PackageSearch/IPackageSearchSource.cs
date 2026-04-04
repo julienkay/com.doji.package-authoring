@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Doji.PackageAuthoring.Editor.Wizards.PackageSearch {
+namespace Doji.PackageAuthoring.Wizards.PackageSearch {
     /// <summary>
     /// Supplies package search results from one backing source such as the Unity registry or a scoped npm registry.
     /// Implementations may load asynchronously and are expected to raise <see cref="Changed"/> whenever their status or entries change.

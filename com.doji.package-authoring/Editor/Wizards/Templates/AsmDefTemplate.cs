@@ -1,8 +1,8 @@
-namespace Doji.PackageAuthoring.Editor.Wizards.Templates {
+namespace Doji.PackageAuthoring.Wizards.Templates {
     /// <summary>
     /// Builds asmdef files for generated package assemblies.
     /// </summary>
-    public static class AsmDefTemplate {
+    internal static class AsmDefTemplate {
         /// <summary>
         /// Builds the runtime asmdef JSON for the generated package.
         /// </summary>

@@ -1,9 +1,9 @@
-using Doji.PackageAuthoring.Editor.Wizards.Models;
-using Doji.PackageAuthoring.Editor.Wizards.Templates;
+using Doji.PackageAuthoring.Models;
+using Doji.PackageAuthoring.Wizards.Templates;
 using UnityEditorInternal;
 using UnityEngine;
 
-namespace Doji.PackageAuthoring.Editor.Wizards.Presets {
+namespace Doji.PackageAuthoring.Wizards.Presets {
     /// <summary>
     /// Base asset for project-scoped editable templates that resolve shared package authoring tokens.
     /// </summary>

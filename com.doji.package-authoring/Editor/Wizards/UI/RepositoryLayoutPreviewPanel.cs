@@ -2,13 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using Doji.PackageAuthoring.Editor.Utilities;
-using Doji.PackageAuthoring.Editor.Wizards.Presets;
-using Doji.PackageAuthoring.Editor.Wizards.Templates;
+using Doji.PackageAuthoring.Utilities;
+using Doji.PackageAuthoring.Wizards.Presets;
+using Doji.PackageAuthoring.Models;
+using Doji.PackageAuthoring.Wizards.Templates;
 using UnityEditor;
 using UnityEngine;
 
-namespace Doji.PackageAuthoring.Editor.Wizards.UI {
+namespace Doji.PackageAuthoring.Wizards.UI {
     /// <summary>
     /// Draws the repository layout preview panel used by package-creation workflows.
     /// </summary>
@@ -1051,14 +1052,14 @@ namespace Doji.PackageAuthoring.Editor.Wizards.UI {
                 AppendValue(signature, (int?)context.Repo?.LicenseType ?? 0);
             }
 
-            private static void AppendDependencies(StringBuilder signature, Doji.PackageAuthoring.Editor.Wizards.Models.PackageDependencyList dependencies) {
+            private static void AppendDependencies(StringBuilder signature, PackageDependencyList dependencies) {
                 if (dependencies?.Items == null) {
                     AppendValue(signature, 0);
                     return;
                 }
 
                 AppendValue(signature, dependencies.Items.Count);
-                foreach (Doji.PackageAuthoring.Editor.Wizards.Models.PackageDependencyEntry dependency in dependencies.Items) {
+                foreach (PackageDependencyEntry dependency in dependencies.Items) {
                     AppendValue(signature, dependency?.PackageName);
                     AppendValue(signature, dependency?.Version);
                 }

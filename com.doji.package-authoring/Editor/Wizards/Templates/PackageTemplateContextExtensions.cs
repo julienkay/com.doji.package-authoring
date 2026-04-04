@@ -1,10 +1,10 @@
-using Doji.PackageAuthoring.Editor.Wizards.Presets;
+using Doji.PackageAuthoring.Wizards.Presets;
 
-namespace Doji.PackageAuthoring.Editor.Wizards.Templates {
+namespace Doji.PackageAuthoring.Wizards.Templates {
     /// <summary>
     /// Provides short template call sites on top of <see cref="PackageContext"/>.
     /// </summary>
-    public static class PackageTemplateContextExtensions {
+    internal static class PackageTemplateContextExtensions {
         /// <summary>
         /// Builds the runtime asmdef JSON for the generated package.
         /// </summary>

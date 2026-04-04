@@ -4,7 +4,7 @@ using UnityEditor;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-namespace Doji.PackageAuthoring.Editor.Utilities {
+namespace Doji.PackageAuthoring.Utilities {
     /// <summary>
     /// Centralizes best-effort access to Unity's internal Inspector window until a public activation API exists.
     /// </summary>

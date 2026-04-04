@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Doji.PackageAuthoring.Editor.Wizards.Presets {
+namespace Doji.PackageAuthoring.Wizards.Presets {
     /// <summary>
     /// Defines the common persistence contract for package authoring project settings assets.
     /// </summary>

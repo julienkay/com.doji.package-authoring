@@ -1,10 +1,10 @@
 using System;
 using UnityEditor;
 using UnityEngine;
-using Doji.PackageAuthoring.Editor.Wizards.Models;
-using Doji.PackageAuthoring.Editor.Wizards.Presets;
+using Doji.PackageAuthoring.Models;
+using Doji.PackageAuthoring.Wizards.Presets;
 
-namespace Doji.PackageAuthoring.Editor.Wizards {
+namespace Doji.PackageAuthoring.Wizards {
     /// <summary>
     /// Centralizes the temporary in-memory state used while a wizard is open.
     /// Wizards edit a transient profile, read serialized values from it, and refresh the window

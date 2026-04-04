@@ -1,9 +1,9 @@
-using Doji.PackageAuthoring.Editor.Wizards.Models;
+using Doji.PackageAuthoring.Models;
 using UnityEditor;
 using UnityEngine;
-using Doji.PackageAuthoring.Editor.Wizards.UI;
+using Doji.PackageAuthoring.Wizards.UI;
 
-namespace Doji.PackageAuthoring.Editor.Wizards.Drawers {
+namespace Doji.PackageAuthoring.Wizards.Drawers {
     /// <summary>
     /// Draws the serialized repository-settings block shared by package authoring surfaces.
     /// </summary>

@@ -28,6 +28,7 @@ The package also adds project-scoped defaults and template editors under `Projec
 - [Defaults And Presets](defaults-and-presets.md): project defaults, preset assets, and how they relate
 - [Templates](templates.md): generated file customization
 - [Companion And Standalone Projects](projects.md): generated Unity project structure and flow differences
+- [Scripting API](scripting-api.md): automate package or project generation from editor scripts
 
 ## Three Concepts To Keep In Mind
 

@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace Doji.PackageAuthoring.Editor.Wizards.UI {
+namespace Doji.PackageAuthoring.Wizards.UI {
     /// <summary>
     /// Carries generated repository file content into the Inspector when a preview entry is selected.
     /// </summary>

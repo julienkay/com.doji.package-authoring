@@ -1,7 +1,7 @@
 using UnityEditor;
 using UnityEngine;
 
-namespace Doji.PackageAuthoring.Editor.Wizards.UI {
+namespace Doji.PackageAuthoring.Wizards.UI {
     /// <summary>
     /// Draws a single-line IMGUI text field with an overlay that colorizes supported template tokens.
     /// </summary>

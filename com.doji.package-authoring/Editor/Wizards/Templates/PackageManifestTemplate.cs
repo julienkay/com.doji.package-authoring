@@ -1,14 +1,14 @@
 using System.Linq;
-using Doji.PackageAuthoring.Editor.Wizards.Models;
+using Doji.PackageAuthoring.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using static Doji.PackageAuthoring.Editor.Utilities.JsonBuilder;
+using static Doji.PackageAuthoring.Utilities.JsonBuilder;
 
-namespace Doji.PackageAuthoring.Editor.Wizards.Templates {
+namespace Doji.PackageAuthoring.Wizards.Templates {
     /// <summary>
     /// Builds the generated package manifest.
     /// </summary>
-    public static class PackageManifestTemplate {
+    internal static class PackageManifestTemplate {
         public static string GetPackageManifest(PackageContext ctx) {
             string documentationUrl = TemplateTokenResolver.Resolve(ctx.Package.DocumentationUrl, ctx);
 

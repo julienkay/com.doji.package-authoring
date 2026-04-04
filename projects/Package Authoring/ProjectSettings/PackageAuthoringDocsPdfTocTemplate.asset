@@ -11,6 +11,6 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 0}
   m_Name: 
-  m_EditorClassIdentifier: Doji.PackageAuthoring.Editor:Doji.PackageAuthoring.Editor.Wizards.Presets:DocsPdfTocTemplateSettings
+  m_EditorClassIdentifier: Doji.PackageAuthoring.Editor:Doji.PackageAuthoring.Wizards.Presets:DocsPdfTocTemplateSettings
   <Content>k__BackingField: "order: 200\nitems:\n- name: Manual\n  href: ../manual/toc.yml\n-
     name: Scripting API\n  href: ../api/toc.yml"

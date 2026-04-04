@@ -1,8 +1,8 @@
-namespace Doji.PackageAuthoring.Editor.Wizards.Templates {
+namespace Doji.PackageAuthoring.Wizards.Templates {
     /// <summary>
     /// Builds Unity meta file content for generated assets so their GUIDs are stable before first import.
     /// </summary>
-    public static class AssetMetaTemplate {
+    internal static class AssetMetaTemplate {
         /// <summary>
         /// Builds meta file content for a generated folder.
         /// </summary>

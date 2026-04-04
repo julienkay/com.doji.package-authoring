@@ -2,18 +2,17 @@ using System;
 using System.IO;
 using UnityEditor;
 using UnityEngine;
-using Doji.PackageAuthoring.Editor.Utilities;
-using Doji.PackageAuthoring.Editor.Wizards.Models;
-using Doji.PackageAuthoring.Editor.Wizards.Presets;
-using Doji.PackageAuthoring.Editor.Wizards.Templates;
-using Doji.PackageAuthoring.Editor.Wizards.UI;
-using static Doji.PackageAuthoring.Editor.Utilities.GuidUtility;
+using Doji.PackageAuthoring;
+using Doji.PackageAuthoring.Models;
+using Doji.PackageAuthoring.Wizards.Presets;
+using Doji.PackageAuthoring.Wizards.Templates;
+using Doji.PackageAuthoring.Wizards.UI;
 
-namespace Doji.PackageAuthoring.Editor.Wizards {
+namespace Doji.PackageAuthoring.Wizards {
     /// <summary>
     /// Editor window that scaffolds a package repository and a companion Unity test project.
     /// </summary>
-    public class PackageCreationWizard : EditorWindow {
+    internal class PackageCreationWizard : EditorWindow {
         private const string SessionStateKey = "Doji.PackageAuthoring.PackageCreationWizard.SessionState";
         private const string PackageSectionPresetTooltip = "Apply package defaults or a package preset asset.";
         private const string CompanionProjectSectionTooltip =
@@ -23,38 +22,34 @@ namespace Doji.PackageAuthoring.Editor.Wizards {
             "Apply project defaults or a preset asset to the companion project.";
 
         private static readonly string PackageNameField =
-            $"<{nameof(Doji.PackageAuthoring.Editor.Wizards.Models.PackageSettings.PackageName)}>k__BackingField";
+            $"<{nameof(Doji.PackageAuthoring.Models.PackageSettings.PackageName)}>k__BackingField";
 
         private static readonly string AssemblyNameField =
-            $"<{nameof(Doji.PackageAuthoring.Editor.Wizards.Models.PackageSettings.AssemblyName)}>k__BackingField";
+            $"<{nameof(Doji.PackageAuthoring.Models.PackageSettings.AssemblyName)}>k__BackingField";
 
         private static readonly string CreateDocsFolderField =
-            $"<{nameof(Doji.PackageAuthoring.Editor.Wizards.Models.PackageSettings.CreateDocsFolder)}>k__BackingField";
+            $"<{nameof(Doji.PackageAuthoring.Models.PackageSettings.CreateDocsFolder)}>k__BackingField";
 
         private static readonly string CreateSamplesFolderField =
-            $"<{nameof(Doji.PackageAuthoring.Editor.Wizards.Models.PackageSettings.CreateSamplesFolder)}>k__BackingField";
+            $"<{nameof(Doji.PackageAuthoring.Models.PackageSettings.CreateSamplesFolder)}>k__BackingField";
 
         private static readonly string CreateEditorFolderField =
-            $"<{nameof(Doji.PackageAuthoring.Editor.Wizards.Models.PackageSettings.CreateEditorFolder)}>k__BackingField";
+            $"<{nameof(Doji.PackageAuthoring.Models.PackageSettings.CreateEditorFolder)}>k__BackingField";
 
         private static readonly string CreateTestsFolderField =
-            $"<{nameof(Doji.PackageAuthoring.Editor.Wizards.Models.PackageSettings.CreateTestsFolder)}>k__BackingField";
+            $"<{nameof(Doji.PackageAuthoring.Models.PackageSettings.CreateTestsFolder)}>k__BackingField";
 
         private static readonly string ProductNameField =
-            $"<{nameof(Doji.PackageAuthoring.Editor.Wizards.Models.ProjectSettings.ProductName)}>k__BackingField";
+            $"<{nameof(Doji.PackageAuthoring.Models.ProjectSettings.ProductName)}>k__BackingField";
 
         private static readonly string TargetLocationField =
-            $"<{nameof(Doji.PackageAuthoring.Editor.Wizards.Models.ProjectSettings.TargetLocation)}>k__BackingField";
+            $"<{nameof(Doji.PackageAuthoring.Models.ProjectSettings.TargetLocation)}>k__BackingField";
 
         [SerializeField] private Vector2 _contentScrollPosition;
         [SerializeField] private Vector2 _repositoryLayoutPreviewScrollPosition;
         [SerializeField] private bool _autoOpenAfterCreation = true;
 
-        private string RootDirectory => Path.Combine(ProjectSettings.TargetLocation, PackageSettings.PackageName);
-        private string PackageDirectory => Path.Combine(RootDirectory, PackageSettings.PackageName);
-        private string ProjectDirectory => Path.Combine(RootDirectory, "projects", ProjectSettings.ProductName);
         private PackageContext Ctx => new(ProjectSettings, PackageSettings, RepoSettings);
-        private string _runtimeAssemblyGuid;
 
         private PackageAuthoringProfile _defaults;
         private SerializedObject _defaultsSerializedObject;
@@ -422,275 +417,11 @@ namespace Doji.PackageAuthoring.Editor.Wizards {
         /// Creates the package repository skeleton, optional folders, and the companion Unity project.
         /// </summary>
         private void CreatePackageScaffolding() {
-            Directory.CreateDirectory(RootDirectory);
-            Directory.CreateDirectory(PackageDirectory);
-            Directory.CreateDirectory(ProjectDirectory);
-
-            if (PackageSettings.CreateDocsFolder) {
-                CreateDocsFolder(RootDirectory);
-            }
-
-            CreatePackageFolders();
-            CreateProjectStructure();
-            CreateRootFiles();
-
-            if (RepoSettings.InitializeGitRepository) {
-                string repositoryUrl = TemplateTokenResolver.Resolve(RepoSettings.RepositoryUrl, Ctx);
-                GitUtility.InitializeRepository(RootDirectory, repositoryUrl);
-            }
-
-            Debug.Log($"Package scaffolding created successfully at {RootDirectory}");
-
-            if (_autoOpenAfterCreation) {
-                UnityEditorLauncherUtility.TryOpenProjectInCurrentEditor(ProjectDirectory);
-            }
-        }
-
-        /// <summary>
-        /// Creates the package folders that live inside the generated package root.
-        /// </summary>
-        private void CreatePackageFolders() {
-            CreateRuntimeFolder();
-
-            if (PackageSettings.CreateSamplesFolder) {
-                CreateSamplesFolder();
-            }
-
-            if (PackageSettings.CreateEditorFolder) {
-                CreateEditorFolder();
-            }
-
-            if (PackageSettings.CreateTestsFolder) {
-                GeneratedProjectScaffoldingUtility.CreateFolderWithMeta(Path.Combine(PackageDirectory, "Tests"));
-            }
-
-            // Package metadata is written after the folder layout is in place so optional folders can influence it.
-            CreatePackageFiles(PackageDirectory);
-        }
-
-        /// <summary>
-        /// Copies the template Unity project and points its manifest back to the generated local package.
-        /// </summary>
-        private void CreateProjectStructure() {
-            GeneratedProjectScaffoldingUtility.CopyTemplateProjectBaseline(
-                ProjectDirectory,
-                CurrentGitIgnoreTemplate,
-                Ctx.GetProjectManifest());
-            GeneratedProjectScaffoldingUtility.ApplyGeneratedProjectSettings(
-                ProjectDirectory,
+            PackageAuthoringGenerationUtility.GeneratePackage(
                 ProjectSettings,
-                GeneratedProjectScaffoldingUtility.BuildDefaultApplicationIdentifier(
-                    ProjectSettings.CompanyName,
-                    ProjectSettings.ProductName),
-                GeneratedProjectScaffoldingUtility.SanitizeRootNamespace(PackageSettings.NamespaceName));
-        }
-
-        private void CreateRootFiles() {
-            string license = Ctx.GetLicense();
-            if (!string.IsNullOrWhiteSpace(license)) {
-                string licensePath = Path.Combine(RootDirectory, "LICENSE");
-                GeneratedProjectScaffoldingUtility.CreateFile(licensePath, license);
-            }
-
-            string agentsInstructions = ProjectSettings.GenerateAgentsFile
-                ? Ctx.GetAgentsInstructions()
-                : string.Empty;
-            if (!string.IsNullOrWhiteSpace(agentsInstructions)) {
-                string agentsPath = Path.Combine(RootDirectory, "AGENTS.md");
-                GeneratedProjectScaffoldingUtility.CreateFile(agentsPath, agentsInstructions);
-            }
-
-            if (RepoSettings.IncludeReadme) {
-                string readmePath = Path.Combine(RootDirectory, "README.md");
-                GeneratedProjectScaffoldingUtility.CreateFile(readmePath, Ctx.GetRepositoryReadme());
-            }
-        }
-
-        private void CreatePackageFiles(string path) {
-            string packageManifestPath = Path.Combine(path, "package.json");
-            // `package.json` is regenerated because optional samples and dependencies directly affect its contents.
-            GeneratedProjectScaffoldingUtility.CreateFileWithMeta(
-                packageManifestPath,
-                Ctx.GetPackageManifest(),
-                AssetMetaTemplate.GetPackageManifestMeta(NewMetaGuid()),
-                overwrite: true);
-
-            if (PackageSettings.IncludeReadme) {
-                string readmePath = Path.Combine(path, "README.md");
-                GeneratedProjectScaffoldingUtility.CreateFileWithMeta(
-                    readmePath,
-                    Ctx.GetPackageReadme(),
-                    AssetMetaTemplate.GetTextAssetMeta(NewMetaGuid()));
-            }
-
-            string changelogPath = Path.Combine(path, "CHANGELOG.md");
-            GeneratedProjectScaffoldingUtility.CreateFileWithMeta(
-                changelogPath,
-                Ctx.GetChangelog(),
-                AssetMetaTemplate.GetTextAssetMeta(NewMetaGuid()));
-        }
-
-        /// <summary>
-        /// Creates the runtime assembly definition in the provided folder.
-        /// </summary>
-        /// <returns>GUID written into the runtime asmdef meta file.</returns>
-        private string CreateRuntimeAsmDef(string path) {
-            string asmDefPath = Path.Combine(path, $"{PackageSettings.AssemblyName}.asmdef");
-            return CreateAsmDefWithMeta(asmDefPath, Ctx.GetRuntimeAsmDef());
-        }
-
-        /// <summary>
-        /// Creates the samples assembly definition in the provided folder.
-        /// </summary>
-        /// <param name="runtimeAssemblyGuid">GUID of the generated runtime asmdef used for stable references.</param>
-        private void CreateSamplesAsmDef(string path, string runtimeAssemblyGuid) {
-            string asmDefPath = Path.Combine(path, $"{PackageSettings.AssemblyName}.asmdef");
-            CreateAsmDefWithMeta(asmDefPath, Ctx.GetSamplesAsmDef(runtimeAssemblyGuid));
-        }
-
-        /// <summary>
-        /// Creates the editor-only assembly definition in the provided folder.
-        /// </summary>
-        /// <param name="runtimeAssemblyGuid">GUID of the generated runtime asmdef used for stable references.</param>
-        private void CreateEditorAsmDef(string path, string runtimeAssemblyGuid) {
-            string asmDefPath = Path.Combine(path, $"{PackageSettings.AssemblyName}.Editor.asmdef");
-            CreateAsmDefWithMeta(asmDefPath, Ctx.GetEditorAsmDef(runtimeAssemblyGuid));
-        }
-
-        /// <summary>
-        /// Creates the runtime assembly info file in the provided folder.
-        /// </summary>
-        private void CreateAssemblyInfo(string path) {
-            string assemblyInfoPath = Path.Combine(path, "AssemblyInfo.cs");
-            GeneratedProjectScaffoldingUtility.CreateFileWithMeta(
-                assemblyInfoPath,
-                Ctx.GetAssemblyInfo(),
-                AssetMetaTemplate.GetMonoScriptMeta(NewMetaGuid()));
-        }
-
-        /// <summary>
-        /// Creates the runtime folder and its baseline assembly files.
-        /// </summary>
-        private void CreateRuntimeFolder() {
-            string runtimePath = Path.Combine(PackageDirectory, "Runtime");
-            GeneratedProjectScaffoldingUtility.CreateFolderWithMeta(runtimePath);
-            string runtimeAssemblyGuid = CreateRuntimeAsmDef(runtimePath);
-            _runtimeAssemblyGuid = runtimeAssemblyGuid;
-            CreateAssemblyInfo(runtimePath);
-        }
-
-        /// <summary>
-        /// Creates the editor folder and its editor-only assembly definition.
-        /// </summary>
-        private void CreateEditorFolder() {
-            string editorPath = Path.Combine(PackageDirectory, "Editor");
-            GeneratedProjectScaffoldingUtility.CreateFolderWithMeta(editorPath);
-            CreateEditorAsmDef(editorPath, _runtimeAssemblyGuid);
-        }
-
-        /// <summary>
-        /// Creates the samples root, assembly definition, and starter sample script.
-        /// </summary>
-        private void CreateSamplesFolder() {
-            string samplesPath = Path.Combine(PackageDirectory, "Samples~");
-            Directory.CreateDirectory(samplesPath);
-
-            GeneratedProjectScaffoldingUtility.CreateFolderWithMeta(Path.Combine(samplesPath, "00-SharedSampleAssets"));
-            GeneratedProjectScaffoldingUtility.CreateFolderWithMeta(Path.Combine(samplesPath, "01-BasicSample"));
-            CreateSamplesAsmDef(samplesPath, _runtimeAssemblyGuid);
-
-            // Keep the starter sample in a numbered folder so package manager ordering is predictable.
-            GeneratedProjectScaffoldingUtility.CreateFileWithMeta(
-                Path.Combine(samplesPath, "01-BasicSample", "BasicSample.cs"),
-                Ctx.GetSampleScript(),
-                AssetMetaTemplate.GetMonoScriptMeta(NewMetaGuid()));
-        }
-
-        /// <summary>
-        /// Creates the documentation folder and the generated docfx configuration files.
-        /// </summary>
-        private void CreateDocsFolder(string path) {
-            path = Path.Combine(path, "docs");
-            Directory.CreateDirectory(path);
-            CreateDocfxFolders(path);
-            CreateDocfxFiles(path);
-            CreateDocfxImages(path);
-        }
-
-        /// <summary>
-        /// Creates the required documentation subfolders before any generated content is written.
-        /// </summary>
-        private void CreateDocfxFolders(string path) {
-            Directory.CreateDirectory(Path.Combine(path, "api"));
-            Directory.CreateDirectory(Path.Combine(path, "manual"));
-            Directory.CreateDirectory(Path.Combine(path, "pdf"));
-        }
-
-        /// <summary>
-        /// Writes the generated docfx configuration and table-of-contents files.
-        /// </summary>
-        private void CreateDocfxFiles(string path) {
-            string docsGitIgnorePath = Path.Combine(path, ".gitignore");
-            GeneratedProjectScaffoldingUtility.CreateFile(docsGitIgnorePath, Ctx.GetDocsGitIgnore());
-
-            string docfxConfigPath = Path.Combine(path, "docfx.json");
-            GeneratedProjectScaffoldingUtility.CreateFile(docfxConfigPath, Ctx.GetDocfxJson());
-
-            string docfxPdfConfigPath = Path.Combine(path, "docfx-pdf.json");
-            GeneratedProjectScaffoldingUtility.CreateFile(docfxPdfConfigPath, Ctx.GetDocfxPdfJson());
-
-            string filterConfigPath = Path.Combine(path, "filterConfig.yml");
-            GeneratedProjectScaffoldingUtility.CreateFile(filterConfigPath, Ctx.GetFilterConfig());
-
-            string indexPath = Path.Combine(path, "index.md");
-            GeneratedProjectScaffoldingUtility.CreateFile(indexPath, Ctx.GetIndexMD());
-
-            string apiGitIgnorePath = Path.Combine(path, "api", ".gitignore");
-            GeneratedProjectScaffoldingUtility.CreateFile(apiGitIgnorePath, Ctx.GetDocsApiGitIgnore());
-
-            string apiIndexPath = Path.Combine(path, "api", "index.md");
-            GeneratedProjectScaffoldingUtility.CreateFile(apiIndexPath, Ctx.GetDocsApiIndex());
-
-            string tocPath = Path.Combine(path, "toc.yml");
-            GeneratedProjectScaffoldingUtility.CreateFile(tocPath, Ctx.GetRootToc());
-
-            string manualTocPath = Path.Combine(path, "manual", "toc.yml");
-            GeneratedProjectScaffoldingUtility.CreateFile(manualTocPath, Ctx.GetManualToc());
-
-            string pdfTocPath = Path.Combine(path, "pdf", "toc.yml");
-            GeneratedProjectScaffoldingUtility.CreateFile(pdfTocPath, Ctx.GetPdfToc());
-        }
-
-        /// <summary>
-        /// Generates optional documentation image outputs from the configured branding texture.
-        /// </summary>
-        private void CreateDocfxImages(string path) {
-            DocsBrandingImageSettings brandingImages = DocsBrandingImageSettings.Instance;
-            if (!brandingImages.HasAnyImage) {
-                return;
-            }
-
-            string imagesPath = Path.Combine(path, "images");
-            if (!DocumentationImageUtility.TryWriteDocumentationImages(
-                    brandingImages.LogoTexture,
-                    brandingImages.FaviconTexture,
-                    imagesPath)) {
-                Debug.LogWarning("Failed to generate one or more documentation branding images from the configured source textures.");
-            }
-        }
-
-        /// <summary>
-        /// Creates an asmdef asset together with a matching meta file so dependent assemblies can reference its GUID.
-        /// </summary>
-        /// <returns>GUID written into the generated asmdef meta file.</returns>
-        private string CreateAsmDefWithMeta(string asmDefPath, string content) {
-            string guid = NewMetaGuid();
-            GeneratedProjectScaffoldingUtility.CreateFile(asmDefPath, content, overwrite: true);
-            GeneratedProjectScaffoldingUtility.CreateFile(
-                $"{asmDefPath}.meta",
-                AssetMetaTemplate.GetAsmDefMeta(guid),
-                overwrite: true);
-            return guid;
+                PackageSettings,
+                RepoSettings,
+                _autoOpenAfterCreation);
         }
     }
 }

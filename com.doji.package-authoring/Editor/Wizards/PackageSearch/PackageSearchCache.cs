@@ -5,16 +5,16 @@ using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
-namespace Doji.PackageAuthoring.Editor.Wizards.PackageSearch {
+namespace Doji.PackageAuthoring.Wizards.PackageSearch {
     /// <summary>
     /// Session-scoped package index shared by package authoring UI across editor windows, inspectors, and
     /// domain reloads.
     /// The cache merges Unity and scoped registry results into one lookup table, then restores that merged
     /// snapshot from <see cref="SessionState"/> until <c>Packages/manifest.json</c> changes.
     /// </summary>
-    public sealed class PackageSearchCache : IDisposable {
+    internal sealed class PackageSearchCache : IDisposable {
         private const string SessionStateKey =
-            "Doji.PackageAuthoring.Editor.Wizards.PackageSearch.PackageSearchCache";
+            "Doji.PackageAuthoring.Wizards.PackageSearch.PackageSearchCache";
 
         private readonly List<IPackageSearchSource> _sources = new();
         private readonly List<PackageSearchEntry> _entries = new();

@@ -1,6 +1,6 @@
 using System;
 
-namespace Doji.PackageAuthoring.Editor.Utilities {
+namespace Doji.PackageAuthoring.Utilities {
     /// <summary>
     /// Centralizes stable GUID string formatting used when generated Unity assets need explicit meta files.
     /// </summary>

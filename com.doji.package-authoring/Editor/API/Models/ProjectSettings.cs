@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace Doji.PackageAuthoring.Editor.Wizards.Models {
+namespace Doji.PackageAuthoring.Models {
     /// <summary>
     /// Selects which Unity IDE integration package should be installed into generated projects.
     /// </summary>

@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEditorInternal;
 using UnityEngine;
-using Doji.PackageAuthoring.Editor.Wizards.Models;
-using Doji.PackageAuthoring.Editor.Wizards.PackageSearch;
+using Doji.PackageAuthoring.Models;
+using Doji.PackageAuthoring.Wizards.PackageSearch;
 
-namespace Doji.PackageAuthoring.Editor.Wizards {
+namespace Doji.PackageAuthoring.Wizards.Drawers {
     /// <summary>
     /// Draws the serialized package-dependency collection with autocomplete-backed dependency rows.
     /// </summary>

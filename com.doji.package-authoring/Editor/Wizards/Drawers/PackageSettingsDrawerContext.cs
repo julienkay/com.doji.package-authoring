@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
-using Doji.PackageAuthoring.Editor.Wizards.PackageSearch;
+using Doji.PackageAuthoring.Wizards.PackageSearch;
 
-namespace Doji.PackageAuthoring.Editor.Wizards {
+namespace Doji.PackageAuthoring.Wizards.Drawers {
     /// <summary>
     /// Carries host-specific rendering options for <c>PackageSettings</c> property drawers.
     /// </summary>

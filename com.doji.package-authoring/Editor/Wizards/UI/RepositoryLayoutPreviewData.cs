@@ -1,6 +1,6 @@
-using Doji.PackageAuthoring.Editor.Wizards.Templates;
+using Doji.PackageAuthoring.Wizards.Templates;
 
-namespace Doji.PackageAuthoring.Editor.Wizards.UI {
+namespace Doji.PackageAuthoring.Wizards.UI {
     /// <summary>
     /// Captures the wizard state that shapes the repository layout preview without exposing the full editor window.
     /// </summary>

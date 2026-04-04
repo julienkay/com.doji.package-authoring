@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Doji.PackageAuthoring.Editor.Wizards.Models {
+namespace Doji.PackageAuthoring.Models {
     /// <summary>
     /// Supported generated license templates for new packages.
     /// </summary>

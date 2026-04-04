@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace Doji.PackageAuthoring.Editor.Wizards.Models {
+namespace Doji.PackageAuthoring.Models {
     /// <summary>
     /// Shared package-facing settings used by package scaffolding presets and the package wizard.
     /// </summary>

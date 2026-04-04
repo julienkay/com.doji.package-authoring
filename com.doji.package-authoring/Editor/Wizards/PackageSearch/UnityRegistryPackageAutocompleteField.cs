@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
-namespace Doji.PackageAuthoring.Editor.Wizards.PackageSearch {
+namespace Doji.PackageAuthoring.Wizards.PackageSearch {
     /// <summary>
     /// Reusable editor field for editing a package dependency pair with merged package-source suggestions.
     /// </summary>
-    public sealed class UnityRegistryPackageAutocompleteField : IDisposable {
+    internal sealed class UnityRegistryPackageAutocompleteField : IDisposable {
         private const int MaxVisibleSuggestions = 6;
         private const float SourceBadgeWidth = 64f;
         private const float SourceBadgePadding = 6f;
@@ -15,7 +15,7 @@ namespace Doji.PackageAuthoring.Editor.Wizards.PackageSearch {
         /// <summary>
         /// Controls how the autocomplete field behaves when more matches exist than are shown initially.
         /// </summary>
-        public enum SuggestionOverflowMode {
+        internal enum SuggestionOverflowMode {
             /// <summary>
             /// Shows the first page of matches and appends a trailing hint that more results are available.
             /// </summary>

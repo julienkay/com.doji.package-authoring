@@ -1,11 +1,11 @@
-using Doji.PackageAuthoring.Editor.Wizards.Models;
-using Doji.PackageAuthoring.Editor.Wizards.Presets;
+using Doji.PackageAuthoring.Models;
+using Doji.PackageAuthoring.Wizards.Presets;
 
-namespace Doji.PackageAuthoring.Editor.Wizards.Templates {
+namespace Doji.PackageAuthoring.Wizards.Templates {
     /// <summary>
     /// Builds repository license text from the selected license preset.
     /// </summary>
-    public static class LicenseTemplate {
+    internal static class LicenseTemplate {
         public static string GetLicense(PackageContext ctx) {
             switch (ctx.Repo.LicenseType) {
                 case LicenseType.None:

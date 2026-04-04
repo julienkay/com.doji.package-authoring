@@ -1,7 +1,7 @@
 using UnityEditor;
 using UnityEngine;
 
-namespace Doji.PackageAuthoring.Editor.Wizards.Presets {
+namespace Doji.PackageAuthoring.Wizards.Presets {
     /// <summary>
     /// Project-scoped editable template used when generating project <c>.gitignore</c> files.
     /// </summary>

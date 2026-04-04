@@ -1,8 +1,8 @@
 using UnityEditor;
-using Doji.PackageAuthoring.Editor.Wizards.Models;
-using Doji.PackageAuthoring.Editor.Wizards.UI;
+using Doji.PackageAuthoring.Models;
+using Doji.PackageAuthoring.Wizards.UI;
 
-namespace Doji.PackageAuthoring.Editor.Wizards.Presets {
+namespace Doji.PackageAuthoring.Wizards.Presets {
     /// <summary>
     /// Renders package authoring preset assets with the shared grouped UI.
     /// </summary>

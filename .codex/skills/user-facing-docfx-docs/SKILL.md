@@ -121,6 +121,26 @@ For template documentation:
 - Prefer concrete file names, menu paths, and generated output paths.
 - Put screenshot placeholders under `docs/images/`, preferably grouped by topic such as `docs/images/manual/`.
 
+## Local preview workflow
+
+After changing user-facing docs in this repository, default to rebuilding and serving the DocFX site unless the user explicitly says not to.
+
+Use the local wrapper script:
+
+- `./scripts/docfx.sh metadata docs/docfx.json`
+- `./scripts/docfx.sh build docs/docfx.json`
+- `./scripts/docfx.sh serve docs/_site`
+
+Notes:
+
+- Run `metadata` before `build` when API docs may have changed, especially after changing public types, namespaces, XML documentation, or assembly-visible API shape.
+- `build` alone does not regenerate this repository's API metadata under `docs/api/`.
+- Run the build after documentation edits so navigation and broken-link issues surface immediately.
+- `serve` does not rebuild; it only serves the current `docs/_site` output.
+- If a serve session is already running for the current workspace, prefer reusing it after a fresh build instead of starting duplicates.
+- Report the local preview URL or any build errors back to the user.
+- If namespaces or generated API file names changed, stale files can linger in `docs/api/` and `docs/_site/api/`. In that case, clean generated API outputs first while preserving hand-authored files such as `docs/api/index.md` and `docs/api/.gitignore`.
+
 ## Verification checklist
 
 Before finishing:
@@ -130,4 +150,7 @@ Before finishing:
 - confirm `docs/index.md` still matches the manual structure
 - confirm user-facing pages do not contain maintainer-only DocFX build instructions
 - confirm image references resolve to actual files under `docs/images/`
+- run `./scripts/docfx.sh metadata docs/docfx.json` when API docs may have changed
+- run `./scripts/docfx.sh build docs/docfx.json` unless the user explicitly skips local verification
+- start or refresh `./scripts/docfx.sh serve docs/_site` unless the user explicitly skips local preview
 - if stale served output is involved, remember that `docfx serve docs/_site` serves existing generated files and does not rebuild them

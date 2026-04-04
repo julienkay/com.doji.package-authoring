@@ -1,8 +1,8 @@
-namespace Doji.PackageAuthoring.Editor.Wizards.Templates {
+namespace Doji.PackageAuthoring.Wizards.Templates {
     /// <summary>
     /// Provides the built-in default content for generated repository <c>AGENTS.md</c> files.
     /// </summary>
-    public static class AgentsTemplate {
+    internal static class AgentsTemplate {
         public const string DefaultContent = @"# AGENTS.md
 
 ## Project Intent

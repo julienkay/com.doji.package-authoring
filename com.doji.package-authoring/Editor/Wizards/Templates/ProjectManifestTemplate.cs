@@ -1,14 +1,14 @@
 using System.IO;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using Doji.PackageAuthoring.Editor.Wizards.Models;
+using Doji.PackageAuthoring.Models;
 using UnityEngine;
 
-namespace Doji.PackageAuthoring.Editor.Wizards.Templates {
+namespace Doji.PackageAuthoring.Wizards.Templates {
     /// <summary>
     /// Builds generated Unity project manifests from the baseline project manifest plus scaffold-specific overrides.
     /// </summary>
-    public static class ProjectManifestTemplate {
+    internal static class ProjectManifestTemplate {
         private static readonly string[] IdePackageIds = {
             "com.unity.ide.visualstudio",
             "com.unity.ide.vscode",

@@ -1,11 +1,12 @@
 using System;
-using Doji.PackageAuthoring.Editor.Wizards.Drawers;
+using Doji.PackageAuthoring.Wizards.Drawers;
 using UnityEditor;
 using UnityEngine;
-using Doji.PackageAuthoring.Editor.Wizards.Models;
-using Doji.PackageAuthoring.Editor.Wizards.PackageSearch;
+using Doji.PackageAuthoring.Models;
+using Doji.PackageAuthoring.Wizards.Presets;
+using Doji.PackageAuthoring.Wizards.PackageSearch;
 
-namespace Doji.PackageAuthoring.Editor.Wizards.UI {
+namespace Doji.PackageAuthoring.Wizards.UI {
     /// <summary>
     /// Shared IMGUI composition for package authoring profiles and adjacent section-based editor UI.
     /// </summary>

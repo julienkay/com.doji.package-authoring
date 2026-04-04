@@ -4,7 +4,7 @@ using Newtonsoft.Json.Linq;
 using UnityEditor;
 using UnityEngine.Networking;
 
-namespace Doji.PackageAuthoring.Editor.Wizards.PackageSearch {
+namespace Doji.PackageAuthoring.Wizards.PackageSearch {
     /// <summary>
     /// Queries one scoped npm-compatible registry declared in the project manifest and exposes its latest package versions.
     /// Unity package manager does not surface arbitrary scoped registries through the same API as the Unity registry,

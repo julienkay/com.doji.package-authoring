@@ -1,4 +1,4 @@
-namespace Doji.PackageAuthoring.Editor.Wizards.UI {
+namespace Doji.PackageAuthoring.Wizards.UI {
     /// <summary>
     /// Stable hover identifiers that link wizard fields to preview highlight rules.
     /// </summary>

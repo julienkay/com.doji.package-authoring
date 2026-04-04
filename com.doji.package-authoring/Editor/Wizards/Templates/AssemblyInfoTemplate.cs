@@ -1,10 +1,10 @@
 using System;
 
-namespace Doji.PackageAuthoring.Editor.Wizards.Templates {
+namespace Doji.PackageAuthoring.Wizards.Templates {
     /// <summary>
     /// Builds assembly metadata for the generated runtime assembly.
     /// </summary>
-    public static class AssemblyInfoTemplate {
+    internal static class AssemblyInfoTemplate {
         public static string GetAssemblyInfo(PackageContext ctx) {
             string copyrightHolder = GetCopyrightHolder(ctx);
 

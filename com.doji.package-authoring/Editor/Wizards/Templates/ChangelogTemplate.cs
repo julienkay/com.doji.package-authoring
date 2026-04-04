@@ -1,7 +1,7 @@
 using System;
 
-namespace Doji.PackageAuthoring.Editor.Wizards.Templates {
-    public static class ChangelogTemplate {
+namespace Doji.PackageAuthoring.Wizards.Templates {
+    internal static class ChangelogTemplate {
         public static string GetContent(string version) {
             return $@"# Changelog
 

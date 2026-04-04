@@ -1,8 +1,8 @@
-using Doji.PackageAuthoring.Editor.Wizards.UI;
+using Doji.PackageAuthoring.Wizards.UI;
 using UnityEditor;
 using UnityEngine;
 
-namespace Doji.PackageAuthoring.Editor.Wizards.Presets {
+namespace Doji.PackageAuthoring.Wizards.Presets {
     /// <summary>
     /// Registers and renders the Project Settings page for editable generation templates.
     /// </summary>
@@ -32,10 +32,10 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Presets {
             "Template content written to generated repository documentation scaffold files.");
         private static readonly GUIContent DocumentationFaviconTextureLabel = new(
             "Favicon Source",
-            "Optional texture asset used to generate docs/images/favicon.ico. Expected resolution: 128x128 or higher.");
+            "Optional texture asset used to generate docs/images/favicon.ico. This icon appears in the browser tab for the generated documentation site. Expected resolution: 128x128 or higher.");
         private static readonly GUIContent DocumentationLogoTextureLabel = new(
             "Logo Source",
-            "Optional texture asset used to generate docs/images/logo.png. Expected resolution: 50x50.");
+            "Optional texture asset used to generate docs/images/logo.png. This image appears in the generated documentation site's header. Expected resolution: 50x50.");
 
         static PackageAuthoringTemplateSettingsProvider() {
             Undo.undoRedoPerformed += HandleUndoRedoPerformed;
@@ -295,7 +295,7 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Presets {
                 return;
             }
 
-            PackageAuthoringProjectSettingsApi.SaveAllProjectSettings();
+            PackageAuthoringApi.SaveAllProjectSettings();
             _hasInitializedDocumentationTemplateSettings = true;
         }
 
@@ -471,7 +471,7 @@ namespace Doji.PackageAuthoring.Editor.Wizards.Presets {
         /// Persists all editable documentation template assets when the documentation settings page is left.
         /// </summary>
         private static void SaveDocumentationTemplateSettingsOnDeactivate() {
-            PackageAuthoringProjectSettingsApi.SaveAllProjectSettings();
+            PackageAuthoringApi.SaveAllProjectSettings();
         }
 
         /// <summary>

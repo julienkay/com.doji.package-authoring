@@ -1,8 +1,8 @@
-namespace Doji.PackageAuthoring.Editor.Wizards.Templates {
+namespace Doji.PackageAuthoring.Wizards.Templates {
     /// <summary>
     /// Provides the built-in fallback content for generated documentation scaffold files.
     /// </summary>
-    public static class DocfxTemplates {
+    internal static class DocfxTemplates {
         public const string DocsGitIgnoreDefaultContent = @"###############
 #    folder   #
 ###############

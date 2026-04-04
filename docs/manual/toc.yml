@@ -16,3 +16,5 @@
   items:
   - name: Companion And Standalone Projects
     href: projects.md
+- name: Scripting API
+  href: scripting-api.md

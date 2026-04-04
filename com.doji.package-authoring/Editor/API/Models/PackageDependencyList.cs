@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Doji.PackageAuthoring.Editor.Wizards.Models {
+namespace Doji.PackageAuthoring.Models {
     /// <summary>
     /// Serialized dependency collection written into generated package manifests.
     /// </summary>

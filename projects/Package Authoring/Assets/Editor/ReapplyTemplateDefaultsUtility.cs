@@ -1,5 +1,5 @@
 using System;
-using Doji.PackageAuthoring.Editor.Wizards.Presets;
+using Doji.PackageAuthoring;
 using UnityEditor;
 using UnityEngine;
 
@@ -22,7 +22,7 @@ namespace Editor {
             }
 
             try {
-                PackageAuthoringProjectSettingsApi.ReapplyAllTemplateDefaults();
+                PackageAuthoringApi.ReapplyAllTemplateDefaults();
                 AssetDatabase.Refresh();
                 Debug.Log("Reapplied package authoring template defaults.");
             }

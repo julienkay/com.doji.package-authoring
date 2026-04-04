@@ -1,10 +1,10 @@
-namespace Doji.PackageAuthoring.Editor.Wizards.PackageSearch {
+namespace Doji.PackageAuthoring.Wizards.PackageSearch {
     /// <summary>
     /// Normalized package metadata consumed by editor autocomplete UI regardless of package source.
     /// This keeps package identity, the latest selectable version, and human-facing labels in one shape whether
     /// the entry came from Unity's package manager API or a scoped npm-compatible registry.
     /// </summary>
-    public readonly struct PackageSearchEntry {
+    internal readonly struct PackageSearchEntry {
         /// <summary>
         /// Canonical package identifier used in manifests and dependency declarations, for example
         /// <c>com.unity.addressables</c>.

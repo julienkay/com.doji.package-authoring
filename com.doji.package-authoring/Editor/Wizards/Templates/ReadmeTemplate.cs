@@ -1,8 +1,8 @@
-namespace Doji.PackageAuthoring.Editor.Wizards.Templates {
+namespace Doji.PackageAuthoring.Wizards.Templates {
     /// <summary>
     /// Provides the built-in default content for generated package and repository README templates.
     /// </summary>
-    public static class ReadmeTemplate {
+    internal static class ReadmeTemplate {
         public const string PackageReadmeDefaultContent = @"# {{PACKAGE_NAME}}
 
 {{PACKAGE_DESCRIPTION}}

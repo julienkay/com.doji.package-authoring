@@ -2,7 +2,7 @@ using System.Diagnostics;
 using System.IO;
 using UnityEditor;
 
-namespace Doji.PackageAuthoring.Editor.Utilities {
+namespace Doji.PackageAuthoring.Utilities {
     /// <summary>
     /// Opens generated projects in the same Unity editor version that is currently running the wizard.
     /// </summary>

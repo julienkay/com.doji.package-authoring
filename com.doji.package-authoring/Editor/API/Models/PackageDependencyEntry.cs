@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace Doji.PackageAuthoring.Editor.Wizards.Models {
+namespace Doji.PackageAuthoring.Models {
     /// <summary>
     /// Serializable dependency entry for generated package manifests and presets.
     /// </summary>

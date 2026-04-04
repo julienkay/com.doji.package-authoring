@@ -2,11 +2,11 @@ using System.Diagnostics;
 using System.IO;
 using Debug = UnityEngine.Debug;
 
-namespace Doji.PackageAuthoring.Editor.Utilities {
+namespace Doji.PackageAuthoring.Utilities {
     /// <summary>
     /// Runs the git commands used to initialize generated repositories.
     /// </summary>
-    public static class GitUtility {
+    internal static class GitUtility {
         /// <summary>
         /// Initializes a git repository and optionally assigns an <c>origin</c> remote before the first commit.
         /// </summary>

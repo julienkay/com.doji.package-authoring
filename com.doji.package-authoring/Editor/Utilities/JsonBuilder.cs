@@ -1,7 +1,7 @@
 using Newtonsoft.Json.Linq;
 
-namespace Doji.PackageAuthoring.Editor.Utilities {
-    public static class JsonBuilder {
+namespace Doji.PackageAuthoring.Utilities {
+    internal static class JsonBuilder {
         public static JObject Obj(params JProperty[] props) {
             JObject o = new JObject();
 

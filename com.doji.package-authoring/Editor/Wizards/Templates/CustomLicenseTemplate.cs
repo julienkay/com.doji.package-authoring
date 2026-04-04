@@ -1,4 +1,4 @@
-namespace Doji.PackageAuthoring.Editor.Wizards.Templates {
+namespace Doji.PackageAuthoring.Wizards.Templates {
     /// <summary>
     /// Provides the built-in fallback content for generated custom repository license files.
     /// </summary>

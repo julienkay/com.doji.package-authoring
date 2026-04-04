@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Doji.PackageAuthoring.Editor.Wizards.Models;
+using Doji.PackageAuthoring.Models;
 
-namespace Doji.PackageAuthoring.Editor.Wizards.Templates {
+namespace Doji.PackageAuthoring.Wizards.Templates {
     /// <summary>
     /// Describes one supported token occurrence inside template text so editor UI can decorate the exact span.
     /// </summary>

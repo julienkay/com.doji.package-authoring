@@ -2,11 +2,11 @@ using System;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
-using Doji.PackageAuthoring.Editor.Wizards.Models;
-using Doji.PackageAuthoring.Editor.Wizards.Templates;
-using static Doji.PackageAuthoring.Editor.Utilities.GuidUtility;
+using Doji.PackageAuthoring.Models;
+using Doji.PackageAuthoring.Wizards.Templates;
+using static Doji.PackageAuthoring.Utilities.GuidUtility;
 
-namespace Doji.PackageAuthoring.Editor.Wizards {
+namespace Doji.PackageAuthoring.Wizards {
     /// <summary>
     /// Owns the shared baseline-copy and generated-project settings patching flow used while scaffolding projects.
     /// </summary>

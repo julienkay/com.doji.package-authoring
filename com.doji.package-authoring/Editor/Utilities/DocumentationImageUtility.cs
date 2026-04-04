@@ -6,7 +6,7 @@ using UnityEditor;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-namespace Doji.PackageAuthoring.Editor.Utilities {
+namespace Doji.PackageAuthoring.Utilities {
     /// <summary>
     /// Generates documentation image outputs from an optional source texture asset.
     /// </summary>

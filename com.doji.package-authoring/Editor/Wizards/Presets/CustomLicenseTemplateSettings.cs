@@ -1,7 +1,7 @@
 using UnityEditor;
 using UnityEngine;
 
-namespace Doji.PackageAuthoring.Editor.Wizards.Presets {
+namespace Doji.PackageAuthoring.Wizards.Presets {
     /// <summary>
     /// Project-scoped editable template used when generating repository <c>LICENSE</c> files for custom licenses.
     /// </summary>

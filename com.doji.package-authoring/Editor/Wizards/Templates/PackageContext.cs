@@ -1,10 +1,10 @@
-using Doji.PackageAuthoring.Editor.Wizards.Models;
+using Doji.PackageAuthoring.Models;
 
-namespace Doji.PackageAuthoring.Editor.Wizards.Templates {
+namespace Doji.PackageAuthoring.Wizards.Templates {
     /// <summary>
     /// Carries the current scaffold configuration into template generators without coupling them to the wizard UI.
     /// </summary>
-    public sealed class PackageContext {
+    internal sealed class PackageContext {
         /// <summary>
         /// Current companion project configuration.
         /// </summary>

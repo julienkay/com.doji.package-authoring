@@ -1,11 +1,12 @@
 using UnityEngine;
+using Doji.PackageAuthoring.Models;
 
-namespace Doji.PackageAuthoring.Editor.Wizards.Models {
+namespace Doji.PackageAuthoring.Wizards.Presets {
     /// <summary>
     /// Shared authoring state used by presets, project defaults, and wizard session data.
     /// </summary>
     [CreateAssetMenu(menuName = "Doji/Package Authoring Preset", fileName = "PackageAuthoringPreset")]
-    public class PackageAuthoringProfile : ScriptableObject {
+    internal class PackageAuthoringProfile : ScriptableObject {
         /// <summary>
         /// Shared project defaults used by both the standalone and companion project flows.
         /// </summary>

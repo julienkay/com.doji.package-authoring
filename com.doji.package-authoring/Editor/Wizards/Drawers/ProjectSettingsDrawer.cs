@@ -1,11 +1,11 @@
-using Doji.PackageAuthoring.Editor.Wizards.Models;
+using Doji.PackageAuthoring.Models;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
-using Doji.PackageAuthoring.Editor.Wizards.UI;
-using Doji.PackageAuthoring.Editor.Wizards.PackageSearch;
+using Doji.PackageAuthoring.Wizards.UI;
+using Doji.PackageAuthoring.Wizards.PackageSearch;
 
-namespace Doji.PackageAuthoring.Editor.Wizards.Drawers {
+namespace Doji.PackageAuthoring.Wizards.Drawers {
     /// <summary>
     /// Draws the serialized project-settings block used by the project and package authoring tools.
     /// </summary>

@@ -11,6 +11,6 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 0}
   m_Name: 
-  m_EditorClassIdentifier: Doji.PackageAuthoring.Editor:Doji.PackageAuthoring.Editor.Wizards.Presets:DocsRootTocTemplateSettings
+  m_EditorClassIdentifier: Doji.PackageAuthoring.Editor:Doji.PackageAuthoring.Wizards.Presets:DocsRootTocTemplateSettings
   <Content>k__BackingField: "- name: Manual\n  href: manual/\n- name: Scripting API\n 
     href: api/\n  homepage: api/index.md\n"

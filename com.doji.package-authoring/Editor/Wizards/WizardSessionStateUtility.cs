@@ -1,8 +1,9 @@
 using UnityEditor;
 using UnityEngine;
-using Doji.PackageAuthoring.Editor.Wizards.Models;
+using Doji.PackageAuthoring.Models;
+using Doji.PackageAuthoring.Wizards.Presets;
 
-namespace Doji.PackageAuthoring.Editor.Wizards {
+namespace Doji.PackageAuthoring.Wizards {
     /// <summary>
     /// Stores transient wizard input across script reloads without promoting ad hoc form state into project defaults.
     /// </summary>

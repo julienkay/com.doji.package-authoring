@@ -5,7 +5,7 @@ using UnityEditor.PackageManager;
 using UnityEditor.PackageManager.Requests;
 using PackageManagerPackageInfo = UnityEditor.PackageManager.PackageInfo;
 
-namespace Doji.PackageAuthoring.Editor.Wizards.PackageSearch {
+namespace Doji.PackageAuthoring.Wizards.PackageSearch {
     /// <summary>
     /// Queries the Unity package manager for packages available from the configured Unity registry sources.
     /// This is kept separate from scoped registry lookup because Unity exposes it through the package manager API.

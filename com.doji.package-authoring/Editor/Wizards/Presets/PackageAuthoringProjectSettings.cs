@@ -1,9 +1,9 @@
 using UnityEditor;
 using UnityEditorInternal;
 using UnityEngine;
-using Doji.PackageAuthoring.Editor.Wizards.Models;
+using Doji.PackageAuthoring.Models;
 
-namespace Doji.PackageAuthoring.Editor.Wizards.Presets {
+namespace Doji.PackageAuthoring.Wizards.Presets {
     /// <summary>
     /// Project-scoped persistent defaults used when the package authoring tools are opened without applying a preset.
     /// This keeps a cached in-memory instance so editor UI state keyed by target instance remains stable across repaints.

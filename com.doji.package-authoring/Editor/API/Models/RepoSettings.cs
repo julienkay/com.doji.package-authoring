@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace Doji.PackageAuthoring.Editor.Wizards.Models {
+namespace Doji.PackageAuthoring.Models {
     /// <summary>
     /// Repository-facing settings that shape generated root files and metadata outside the package manifest.
     /// </summary>

@@ -1,7 +1,7 @@
 using UnityEditor;
 using UnityEngine;
 
-namespace Doji.PackageAuthoring.Editor.Wizards.Presets {
+namespace Doji.PackageAuthoring.Wizards.Presets {
     /// <summary>
     /// Stores the project settings asset paths used by generated documentation scaffold templates.
     /// </summary>

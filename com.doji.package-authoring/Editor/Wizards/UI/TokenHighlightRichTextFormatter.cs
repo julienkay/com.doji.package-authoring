@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 using System.Text;
-using Doji.PackageAuthoring.Editor.Wizards.Templates;
+using Doji.PackageAuthoring.Wizards.Templates;
 using UnityEngine;
 
-namespace Doji.PackageAuthoring.Editor.Wizards.UI {
+namespace Doji.PackageAuthoring.Wizards.UI {
     /// <summary>
     /// Converts preview text into rich-text markup that can colorize supported tokens and optional hover-linked values.
     /// </summary>

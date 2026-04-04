@@ -1,8 +1,8 @@
-using Doji.PackageAuthoring.Editor.Wizards.Templates;
+using Doji.PackageAuthoring.Wizards.Templates;
 using UnityEditor;
 using UnityEngine;
 
-namespace Doji.PackageAuthoring.Editor.Wizards.UI {
+namespace Doji.PackageAuthoring.Wizards.UI {
     /// <summary>
     /// Centralizes reusable GUI labels and tooltips for package authoring editor surfaces.
     /// </summary>

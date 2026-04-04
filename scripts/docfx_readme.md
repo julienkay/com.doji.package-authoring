@@ -17,7 +17,14 @@ dotnet tool install -g docfx
 From the repository root:
 
 ```bash
-./scripts/docfx.sh docs/docfx.json
+./scripts/docfx.sh build docs/docfx.json
+```
+
+If API metadata may have changed, regenerate it before the HTML build:
+
+```bash
+./scripts/docfx.sh metadata docs/docfx.json
+./scripts/docfx.sh build docs/docfx.json
 ```
 
 ## Preview Locally
@@ -35,12 +42,14 @@ DocFX prints the local URL after the server starts. Stop it with `Ctrl+C`.
 Build the PDF-oriented output with:
 
 ```bash
-./scripts/docfx.sh docs/docfx-pdf.json
+./scripts/docfx.sh build docs/docfx-pdf.json
 ```
 
 The generated PDF is written to `docs/_site/pdf/com.doji.package-authoring.pdf`.
 
 ## Notes
 
-- The API filter includes the `Doji.PackageAuthoring.Editor` namespaces because this package exposes editor tooling rather than runtime components.
+- This repository's API docs are generated into `docs/api/`. `build` alone does not refresh that metadata.
+- After changing public types, namespaces, or XML comments that affect the generated API reference, run `metadata` before `build`.
+- If namespaces or generated API file names changed, stale files can remain in `docs/api/` and `docs/_site/api/`. Clean generated files in those folders while preserving hand-authored files such as `docs/api/index.md` and `docs/api/.gitignore`.
 - Generated API YAML files stay ignored under `docs/api/`, so you can rebuild locally without committing intermediate artifacts.

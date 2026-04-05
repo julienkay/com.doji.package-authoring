@@ -173,7 +173,7 @@ namespace Doji.PackageAuthoring.Wizards {
             EditorGUILayout.LabelField("Project Folder", PreviewProjectDirectory, EditorStyles.miniLabel);
         }
 
-        private string PreviewProjectDirectory => Path.Combine(CurrentTargetLocation, CurrentProductName);
+        private string PreviewProjectDirectory => Path.GetFullPath(Path.Combine(CurrentTargetLocation, CurrentProductName));
 
         private string CurrentProductName => GetSerializedString(
             PackageAuthoringGui.FindProjectDefaultsProperty(_defaultsSerializedObject),

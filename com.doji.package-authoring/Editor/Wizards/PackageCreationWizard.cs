@@ -348,9 +348,9 @@ namespace Doji.PackageAuthoring.Wizards {
             };
         }
 
-        private string PreviewRootDirectory => Path.Combine(CurrentTargetLocation, CurrentPackageName);
-        private string PreviewPackageDirectory => Path.Combine(PreviewRootDirectory, CurrentPackageName);
-        private string PreviewProjectDirectory => Path.Combine(PreviewRootDirectory, "projects", CurrentProductName);
+        private string PreviewRootDirectory => GetFullPath(CurrentTargetLocation, CurrentPackageName);
+        private string PreviewPackageDirectory => GetFullPath(PreviewRootDirectory, CurrentPackageName);
+        private string PreviewProjectDirectory => GetFullPath(PreviewRootDirectory, "projects", CurrentProductName);
 
         private string CurrentPackageName => GetSerializedString(
             PackageAuthoringGui.FindPackageDefaultsProperty(_defaultsSerializedObject),
@@ -398,6 +398,10 @@ namespace Doji.PackageAuthoring.Wizards {
 
         private static bool GetSerializedBool(SerializedProperty property, string relativePath, bool fallback) {
             return WizardStateUtility.GetSerializedBool(property, relativePath, fallback);
+        }
+
+        private static string GetFullPath(params string[] segments) {
+            return Path.GetFullPath(Path.Combine(segments));
         }
 
         private static PackageAuthoringProfile CreateTemporaryProfile() {

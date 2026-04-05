@@ -56,10 +56,6 @@ MonoBehaviour:
     durable project memory in `.codex/project-memory.md`.
 
 
-    Do not create or
-    maintain a second long-lived project memory file under `docs/`.
-
-
     ## Conventions
 
 

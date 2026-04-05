@@ -26,8 +26,6 @@ Prefer working in the package folder when functionality is package-owned.
 
 Keep durable project memory in `.codex/project-memory.md`.
 
-Do not create or maintain a second long-lived project memory file under `docs/`.
-
 ## Conventions
 
 When adding code:

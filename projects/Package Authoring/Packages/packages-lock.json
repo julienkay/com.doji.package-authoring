@@ -8,6 +8,14 @@
         "com.unity.nuget.newtonsoft-json": "3.2.2"
       }
     },
+    "com.unity.asset-store-tools": {
+      "version": "file:com.unity.asset-store-tools",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {
+        "com.unity.nuget.newtonsoft-json": "3.2.1"
+      }
+    },
     "com.unity.burst": {
       "version": "1.8.28",
       "depth": 2,

@@ -199,10 +199,16 @@ namespace Doji.PackageAuthoring.Wizards {
         /// <param name="path">Asset path to create.</param>
         /// <param name="content">Asset content to write.</param>
         /// <param name="metaContent">Companion meta file content.</param>
-        /// <param name="overwrite">Whether existing files should be replaced.</param>
-        public static void CreateFileWithMeta(string path, string content, string metaContent, bool overwrite = false) {
+        /// <param name="overwrite">Whether an existing asset file should be replaced.</param>
+        /// <param name="overwriteMeta">Whether an existing companion meta file should be replaced.</param>
+        public static void CreateFileWithMeta(
+            string path,
+            string content,
+            string metaContent,
+            bool overwrite = false,
+            bool overwriteMeta = false) {
             CreateFile(path, content, overwrite);
-            CreateFile($"{path}.meta", metaContent, overwrite);
+            CreateFile($"{path}.meta", metaContent, overwriteMeta);
         }
 
         /// <summary>

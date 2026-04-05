@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Text.RegularExpressions;
 using Doji.PackageAuthoring.Utilities;
 using Doji.PackageAuthoring.Wizards.Presets;
 using Doji.PackageAuthoring.Models;
@@ -169,7 +170,8 @@ namespace Doji.PackageAuthoring.Wizards {
                 Path.Combine(packageDirectory, "package.json"),
                 context.GetPackageManifest(),
                 AssetMetaTemplate.GetPackageManifestMeta(NewMetaGuid()),
-                overwrite: true);
+                overwrite: true,
+                overwriteMeta: false);
 
             if (packageSettings.IncludeReadme) {
                 GeneratedProjectScaffoldingUtility.CreateFileWithMeta(
@@ -263,13 +265,40 @@ namespace Doji.PackageAuthoring.Wizards {
         }
 
         private static string CreateAsmDefWithMeta(string asmDefPath, string content) {
+            string metaPath = $"{asmDefPath}.meta";
+
+            if (File.Exists(asmDefPath)) {
+                string existingGuid = TryReadMetaGuid(metaPath);
+                if (!string.IsNullOrWhiteSpace(existingGuid)) {
+                    return existingGuid;
+                }
+
+                string generatedGuid = NewMetaGuid();
+                GeneratedProjectScaffoldingUtility.CreateFile(
+                    metaPath,
+                    AssetMetaTemplate.GetAsmDefMeta(generatedGuid));
+                return generatedGuid;
+            }
+
             string guid = NewMetaGuid();
-            GeneratedProjectScaffoldingUtility.CreateFile(asmDefPath, content, overwrite: true);
+            GeneratedProjectScaffoldingUtility.CreateFile(asmDefPath, content);
             GeneratedProjectScaffoldingUtility.CreateFile(
-                $"{asmDefPath}.meta",
+                metaPath,
                 AssetMetaTemplate.GetAsmDefMeta(guid),
-                overwrite: true);
+                overwrite: false);
             return guid;
+        }
+
+        private static string TryReadMetaGuid(string metaPath) {
+            if (!File.Exists(metaPath)) {
+                return null;
+            }
+
+            Match match = Regex.Match(
+                File.ReadAllText(metaPath),
+                @"^guid:\s*(?<guid>[0-9a-fA-F]{32})\s*$",
+                RegexOptions.Multiline);
+            return match.Success ? match.Groups["guid"].Value : null;
         }
     }
 }

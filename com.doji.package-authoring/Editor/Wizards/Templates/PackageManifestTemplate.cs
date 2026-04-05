@@ -36,9 +36,10 @@ namespace Doji.PackageAuthoring.Wizards.Templates {
         }
 
         private static JObject GetAuthorMetadata(PackageContext ctx) {
+            string authorUrl = TemplateTokenResolver.Resolve(ctx.Package.AuthorUrl, ctx);
             JObject author = Obj(
                 Prop("name", ctx.Package.CompanyName),
-                Prop("url", ctx.Package.AuthorUrl),
+                Prop("url", authorUrl),
                 Prop("email", ctx.Package.AuthorEmail)
             );
 

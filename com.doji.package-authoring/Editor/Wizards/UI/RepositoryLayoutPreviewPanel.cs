@@ -356,11 +356,11 @@ namespace Doji.PackageAuthoring.Wizards.UI {
                     yield break;
                 case RepositoryLayoutPreviewHoverTargets.IncludeAuthor:
                     yield return data.Context.Package.CompanyName;
-                    yield return data.Context.Package.AuthorUrl;
+                    yield return TemplateTokenResolver.Resolve(data.Context.Package.AuthorUrl, data.Context);
                     yield return data.Context.Package.AuthorEmail;
                     yield break;
                 case RepositoryLayoutPreviewHoverTargets.AuthorUrl:
-                    yield return data.Context.Package.AuthorUrl;
+                    yield return TemplateTokenResolver.Resolve(data.Context.Package.AuthorUrl, data.Context);
                     yield break;
                 case RepositoryLayoutPreviewHoverTargets.AuthorEmail:
                     yield return data.Context.Package.AuthorEmail;

@@ -122,7 +122,7 @@ namespace Doji.PackageAuthoring.Wizards.UI {
             public static GUIContent InitializeGitRepository { get; } =
                 EditorGUIUtility.TrTextContent(
                     "Initialize Git Repository",
-                    "Controls whether the generated repository runs git init and creates an initial commit.");
+                    "Controls whether the generated repository runs git init and creates an initial commit. Git must be installed and available on PATH for this step to succeed.");
         }
     }
 }

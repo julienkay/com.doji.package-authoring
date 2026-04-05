@@ -152,7 +152,10 @@ namespace Doji.PackageAuthoring.Wizards {
                 ? context.GetAgentsInstructions()
                 : string.Empty;
             if (!string.IsNullOrWhiteSpace(agentsInstructions)) {
-                GeneratedProjectScaffoldingUtility.CreateFile(Path.Combine(rootDirectory, "AGENTS.md"), agentsInstructions);
+                GeneratedProjectScaffoldingUtility.CreateFile(
+                    Path.Combine(rootDirectory, "AGENTS.md"),
+                    agentsInstructions,
+                    overwrite: true);
             }
 
             if (repoSettings.IncludeReadme) {

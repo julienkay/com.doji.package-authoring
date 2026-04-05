@@ -32,7 +32,7 @@ namespace Doji.PackageAuthoring.Wizards {
         private PackageAuthoringProfile Defaults => _defaults ??= CreateTemporaryProfile();
         private string ScopedSessionStateKey => WizardSessionStateUtility.GetProjectScopedKey(SessionStateKey);
         private ProjectSettings ProjectSettings => Defaults.ProjectDefaults;
-        [MenuItem("Package Authoring/Create Project...")]
+        [MenuItem("Window/Package Authoring/Create Project...")]
         public static void ShowWindow() {
             GetWindow<ProjectCreationWizard>().titleContent = new GUIContent("Project Creation");
         }

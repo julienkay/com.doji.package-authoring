@@ -14,10 +14,10 @@ Unity editor tooling to create reusable UPM packages, companion Unity projects, 
 
 This repository is the source for the `com.doji.package-authoring` package.
 
-The tooling currently focuses on two editor workflows:
+The tooling currently focuses on two editor workflows under `Window > Package Authoring`:
 
-- `Package Authoring/Create Package...` generates a package repository with a UPM package, repository files, optional docs, and a companion Unity project.
-- `Tools/Project Creation Wizard` generates a standalone Unity project from the same shared project baseline and settings model.
+- `Window > Package Authoring > Create Package...` generates a package repository with a UPM package, repository files, optional docs, and a companion Unity project.
+- `Window > Package Authoring > Create Project...` generates a standalone Unity project from the same shared project baseline and settings model.
 
 ## What It Includes
 
@@ -64,8 +64,8 @@ This repository already contains a companion Unity project under [`projects/Pack
 
 Open that project in Unity `6000.3.10f1` or a compatible Unity 6.3 editor, then use:
 
-- `Package Authoring/Create Package...`
-- `Tools/Project Creation Wizard`
+- `Window > Package Authoring > Create Package...`
+- `Window > Package Authoring > Create Project...`
 
 ## Repository Layout
 

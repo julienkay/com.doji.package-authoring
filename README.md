@@ -10,6 +10,8 @@ Unity editor tooling to create reusable UPM packages, companion Unity projects, 
 
 [OpenUPM] · [Asset Store] · [Documentation]
 
+[<img src="docs/images/manual/documentation-home-hero.webp">](https://link-to-your-URL/)
+
 ## About
 
 This repository is the source for the `com.doji.package-authoring` package.

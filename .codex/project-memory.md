@@ -45,6 +45,12 @@
 - Prefer property-based public APIs over raw public fields.
 - Public and non-obvious internal C# types should carry XML summaries.
 
+## Testing Notes
+
+- Prefer black-box editor regression tests through `PackageAuthoringApi.GeneratePackage(...)` or `PackageAuthoringApi.GenerateProject(...)` instead of asserting on internal template helpers when both paths cover the same behavior.
+- Place package-owned editor tests under `com.doji.package-authoring/Tests/Editor` in an editor-only asmdef that references `Doji.PackageAuthoring.Editor` and includes `optionalUnityReferences: [ "TestAssemblies" ]`.
+- Generate into unique temp directories, disable git initialization unless explicitly under test, assert on concrete generated files such as `package.json`, companion `Packages/manifest.json`, `README.md`, `AGENTS.md`, and DocFX files, and clean temp output in `TearDown`.
+
 ## Generated Output Expectations
 
 - `ProjectCreationWizard` generates a fresh Unity project from the scaffold it owns and then applies project metadata.

@@ -1,0 +1,21 @@
+{
+  "name": "Doji.PackageAuthoring.Editor.Tests",
+  "rootNamespace": "Doji.PackageAuthoring.Tests",
+  "references": [
+    "Doji.PackageAuthoring.Editor"
+  ],
+  "includePlatforms": [
+    "Editor"
+  ],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": false,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false,
+  "optionalUnityReferences": [
+    "TestAssemblies"
+  ]
+}

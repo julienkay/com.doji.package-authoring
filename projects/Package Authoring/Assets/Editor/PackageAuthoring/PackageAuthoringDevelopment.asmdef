@@ -1,7 +1,9 @@
 {
-    "name": "Doji.PackageAuthoring.Editor",
-    "rootNamespace": "Doji.PackageAuthoring",
-    "references": [],
+    "name": "PackageAuthoringDevelopment",
+    "rootNamespace": "",
+    "references": [
+        "GUID:97410b397859f4870811bc75d6f60349"
+    ],
     "includePlatforms": [
         "Editor"
     ],
@@ -9,7 +11,7 @@
     "allowUnsafeCode": false,
     "overrideReferences": false,
     "precompiledReferences": [],
-    "autoReferenced": false,
+    "autoReferenced": true,
     "defineConstraints": [],
     "versionDefines": [],
     "noEngineReferences": false

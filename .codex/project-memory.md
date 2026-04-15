@@ -50,6 +50,7 @@
 - Prefer black-box editor regression tests through `PackageAuthoringApi.GeneratePackage(...)` or `PackageAuthoringApi.GenerateProject(...)` instead of asserting on internal template helpers when both paths cover the same behavior.
 - Place package-owned editor tests under `com.doji.package-authoring/Tests/Editor` in an editor-only asmdef that references `Doji.PackageAuthoring.Editor` and includes `optionalUnityReferences: [ "TestAssemblies" ]`.
 - Generate into unique temp directories, disable git initialization unless explicitly under test, assert on concrete generated files such as `package.json`, companion `Packages/manifest.json`, `README.md`, `AGENTS.md`, and DocFX files, and clean temp output in `TearDown`.
+- For manifest assertions, package ids like `com.doji.package-authoring` are literal JSON property names. Do not use `SelectToken(...)` for them; index the parent `JObject` by exact key instead.
 
 ## Generated Output Expectations
 

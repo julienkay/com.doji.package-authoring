@@ -62,7 +62,8 @@ Assertion pattern:
 1. Build `ProjectSettings`, `PackageSettings`, and `RepoSettings` with only the fields needed for the scenario.
 2. Disable git initialization unless the test is explicitly about git behavior.
 3. Parse generated JSON with `JObject.Parse(...)` for manifest assertions.
-4. For template outputs, assert both the resolved expected value and absence of unresolved tokens where that matters.
+4. For package ids or dependency keys that contain dots, read from the containing `JObject` by exact key, for example `dependencies["com.doji.package-authoring"]`, instead of `SelectToken(...)`.
+5. For template outputs, assert both the resolved expected value and absence of unresolved tokens where that matters.
 
 When adding or updating tests:
 
@@ -70,6 +71,7 @@ When adding or updating tests:
 2. Keep helpers local to the fixture when they only serve one behavior cluster.
 3. Verify the test still reflects current on-disk package behavior, especially after generator refactors.
 4. If the work introduces a new generated surface, add at least one regression assertion at that surface rather than only testing supporting internals.
+5. Treat dotted package names as literal JSON property names, not JSONPath segments.
 
 Current reference test:
 

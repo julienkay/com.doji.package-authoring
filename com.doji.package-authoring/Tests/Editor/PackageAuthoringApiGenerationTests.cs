@@ -106,12 +106,13 @@ namespace Doji.PackageAuthoring.Tests {
                 "Packages",
                 "manifest.json");
             JObject companionManifest = JObject.Parse(File.ReadAllText(companionManifestPath));
+            JObject dependencies = (JObject)companionManifest["dependencies"];
 
             Assert.That(
-                companionManifest.SelectToken("dependencies.com.doji.tests.tokenized")?.Value<string>(),
+                dependencies?["com.doji.tests.tokenized"]?.Value<string>(),
                 Is.EqualTo("file:../../../com.doji.tests.tokenized"));
             Assert.That(
-                companionManifest.SelectToken("dependencies.com.unity.ide.rider")?.Value<string>(),
+                dependencies?["com.unity.ide.rider"]?.Value<string>(),
                 Is.EqualTo("3.0.39"));
             Assert.That(companionManifest["testables"]?.Values<string>(), Does.Contain("com.doji.tests.tokenized"));
         }

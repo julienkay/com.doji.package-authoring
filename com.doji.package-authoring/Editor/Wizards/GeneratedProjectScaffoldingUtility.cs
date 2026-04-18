@@ -100,7 +100,7 @@ namespace Doji.PackageAuthoring.Wizards {
             Directory.CreateDirectory(projectDirectory);
             Directory.CreateDirectory(Path.Combine(projectDirectory, "Assets"));
             CopyPackagesBaseline(Path.Combine(projectDirectory, "Packages"));
-            CopyDirectory("ProjectSettings", Path.Combine(projectDirectory, "ProjectSettings"));
+            CopyProjectSettingsBaseline(Path.Combine(projectDirectory, "ProjectSettings"));
 
             if (!string.IsNullOrWhiteSpace(gitIgnoreContent)) {
                 CreateFile(Path.Combine(projectDirectory, ".gitignore"), gitIgnoreContent);
@@ -140,11 +140,20 @@ namespace Doji.PackageAuthoring.Wizards {
         }
 
         /// <summary>
+        /// Copies Unity project settings while excluding package-authoring template assets that belong only to the source template project.
+        /// </summary>
+        /// <param name="destinationDir">Destination <c>ProjectSettings</c> directory in the generated project.</param>
+        public static void CopyProjectSettingsBaseline(string destinationDir) {
+            CopyDirectory("ProjectSettings", destinationDir, ShouldCopyProjectSettingsPath);
+        }
+
+        /// <summary>
         /// Recursively copies a directory into the generated output, preserving existing destination files.
         /// </summary>
         /// <param name="sourceDir">Source directory in the template project.</param>
         /// <param name="destinationDir">Destination directory in the generated project.</param>
-        public static void CopyDirectory(string sourceDir, string destinationDir) {
+        /// <param name="shouldCopyPath">Optional filter for source file paths.</param>
+        public static void CopyDirectory(string sourceDir, string destinationDir, Func<string, bool> shouldCopyPath = null) {
             if (!Directory.Exists(sourceDir)) {
                 UnityEngine.Debug.LogWarning($"Source directory {sourceDir} does not exist. Skipping copy.");
                 return;
@@ -153,13 +162,17 @@ namespace Doji.PackageAuthoring.Wizards {
             Directory.CreateDirectory(destinationDir);
 
             foreach (string file in Directory.GetFiles(sourceDir)) {
+                if (shouldCopyPath != null && !shouldCopyPath(file)) {
+                    continue;
+                }
+
                 string destinationFile = Path.Combine(destinationDir, Path.GetFileName(file));
                 CopyFile(file, destinationFile);
             }
 
             foreach (string subDirectory in Directory.GetDirectories(sourceDir)) {
                 string destinationSubDirectory = Path.Combine(destinationDir, Path.GetFileName(subDirectory));
-                CopyDirectory(subDirectory, destinationSubDirectory);
+                CopyDirectory(subDirectory, destinationSubDirectory, shouldCopyPath);
             }
         }
 
@@ -369,6 +382,11 @@ namespace Doji.PackageAuthoring.Wizards {
                 pattern,
                 scalarMatch => $"{scalarMatch.Groups["indent"].Value}{key}: {safeValue}",
                 RegexOptions.Multiline);
+        }
+
+        private static bool ShouldCopyProjectSettingsPath(string sourcePath) {
+            string fileName = Path.GetFileName(sourcePath);
+            return !fileName.StartsWith("PackageAuthoring", StringComparison.OrdinalIgnoreCase);
         }
 
         /// <summary>

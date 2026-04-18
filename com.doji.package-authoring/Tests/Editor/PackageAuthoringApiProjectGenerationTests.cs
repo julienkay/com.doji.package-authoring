@@ -66,5 +66,29 @@ namespace Doji.PackageAuthoring.Tests {
 
             Assert.That(companionManifest["testables"], Is.Null);
         }
+
+        [Test]
+        public void GeneratePackage_DoesNotCopyPackageAuthoringTemplateAssetsIntoCompanionProject() {
+            ProjectSettings projectSettings = CreateProjectSettings("Companion Without Template Assets");
+
+            string rootDirectory = PackageAuthoringApi.GeneratePackage(
+                projectSettings,
+                CreatePackageSettings(authorUrl: string.Empty, documentationUrl: string.Empty),
+                CreateRepoSettings(),
+                openProjectAfterCreation: false);
+
+            string companionProjectSettingsPath = Path.Combine(
+                rootDirectory,
+                "projects",
+                projectSettings.ProductName,
+                "ProjectSettings");
+
+            Assert.That(
+                File.Exists(Path.Combine(companionProjectSettingsPath, "ProjectSettings.asset")),
+                Is.True);
+            Assert.That(
+                Directory.GetFiles(companionProjectSettingsPath, "PackageAuthoring*", SearchOption.AllDirectories),
+                Is.Empty);
+        }
     }
 }

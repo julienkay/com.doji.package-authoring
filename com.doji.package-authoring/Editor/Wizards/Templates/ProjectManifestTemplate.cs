@@ -1,4 +1,5 @@
 using System.IO;
+using System.Linq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Doji.PackageAuthoring.Models;
@@ -36,6 +37,7 @@ namespace Doji.PackageAuthoring.Wizards.Templates {
             }
 
             ((JObject)json["dependencies"])[ctx.Package.PackageName] = $"file:../../../{ctx.Package.PackageName}";
+            json["dependencies"] = SortDependencies((JObject)json["dependencies"]);
             return json.ToString(Formatting.Indented);
         }
 
@@ -45,7 +47,7 @@ namespace Doji.PackageAuthoring.Wizards.Templates {
             AddIncludedPackages(deps, projectSettings?.IncludedPackages);
             RemoveIdeDependencies(deps);
             AddPreferredEditorDependency(deps, projectSettings?.PreferredEditor ?? PreferredEditor.None);
-            return deps;
+            return SortDependencies(deps);
         }
 
         private static JObject GetSanitizedBaselineDependencies(JObject baselineDependencies) {
@@ -120,6 +122,16 @@ namespace Doji.PackageAuthoring.Wizards.Templates {
                     deps["com.unity.ide.rider"] = "3.0.39";
                     break;
             }
+        }
+
+        private static JObject SortDependencies(JObject deps) {
+            if (deps == null) {
+                return new JObject();
+            }
+
+            return new JObject(deps.Properties()
+                .OrderBy(property => property.Name, System.StringComparer.Ordinal)
+                .Select(property => new JProperty(property.Name, property.Value)));
         }
     }
 }

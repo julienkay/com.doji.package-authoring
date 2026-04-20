@@ -989,6 +989,20 @@ namespace Doji.PackageAuthoring.Wizards.UI {
 
             private string Signature { get; }
 
+            /// <summary>
+            /// Builds cache key for repository preview tree and Inspector content.
+            /// </summary>
+            /// <remarks>
+            /// This signature must include every field that can change either preview structure or generated preview text.
+            /// That includes values that only affect file contents, such as companion <c>Packages/manifest.json</c>
+            /// dependencies, selected IDE integration, tokenized text, and toggles that add or remove generated sections.
+            ///
+            /// TODO: Extract signature builder into a small internal helper and cover it with focused editor tests.
+            /// Direct tests would make preview-cache regressions easier to catch when new wizard fields are added.
+            ///
+            /// When adding new wizard fields or generated outputs, update this signature alongside the preview builders.
+            /// Missing one field here can leave the Inspector preview showing stale generated content from an older snapshot.
+            /// </remarks>
             public static PreviewSnapshotKey Create(RepositoryLayoutPreviewData data) {
                 StringBuilder signature = new();
                 AppendValue(signature, data.RootDirectoryName);
@@ -1018,6 +1032,13 @@ namespace Doji.PackageAuthoring.Wizards.UI {
                 return StringComparer.Ordinal.GetHashCode(Signature);
             }
 
+            /// <summary>
+            /// Appends all context values that can affect generated preview file contents, not only tree shape.
+            /// </summary>
+            /// <remarks>
+            /// Keep this in sync with template inputs used by preview nodes such as <c>package.json</c>,
+            /// companion <c>Packages/manifest.json</c>, readmes, and other generated text files.
+            /// </remarks>
             private static void AppendContextValues(StringBuilder signature, PackageContext context) {
                 if (context == null) {
                     return;
@@ -1026,6 +1047,9 @@ namespace Doji.PackageAuthoring.Wizards.UI {
                 AppendValue(signature, context.Project?.CompanyName);
                 AppendValue(signature, context.Project?.ProductName);
                 AppendValue(signature, context.Project?.Version);
+                AppendValue(signature, (int?)context.Project?.PreferredEditor ?? 0);
+                AppendDependencies(signature, context.Project?.IncludedPackages);
+                AppendValue(signature, context.Project?.GenerateAgentsFile ?? false);
                 AppendValue(signature, context.Project?.TargetLocation);
 
                 AppendValue(signature, context.Package?.PackageName);

@@ -4,7 +4,7 @@ The package creation wizard is the main entry point for generating a reusable pa
 
 Open it from `Window > Package Authoring > Create Package...`.
 
-![Package creation wizard overview](../images/manual/documentation-home-hero.webp)
+![Package creation wizard overview](~/images/manual/documentation-home-hero.webp)
 
 ## What The Wizard Produces
 
@@ -23,7 +23,7 @@ A generated repository includes the package itself, repository support files, an
 
 The window is organized into four editable sections and a live preview:
 
-![Package creation wizard sections](../images/manual/package-creation-wizard-sections.webp)
+![Package creation wizard sections](~/images/manual/package-creation-wizard-sections.webp)
 
 - `Package Definition` controls the package manifest and package-owned folders.
 - `Repo Settings` controls repository-level files such as the license and root README.
@@ -103,7 +103,7 @@ It is built from the template project's baseline assets, packages, and project s
 
 The package creation wizard has two preset scopes:
 
-![Package wizard preset buttons](../images/manual/package-creation-wizard-presets.webp)
+![Package wizard preset buttons](~/images/manual/package-creation-wizard-presets.webp)
 
 - the `Package Definition` preset button applies package and repository values
 - the `Companion Project` preset button applies project-facing values
@@ -112,13 +112,13 @@ The package and repository side can change independently from the companion-proj
 
 You can either apply [Project Defaults](defaults-and-presets.md#project-defaults) or custom [Presets](defaults-and-presets.md#preset-assets):
 
-![Package wizard preset button options](../images/manual/package-creation-wizard-presets_options.webp)
+![Package wizard preset button options](~/images/manual/package-creation-wizard-presets_options.webp)
 
 ## Output Preview
 
 The `Output` section shows the resolved paths derived from the current settings:
 
-![Package wizard output and repository preview](../images/manual/package-creation-wizard-output-preview.webp)
+![Package wizard output and repository preview](~/images/manual/package-creation-wizard-output-preview.webp)
 
 - target location
 - repository root

@@ -2,7 +2,7 @@
 
 ## Package Definition
 
-![Package definition section](../images/manual/package-definition-section.webp)
+![Package definition section](~/images/manual/package-definition-section.webp)
 
 Package identity, generated package structure, and package-level metadata.
 
@@ -178,7 +178,7 @@ If the current package name does not yet match a known exact package, the row ca
 
 ## Repo Settings
 
-![Repository settings section](../images/manual/repo-settings-section.webp)
+![Repository settings section](~/images/manual/repo-settings-section.webp)
 
 Repository-root files and repository initialization behavior outside the package folder itself.
 
@@ -227,7 +227,7 @@ If provided, it is resolved through the standard template-token system and then 
 
 The `Companion Project` section uses the shared project settings UI, but inside the package creation wizard it intentionally hides the target location field because the companion project always lives inside the generated repository.
 
-![Companion project section](../images/manual/companion-project-section.webp)
+![Companion project section](~/images/manual/companion-project-section.webp)
 
 Unity project settings for the generated companion project used for development, validation, and sample usage.
 
@@ -306,7 +306,7 @@ When disabled, the files are still generated, but the wizard does not launch the
 
 The `Output` section is read-only except for `Target Location`.
 
-![Output section and repository layout preview](../images/manual/output-and-preview-section.webp)
+![Output section and repository layout preview](~/images/manual/output-and-preview-section.webp)
 
 It shows:
 
@@ -331,6 +331,6 @@ The companion project folder is:
 
 The live repository layout preview is not just decoration. It reflects the current toggle state and helps confirm which files and folders each setting will add or remove.
 
-![Repository layout preview detail](../images/manual/repository-layout-preview-detail.webp)
+![Repository layout preview detail](~/images/manual/repository-layout-preview-detail.webp)
 
 Hovering related fields in the form highlights the matching area of the preview, including package metadata, docs, readmes, samples, editor files, tests, and companion-project output.

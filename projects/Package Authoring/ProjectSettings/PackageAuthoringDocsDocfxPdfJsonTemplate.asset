@@ -12,24 +12,26 @@ MonoBehaviour:
   m_Script: {fileID: 0}
   m_Name: 
   m_EditorClassIdentifier: Doji.PackageAuthoring.Editor:Doji.PackageAuthoring.Wizards.Presets:DocsDocfxPdfJsonTemplateSettings
-  <Content>k__BackingField: "{\n  \"metadata\": [\n    {\n      \"src\": [\n       
-    {\n          \"files\": [\n            \"**/*.cs\"\n          ],\n          \"src\":
-    \"../{{PACKAGE_NAME}}\"\n        }\n      ],\n      \"dest\": \"api\",\n     
-    \"includePrivateMembers\": false,\n      \"disableGitFeatures\": false,\n     
-    \"disableDefaultFilter\": false,\n      \"noRestore\": false,\n      \"namespaceLayout\":
-    \"flattened\",\n      \"memberLayout\": \"samePage\",\n      \"EnumSortOrder\":
-    \"declaringOrder\",\n      \"allowCompilationErrors\": true,\n      \"globalNamespaceId\":
-    \"Global\",\n      \"filter\": \"filterConfig.yml\"\n    }\n  ],\n  \"build\":
-    {\n    \"content\": [\n      {\n        \"files\": [\n          \"api/**.yml\",\n         
-    \"api/index.md\"\n        ]\n      },\n      {\n        \"files\": [\n         
-    \"manual/**.md\",\n          \"manual/**/toc.yml\",\n          \"toc.yml\",\n         
-    \"*.md\"\n        ]\n      },\n      {\n        \"files\": [\n          \"pdf/toc.yml\"\n       
-    ]\n      }\n    ],\n    \"resource\": [\n      {\n        \"files\": [\n         
-    \"images/**\"\n        ]\n      }\n    ],\n    \"output\": \"_site\",\n    \"globalMetadataFiles\":
-    [],\n    \"globalMetadata\": {\n      \"_appFaviconPath\": \"images/favicon.ico\",\n     
-    \"_appLogoPath\": \"images/logo.png\",\n      \"_appLogoUrl\": \"{{DOCUMENTATION_URL}}\",\n     
-    \"_disableContribution\": true,\n      \"pdf\": true,\n      \"pdfTocPage\":
-    true,\n      \"pdfFileName\": \"{{PACKAGE_NAME}}.pdf\"\n    },\n    \"fileMetadataFiles\":
-    [],\n    \"template\": [\n      \"default\",\n      \"templates/unity\"\n   
-    ],\n    \"postProcessors\": [],\n    \"keepFileLink\": false,\n    \"disableGitFeatures\":
-    false\n  }\n}"
+  <Content>k__BackingField: "{\r\n  \"metadata\": [\r\n    {\r\n      \"src\": [\r\n       
+    {\r\n          \"files\": [\r\n            \"**/*.cs\"\r\n          ],\r\n         
+    \"src\": \"../{{PACKAGE_NAME}}\"\r\n        }\r\n      ],\r\n      \"dest\":
+    \"api\",\r\n      \"includePrivateMembers\": false,\r\n      \"disableGitFeatures\":
+    false,\r\n      \"disableDefaultFilter\": false,\r\n      \"noRestore\": false,\r\n     
+    \"namespaceLayout\": \"flattened\",\r\n      \"memberLayout\": \"samePage\",\r\n     
+    \"EnumSortOrder\": \"declaringOrder\",\r\n      \"allowCompilationErrors\": true,\r\n     
+    \"globalNamespaceId\": \"Global\",\r\n      \"filter\": \"filterConfig.yml\"\r\n   
+    }\r\n  ],\r\n  \"build\": {\r\n    \"content\": [\r\n      {\r\n        \"files\":
+    [\r\n          \"api/**.yml\",\r\n          \"api/index.md\"\r\n        ]\r\n     
+    },\r\n      {\r\n        \"files\": [\r\n          \"manual/**.md\",\r\n         
+    \"manual/**/toc.yml\",\r\n          \"toc.yml\",\r\n          \"*.md\"\r\n       
+    ]\r\n      },\r\n      {\r\n        \"files\": [\r\n          \"pdf/toc.yml\"\r\n       
+    ]\r\n      }\r\n    ],\r\n    \"resource\": [\r\n      {\r\n        \"files\":
+    [\r\n          \"images/**\"\r\n        ]\r\n      }\r\n    ],\r\n    \"output\":
+    \"_site\",\r\n    \"globalMetadataFiles\": [],\r\n    \"globalMetadata\": {\r\n     
+    \"_appFaviconPath\": \"images/favicon.ico\",\r\n      \"_appLogoPath\": \"images/logo.png\",\r\n     
+    \"_appLogoUrl\": \"{{DOCUMENTATION_URL}}\",\r\n      \"_disableContribution\":
+    true,\r\n      \"pdf\": true,\r\n      \"pdfTocPage\": true,\r\n      \"pdfFileName\":
+    \"{{PACKAGE_NAME}}.pdf\"\r\n    },\r\n    \"fileMetadataFiles\": [],\r\n    \"template\":
+    [\r\n      \"default\",\r\n      \"templates/unity\"\r\n    ],\r\n    \"postProcessors\":
+    [],\r\n    \"keepFileLink\": false,\r\n    \"disableGitFeatures\": false\r\n 
+    }\r\n}"

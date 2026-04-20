@@ -82,6 +82,11 @@ Prefer showing over telling:
 - if the point is that a page is for reference, make the headings and layout reference-friendly instead of saying so
 - if the point is that a workflow is the main entry point, prove it through ordering, screenshots, and link placement
 
+Use DocFX-root-relative paths for site assets and cross-page references when possible:
+
+- prefer `~/images/...` over relative paths like `../images/...`
+- prefer `~/manual/...` or `~/api/...` when linking across docs sections if root-relative links keep the markdown clearer
+
 Default to visuals-first documentation:
 
 - if a screenshot explains a UI section faster than prose, place the image before the explanation

@@ -4,7 +4,7 @@ The package-authoring tools generate several repository and package files from p
 
 Open them from `Project Settings > Doji > Package Authoring > Templates`.
 
-![Templates landing page](../images/manual/templates-landing-page.webp)
+![Templates landing page](~/images/manual/templates-landing-page.webp)
 
 ## Template Categories
 
@@ -40,7 +40,7 @@ Tokens are resolved from the current package, repository, and project settings a
 
 ## Package Templates
 
-![Package templates page](../images/manual/package-templates-page.webp)
+![Package templates page](~/images/manual/package-templates-page.webp)
 
 These templates affect files generated inside the package itself or directly into generated Unity projects.
 
@@ -62,7 +62,7 @@ This template becomes the package root `README.md` when `Include Package README`
 
 ## Repository Templates
 
-![Repository templates page](../images/manual/repository-templates-page.webp)
+![Repository templates page](~/images/manual/repository-templates-page.webp)
 
 These templates affect files written at the repository root.
 
@@ -98,7 +98,7 @@ Path:
 
 - `Project Settings > Doji > Package Authoring > Templates > Documentation (DocFX)`
 
-![Documentation templates page](../images/manual/documentation-templates-page.webp)
+![Documentation templates page](~/images/manual/documentation-templates-page.webp)
 
 The generated `docs/` folder is created when `Create Documentation Folder` is enabled.
 
@@ -122,7 +122,7 @@ See [Companion And Standalone Projects](projects.md) for how generated projects 
 
 The documentation settings page can also write branding outputs under `docs/images`.
 
-![Documentation branding fields](../images/manual/documentation-branding-fields.webp)
+![Documentation branding fields](~/images/manual/documentation-branding-fields.webp)
 
 - `Favicon Source` is used to generate `docs/images/favicon.ico`
 - `Logo Source` is used to generate `docs/images/logo.png`

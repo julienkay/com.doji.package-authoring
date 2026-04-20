@@ -1,6 +1,6 @@
 # Package Authoring
 
-![Documentation landing page overview](images/manual/documentation-home-hero.webp)
+![Documentation landing page overview](~/images/manual/documentation-home-hero.webp)
 
 Unity editor tooling for scaffolding UPM packages and their companion sample projects.
 

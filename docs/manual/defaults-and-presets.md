@@ -6,7 +6,7 @@ The package-authoring tools separate persistent project defaults from reusable p
 
 Open `Project Settings > Doji > Package Authoring` to edit the project-wide defaults.
 
-![Project settings defaults page](../images/manual/project-defaults-page.webp)
+![Project settings defaults page](~/images/manual/project-defaults-page.webp)
 
 These defaults are stored in `ProjectSettings/PackageAuthoringProjectSettings.asset` and are used whenever a wizard opens without applying a preset first.
 
@@ -36,11 +36,11 @@ Create one from:
 
 - `Assets > Create > Doji > Package Authoring Preset`
 
-![Package authoring preset asset](../images/manual/package-authoring-preset-asset_create.webp)
+![Package authoring preset asset](~/images/manual/package-authoring-preset-asset_create.webp)
 
 A preset stores package, repository, and project values together, the exact same way you can author these in the package creation wizard or the default project settings. Use presets when you need more than one repeatable authoring configuration in the same Unity project.
 
-![Package authoring preset asset](../images/manual/package-authoring-preset-asset.webp)
+![Package authoring preset asset](~/images/manual/package-authoring-preset-asset.webp)
 
 ## Where Presets Can Be Applied
 
@@ -48,13 +48,13 @@ A preset stores package, repository, and project values together, the exact same
 
 The title bar of `Project Settings > Doji > Package Authoring` includes a preset button. Applying a preset there copies the preset values into the project defaults and saves them.
 
-![Project settings preset menu](../images/manual/project-settings-preset-menu.webp)
+![Project settings preset menu](~/images/manual/project-settings-preset-menu.webp)
 
 ### In Package Creation Wizard
 
 The wizard intentionally exposes two preset buttons:
 
-![Package wizard preset menu](../images/manual/package-creation-wizard-presets.webp)
+![Package wizard preset menu](~/images/manual/package-creation-wizard-presets.webp)
 
 - `Package Definition` preset button
 - `Companion Project` preset button

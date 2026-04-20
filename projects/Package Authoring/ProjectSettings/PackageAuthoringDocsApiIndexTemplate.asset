@@ -14,5 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: Doji.PackageAuthoring.Editor:Doji.PackageAuthoring.Wizards.Presets:DocsApiIndexTemplateSettings
   <Content>k__BackingField: '# Scripting API
 
-    This is the documentation for the
-    Scripting APIs of this package.'
+    This is the documentation for
+    the Scripting APIs of this package.'

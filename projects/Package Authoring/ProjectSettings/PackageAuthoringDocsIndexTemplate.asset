@@ -14,5 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Doji.PackageAuthoring.Editor:Doji.PackageAuthoring.Wizards.Presets:DocsIndexTemplateSettings
   <Content>k__BackingField: '# {{PACKAGE_DISPLAY_NAME}}
 
+    
 
     {{PACKAGE_DESCRIPTION}}'

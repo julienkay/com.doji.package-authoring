@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 0}
   m_Name: 
   m_EditorClassIdentifier: Doji.PackageAuthoring.Editor:Doji.PackageAuthoring.Wizards.Presets:DocsFilterConfigTemplateSettings
-  <Content>k__BackingField: "apiRules:\n- include: # The namespaces to generate\n   
-    uidRegex: ^{{NAMESPACE_NAME_REGEX}}\n    type: Namespace\n- include:\n    uidRegex:
-    ^Global\n    type: Namespace\n- exclude:\n    uidRegex: ^{{NAMESPACE_NAME_REGEX}}\\.Editor\n-
-    exclude:\n    uidRegex: ^{{NAMESPACE_NAME_REGEX}}\\.Samples"
+  <Content>k__BackingField: "apiRules:\r\n- include: # The namespaces to generate\r\n   
+    uidRegex: ^{{NAMESPACE_NAME_REGEX}}\r\n    type: Namespace\r\n- include:\r\n   
+    uidRegex: ^Global\r\n    type: Namespace\r\n- exclude:\r\n    uidRegex: ^{{NAMESPACE_NAME_REGEX}}\\.Editor\r\n-
+    exclude:\r\n    uidRegex: ^{{NAMESPACE_NAME_REGEX}}\\.Samples"

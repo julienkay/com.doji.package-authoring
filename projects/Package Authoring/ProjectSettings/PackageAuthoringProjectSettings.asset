@@ -44,7 +44,7 @@ MonoBehaviour:
     <Dependencies>k__BackingField:
       <Items>k__BackingField:
       - <PackageName>k__BackingField: com.unity.ai.inference
-        <Version>k__BackingField: 2.5.0
+        <Version>k__BackingField: 2.6.1
   <RepoDefaults>k__BackingField:
     <CopyrightHolder>k__BackingField: Julien Kipp
     <LicenseType>k__BackingField: 2

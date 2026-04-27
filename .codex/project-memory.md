@@ -44,6 +44,7 @@
 - Preserve Unity `.meta` files when moving assets or scripts.
 - Prefer property-based public APIs over raw public fields.
 - Public and non-obvious internal C# types should carry XML summaries.
+- This project now relies on `csc.rsp` at repo root with `-langVersion:10` so editor assemblies can compile features such as const interpolated strings consistently in Unity.
 
 ## Testing Notes
 

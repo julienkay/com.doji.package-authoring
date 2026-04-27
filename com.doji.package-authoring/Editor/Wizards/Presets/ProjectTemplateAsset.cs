@@ -1,17 +1,92 @@
+using System.IO;
 using Doji.PackageAuthoring.Models;
 using Doji.PackageAuthoring.Wizards.Templates;
-using UnityEditorInternal;
 using UnityEngine;
 
 namespace Doji.PackageAuthoring.Wizards.Presets {
     /// <summary>
-    /// Base asset for project-scoped editable templates that resolve shared package authoring tokens.
+    /// Resolves file-backed template paths under <c>ProjectSettings/PackageAuthoringTemplates</c>.
+    /// </summary>
+    internal static class PackageAuthoringTemplateStoragePaths {
+        private const string TemplatesRoot = "ProjectSettings/PackageAuthoringTemplates";
+
+        public const string PackageGitIgnore = $"{TemplatesRoot}/Package/.gitignore";
+        public const string PackageReadme = $"{TemplatesRoot}/Package/README.md";
+        public const string RepositoryReadme = $"{TemplatesRoot}/Repository/README.md";
+        public const string RepositoryAgents = $"{TemplatesRoot}/Repository/AGENTS.md";
+        public const string RepositoryCustomLicense = $"{TemplatesRoot}/Repository/CustomLicense.txt";
+        public const string DocsGitIgnore = $"{TemplatesRoot}/Documentation/.gitignore";
+        public const string DocsApiGitIgnore = $"{TemplatesRoot}/Documentation/api/.gitignore";
+        public const string DocsApiIndex = $"{TemplatesRoot}/Documentation/api/index.md";
+        public const string DocsDocfxJson = $"{TemplatesRoot}/Documentation/docfx.json";
+        public const string DocsDocfxPdfJson = $"{TemplatesRoot}/Documentation/docfx-pdf.json";
+        public const string DocsFilterConfig = $"{TemplatesRoot}/Documentation/filterConfig.yml";
+        public const string DocsIndex = $"{TemplatesRoot}/Documentation/index.md";
+        public const string DocsRootToc = $"{TemplatesRoot}/Documentation/toc.yml";
+        public const string DocsManualToc = $"{TemplatesRoot}/Documentation/manual/toc.yml";
+        public const string DocsPdfToc = $"{TemplatesRoot}/Documentation/pdf/toc.yml";
+        public const string DocsBrandingImageAsset = "ProjectSettings/PackageAuthoringDocsBrandingImage.asset";
+    }
+
+    /// <summary>
+    /// Handles project-root-relative template file IO.
+    /// </summary>
+    internal static class ProjectTemplateStorage {
+        private static string _projectRootPathOverride;
+
+        internal static string LoadContent(string settingsFilePath, string defaultContent) {
+            string absoluteSettingsPath = GetAbsolutePath(settingsFilePath);
+            if (File.Exists(absoluteSettingsPath)) {
+                return File.ReadAllText(absoluteSettingsPath);
+            }
+
+            return defaultContent;
+        }
+
+        internal static void SaveContent(string settingsFilePath, string content) {
+            string absoluteSettingsPath = GetAbsolutePath(settingsFilePath);
+            string directoryPath = Path.GetDirectoryName(absoluteSettingsPath);
+            if (!string.IsNullOrEmpty(directoryPath)) {
+                Directory.CreateDirectory(directoryPath);
+            }
+
+            File.WriteAllText(absoluteSettingsPath, content ?? string.Empty);
+        }
+
+        internal static void OverrideProjectRootPath(string projectRootPath) {
+            _projectRootPathOverride = projectRootPath;
+        }
+
+        internal static void ClearProjectRootPathOverride() {
+            _projectRootPathOverride = null;
+        }
+
+        private static string GetAbsolutePath(string relativePath) {
+            return Path.GetFullPath(Path.Combine(GetProjectRootPath(), relativePath));
+        }
+
+        private static string GetProjectRootPath() {
+            if (!string.IsNullOrWhiteSpace(_projectRootPathOverride)) {
+                return _projectRootPathOverride;
+            }
+
+            return Directory.GetParent(Application.dataPath)?.FullName ?? Directory.GetCurrentDirectory();
+        }
+    }
+
+    /// <summary>
+    /// Base in-memory settings object for project-scoped editable templates that resolve shared package authoring tokens.
     /// </summary>
     internal abstract class ProjectTemplateAsset : ScriptableObject {
         /// <summary>
         /// Built-in fallback content used when the project has not customized the template yet.
         /// </summary>
         protected abstract string DefaultContent { get; }
+
+        /// <summary>
+        /// Project-root-relative file that stores the editable template content.
+        /// </summary>
+        protected abstract string SettingsFilePath { get; }
 
         /// <summary>
         /// Raw template content edited in Project Settings.
@@ -23,6 +98,7 @@ namespace Doji.PackageAuthoring.Wizards.Presets {
         /// Returns the template content with shared tokens resolved against the current scaffold context.
         /// </summary>
         public virtual string GetResolvedContent(PackageContext ctx) {
+            RefreshContentFromStorage();
             return TemplateTokenResolver.Resolve(Content, ctx);
         }
 
@@ -33,16 +109,24 @@ namespace Doji.PackageAuthoring.Wizards.Presets {
             ProjectSettings project,
             PackageSettings package = null,
             RepoSettings repo = null) {
+            RefreshContentFromStorage();
             return TemplateTokenResolver.Resolve(Content, project, package, repo);
         }
 
         /// <summary>
-        /// Ensures the template content is initialized to the built-in default when absent.
+        /// Ensures the in-memory template content has been populated from the file-backed settings store.
         /// </summary>
-        protected void EnsureDefaultContent() {
+        protected void EnsureContentLoaded() {
             if (Content == null) {
-                Content = DefaultContent;
+                RefreshContentFromStorage();
             }
+        }
+
+        /// <summary>
+        /// Refreshes the in-memory template content from current on-disk settings file.
+        /// </summary>
+        protected void RefreshContentFromStorage() {
+            Content = ProjectTemplateStorage.LoadContent(SettingsFilePath, DefaultContent);
         }
 
         /// <summary>
@@ -53,62 +137,30 @@ namespace Doji.PackageAuthoring.Wizards.Presets {
         }
 
         /// <summary>
-        /// Restores a template settings object from the project's <c>ProjectSettings</c> folder, or falls back to a transient in-memory instance.
+        /// Initializes the transient settings object from the current on-disk template state.
         /// </summary>
-        /// <remarks>
-        /// Unity editor configuration is often stored either as importable assets under <c>Assets</c>/<c>Packages</c> or as
-        /// serialized objects under <c>ProjectSettings</c>. These template presets intentionally use the latter so the package
-        /// can provide built-in defaults without shipping mutable template files as real package assets.
-        ///
-        /// <see cref="InternalEditorUtility.LoadSerializedFileAndForget(string)"/> is the usual low-level API for this pattern:
-        /// it reads arbitrary serialized Unity objects from a known path even when they are not part of the Asset Database.
-        /// When the file does not exist yet, callers still need a working instance so the editor UI can expose default content
-        /// and later save the customized version back to disk. That is why this helper creates a hidden transient object instead
-        /// of returning <c>null</c>.
-        ///
-        /// This is typically used by project-scoped editor settings types that behave similarly to <c>ScriptableSingleton</c>
-        /// but need explicit control over inheritance, initialization, or save timing.
-        /// </remarks>
-        protected static T LoadOrCreateSettings<T>(string assetPath)
-            where T : ProjectTemplateAsset {
-            Object[] settings = InternalEditorUtility.LoadSerializedFileAndForget(assetPath);
-            if (settings.Length > 0 && settings[0] is T existingSettings) {
-                return existingSettings;
-            }
-
-            T created = CreateInstance<T>();
-            created.hideFlags = HideFlags.HideAndDontSave;
-            return created;
+        protected virtual void InitializeSettings() {
+            EnsureContentLoaded();
         }
 
         /// <summary>
-        /// Saves the current template asset back into the project settings folder.
+        /// Saves the current template content back into <c>ProjectSettings/PackageAuthoringTemplates</c>.
         /// </summary>
-        protected void SaveSettingsAsset(string assetPath, bool saveAsText = true) {
-            EnsureDefaultContent();
-            InternalEditorUtility.SaveToSerializedFileAndForget(
-                new Object[] {
-                    this
-                },
-                assetPath,
-                saveAsText);
+        protected void SaveSettingsFile() {
+            EnsureContentLoaded();
+            ProjectTemplateStorage.SaveContent(SettingsFilePath, Content);
         }
     }
 
     /// <summary>
-    /// Base asset for project-scoped templates that know how to persist themselves back into <c>ProjectSettings</c>.
+    /// Base settings object for project-scoped templates that know how to persist themselves back into plain text files.
     /// </summary>
     internal abstract class ProjectTemplateSettingsAsset : ProjectTemplateAsset, IPackageAuthoringTemplateSettingsAsset {
         /// <summary>
-        /// Serialized project settings path used when this template asset is saved.
-        /// </summary>
-        protected abstract string AssetPath { get; }
-
-        /// <summary>
-        /// Saves the current template settings instance back into the project settings asset.
+        /// Saves the current template settings instance back into the project settings file.
         /// </summary>
         public void SaveSettings() {
-            SaveSettingsAsset(AssetPath);
+            SaveSettingsFile();
         }
 
         void IPackageAuthoringTemplateSettingsAsset.RestoreDefaultContent() {
@@ -128,10 +180,6 @@ namespace Doji.PackageAuthoring.Wizards.Presets {
         /// </summary>
         public static T Instance => _instance ??= GetOrCreateSettings();
 
-        protected virtual void InitializeSettings() {
-            EnsureDefaultContent();
-        }
-
         private void OnDisable() {
             if (_instance == this) {
                 _instance = null;
@@ -139,16 +187,10 @@ namespace Doji.PackageAuthoring.Wizards.Presets {
         }
 
         private static T GetOrCreateSettings() {
-            T settings = LoadOrCreateSettings<T>(GetAssetPath());
+            T settings = CreateInstance<T>();
+            settings.hideFlags = HideFlags.HideAndDontSave;
             settings.InitializeSettings();
             return settings;
-        }
-
-        private static string GetAssetPath() {
-            T templateSettings = CreateInstance<T>();
-            string assetPath = templateSettings.AssetPath;
-            Object.DestroyImmediate(templateSettings);
-            return assetPath;
         }
     }
 }

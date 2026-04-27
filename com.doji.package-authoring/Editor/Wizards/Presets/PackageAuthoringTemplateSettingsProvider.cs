@@ -287,8 +287,9 @@ namespace Doji.PackageAuthoring.Wizards.Presets {
         /// </summary>
         /// <remarks>
         /// Documentation template settings are loaded lazily and can exist only as transient in-memory defaults until a
-        /// save path is exercised. Initializing them here ensures a fresh project gets concrete <c>ProjectSettings</c>
-        /// assets for both editable and locked documentation templates the first time this page is opened.
+        /// save path is exercised. Initializing them here ensures a fresh project gets concrete template files under
+        /// <c>ProjectSettings/PackageAuthoringTemplates</c> for both editable and locked documentation templates the
+        /// first time this page is opened.
         /// </remarks>
         private static void EnsureDocumentationTemplateSettingsInitialized() {
             if (_hasInitializedDocumentationTemplateSettings) {
@@ -300,12 +301,12 @@ namespace Doji.PackageAuthoring.Wizards.Presets {
         }
 
         /// <summary>
-        /// Draws one editable template asset section backed by a serialized <see cref="ProjectTemplateAsset"/>.
+        /// Draws one editable template section backed by a serialized <see cref="ProjectTemplateAsset"/>.
         /// </summary>
         /// <param name="title">Visible section title that also reflects the generated output path.</param>
         /// <param name="settings">Project-settings asset containing the editable template content.</param>
         /// <param name="minHeight">Minimum text-area height used before content-driven expansion.</param>
-        /// <param name="saveSettings">Persistence callback required because these assets are stored under <c>ProjectSettings</c>.</param>
+        /// <param name="saveSettings">Persistence callback required because these settings are saved outside the Asset Database.</param>
         private static void DrawEditableTemplateAssetSection(
             string title,
             ProjectTemplateAsset settings,
@@ -475,20 +476,20 @@ namespace Doji.PackageAuthoring.Wizards.Presets {
         }
 
         /// <summary>
-        /// Applies serialized changes and persists project-settings assets even when the current GUI update is an undo/redo pass.
+        /// Applies serialized changes and persists file-backed template settings even when the current GUI update is an undo/redo pass.
         /// </summary>
         /// <remarks>
-        /// Project-settings objects saved through explicit <c>SaveSettings()</c> calls can fall out of sync with disk when a custom
-        /// text control redraws correctly after undo/redo but no normal property-apply path reports a fresh modification. Undo can
-        /// also restore the in-memory value before the affected section is drawn, so by the time the field code runs there may no
-        /// longer be a detectable current-vs-updated string difference. Use this helper for editable settings UIs that write to
-        /// <c>ProjectSettings</c>, especially around custom text areas or overlay-based IMGUI controls where the visual edit flow is
-        /// decoupled from Unity's default inspector field pipeline. Editable template providers also add a narrow
+        /// These transient settings objects can fall out of sync with disk when a custom text control redraws correctly after
+        /// undo/redo but no normal property-apply path reports a fresh modification. Undo can also restore the in-memory value
+        /// before the affected section is drawn, so by the time the field code runs there may no longer be a detectable
+        /// current-vs-updated string difference. Use this helper for editable settings UIs that write to
+        /// <c>ProjectSettings/PackageAuthoringTemplates</c>, especially around custom text areas or overlay-based IMGUI controls
+        /// where the visual edit flow is decoupled from Unity's default inspector field pipeline. Editable template providers also add a narrow
         /// <see cref="SettingsProvider.deactivateHandler"/> fallback so navigating away from the page persists the
         /// current in-memory state even if a custom text control sidesteps the usual change notifications.
         /// </remarks>
         private static void ApplyAndSaveOnChangeOrUndo(SerializedObject serializedSettings, System.Action saveSettings) {
-            // Undo/redo updates the in-memory settings object, but these ProjectSettings-backed assets still need an explicit save.
+            // Undo/redo updates the in-memory settings object, but these file-backed settings still need an explicit save.
             if (serializedSettings.ApplyModifiedProperties() || _pendingUndoRedoSave) {
                 saveSettings();
             }

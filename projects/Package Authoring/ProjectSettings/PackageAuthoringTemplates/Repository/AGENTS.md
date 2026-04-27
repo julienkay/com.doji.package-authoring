@@ -1,10 +1,5 @@
-namespace Doji.PackageAuthoring.Wizards.Templates {
-    /// <summary>
-    /// Provides the built-in default content for generated repository <c>AGENTS.md</c> files.
-    /// </summary>
-    internal static class AgentsTemplate {
-        public const string DefaultContent = @"# AGENTS.md
-
+# AGENTS.md
+test123
 ## Project Intent
 
 This repository contains the Unity package `{{PACKAGE_NAME}}` and its companion project `{{PROJECT_NAME}}`.
@@ -81,6 +76,3 @@ When adding code:
 - when a change affects package users or package-author workflow, add or update user-facing docs under `docs/` in same phase
 - after larger refactors, verify the current file contents before describing the final state; do not rely on intent, partial diffs, or memory
 - when multiple files should have changed, confirm each affected file explicitly
-";
-    }
-}

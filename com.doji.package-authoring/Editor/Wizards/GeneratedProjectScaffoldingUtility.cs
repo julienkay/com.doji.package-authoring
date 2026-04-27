@@ -159,20 +159,39 @@ namespace Doji.PackageAuthoring.Wizards {
                 return;
             }
 
-            Directory.CreateDirectory(destinationDir);
+            CopyDirectoryContents(sourceDir, destinationDir, shouldCopyPath);
+        }
+
+        private static bool CopyDirectoryContents(
+            string sourceDir,
+            string destinationDir,
+            Func<string, bool> shouldCopyPath) {
+            bool copiedAnyContent = false;
 
             foreach (string file in Directory.GetFiles(sourceDir)) {
                 if (shouldCopyPath != null && !shouldCopyPath(file)) {
                     continue;
                 }
 
+                EnsureDirectoryExists(destinationDir);
                 string destinationFile = Path.Combine(destinationDir, Path.GetFileName(file));
                 CopyFile(file, destinationFile);
+                copiedAnyContent = true;
             }
 
             foreach (string subDirectory in Directory.GetDirectories(sourceDir)) {
                 string destinationSubDirectory = Path.Combine(destinationDir, Path.GetFileName(subDirectory));
-                CopyDirectory(subDirectory, destinationSubDirectory, shouldCopyPath);
+                if (CopyDirectoryContents(subDirectory, destinationSubDirectory, shouldCopyPath)) {
+                    copiedAnyContent = true;
+                }
+            }
+
+            return copiedAnyContent;
+        }
+
+        private static void EnsureDirectoryExists(string path) {
+            if (!Directory.Exists(path)) {
+                Directory.CreateDirectory(path);
             }
         }
 
@@ -385,7 +404,14 @@ namespace Doji.PackageAuthoring.Wizards {
         }
 
         private static bool ShouldCopyProjectSettingsPath(string sourcePath) {
-            string fileName = Path.GetFileName(sourcePath);
+            string normalizedPath = sourcePath.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
+            string templatesDirectorySegment = $"{Path.DirectorySeparatorChar}PackageAuthoringTemplates{Path.DirectorySeparatorChar}";
+
+            if (normalizedPath.Contains(templatesDirectorySegment, StringComparison.OrdinalIgnoreCase)) {
+                return false;
+            }
+
+            string fileName = Path.GetFileName(normalizedPath);
             return !fileName.StartsWith("PackageAuthoring", StringComparison.OrdinalIgnoreCase);
         }
 

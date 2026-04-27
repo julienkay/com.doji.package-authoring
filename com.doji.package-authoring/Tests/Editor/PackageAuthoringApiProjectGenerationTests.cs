@@ -140,7 +140,7 @@ namespace Doji.PackageAuthoring.Tests {
         }
 
         [Test]
-        public void GeneratePackage_DoesNotCopyPackageAuthoringTemplateAssetsIntoCompanionProject() {
+        public void GeneratePackage_DoesNotCopyPackageAuthoringTemplateDirectoryOrAssetsIntoCompanionProjectSettings() {
             ProjectSettings projectSettings = CreateProjectSettings("Companion Without Template Assets");
 
             string rootDirectory = PackageAuthoringApi.GeneratePackage(
@@ -159,7 +159,49 @@ namespace Doji.PackageAuthoring.Tests {
                 File.Exists(Path.Combine(companionProjectSettingsPath, "ProjectSettings.asset")),
                 Is.True);
             Assert.That(
-                Directory.GetFiles(companionProjectSettingsPath, "PackageAuthoring*", SearchOption.AllDirectories),
+                Directory.Exists(Path.Combine(companionProjectSettingsPath, "PackageAuthoringTemplates")),
+                Is.False);
+            Assert.That(
+                Directory.GetFileSystemEntries(
+                    Path.Combine(companionProjectSettingsPath),
+                    "PackageAuthoringTemplates",
+                    SearchOption.AllDirectories),
+                Is.Empty);
+            Assert.That(
+                Directory.GetFiles(
+                    companionProjectSettingsPath,
+                    "PackageAuthoring*.asset",
+                    SearchOption.TopDirectoryOnly),
+                Is.Empty);
+        }
+
+        [Test]
+        public void GenerateProject_DoesNotCopyPackageAuthoringTemplateDirectoryOrAssetsIntoProjectSettings() {
+            ProjectSettings projectSettings = CreateProjectSettings("Standalone Without Template Assets");
+
+            string projectDirectory = PackageAuthoringApi.GenerateProject(
+                projectSettings,
+                openProjectAfterCreation: false);
+
+            string projectSettingsPath = Path.Combine(projectDirectory, "ProjectSettings");
+
+            Assert.That(
+                File.Exists(Path.Combine(projectSettingsPath, "ProjectSettings.asset")),
+                Is.True);
+            Assert.That(
+                Directory.Exists(Path.Combine(projectSettingsPath, "PackageAuthoringTemplates")),
+                Is.False);
+            Assert.That(
+                Directory.GetFileSystemEntries(
+                    projectSettingsPath,
+                    "PackageAuthoringTemplates",
+                    SearchOption.AllDirectories),
+                Is.Empty);
+            Assert.That(
+                Directory.GetFiles(
+                    projectSettingsPath,
+                    "PackageAuthoring*.asset",
+                    SearchOption.TopDirectoryOnly),
                 Is.Empty);
         }
     }

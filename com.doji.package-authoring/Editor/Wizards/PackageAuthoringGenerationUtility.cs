@@ -42,6 +42,7 @@ namespace Doji.PackageAuthoring.Wizards {
             Debug.Log($"Project created successfully at {projectDirectory}");
 
             if (openProjectAfterCreation) {
+                UnityHubProjectRegistryUtility.TryRegisterProject(projectDirectory);
                 UnityEditorLauncherUtility.TryOpenProjectInCurrentEditor(projectDirectory);
             }
 
@@ -113,6 +114,7 @@ namespace Doji.PackageAuthoring.Wizards {
             Debug.Log($"Package scaffolding created successfully at {rootDirectory}");
 
             if (openProjectAfterCreation) {
+                UnityHubProjectRegistryUtility.TryRegisterProject(projectDirectory);
                 UnityEditorLauncherUtility.TryOpenProjectInCurrentEditor(projectDirectory);
             }
 

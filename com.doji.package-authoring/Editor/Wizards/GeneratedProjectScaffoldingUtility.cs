@@ -4,6 +4,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using Doji.PackageAuthoring.Models;
 using Doji.PackageAuthoring.Wizards.Templates;
+using UnityEngine;
 using static Doji.PackageAuthoring.Utilities.GuidUtility;
 
 namespace Doji.PackageAuthoring.Wizards {
@@ -110,7 +111,7 @@ namespace Doji.PackageAuthoring.Wizards {
                 CreateFile(
                     Path.Combine(projectDirectory, "Packages", "manifest.json"),
                     manifestContent,
-                    overwrite: true);
+                    true);
             }
         }
 
@@ -121,7 +122,7 @@ namespace Doji.PackageAuthoring.Wizards {
         public static void CopyPackagesBaseline(string destinationDir) {
             const string sourceDir = "Packages";
             if (!Directory.Exists(sourceDir)) {
-                UnityEngine.Debug.LogWarning($"Source directory {sourceDir} does not exist. Skipping copy.");
+                Debug.LogWarning($"Source directory {sourceDir} does not exist. Skipping copy.");
                 return;
             }
 
@@ -140,7 +141,8 @@ namespace Doji.PackageAuthoring.Wizards {
         }
 
         /// <summary>
-        /// Copies Unity project settings while excluding package-authoring template assets that belong only to the source template project.
+        /// Copies Unity project settings while excluding package-authoring template assets that belong only to the source
+        /// template project.
         /// </summary>
         /// <param name="destinationDir">Destination <c>ProjectSettings</c> directory in the generated project.</param>
         public static void CopyProjectSettingsBaseline(string destinationDir) {
@@ -153,9 +155,10 @@ namespace Doji.PackageAuthoring.Wizards {
         /// <param name="sourceDir">Source directory in the template project.</param>
         /// <param name="destinationDir">Destination directory in the generated project.</param>
         /// <param name="shouldCopyPath">Optional filter for source file paths.</param>
-        public static void CopyDirectory(string sourceDir, string destinationDir, Func<string, bool> shouldCopyPath = null) {
+        public static void CopyDirectory(string sourceDir, string destinationDir,
+            Func<string, bool> shouldCopyPath = null) {
             if (!Directory.Exists(sourceDir)) {
-                UnityEngine.Debug.LogWarning($"Source directory {sourceDir} does not exist. Skipping copy.");
+                Debug.LogWarning($"Source directory {sourceDir} does not exist. Skipping copy.");
                 return;
             }
 
@@ -202,7 +205,7 @@ namespace Doji.PackageAuthoring.Wizards {
         /// <param name="destinationFileName">Destination file path.</param>
         public static void CopyFile(string sourceFileName, string destinationFileName) {
             if (!File.Exists(destinationFileName)) {
-                File.Copy(sourceFileName, destinationFileName, overwrite: false);
+                File.Copy(sourceFileName, destinationFileName, false);
             }
         }
 
@@ -285,7 +288,8 @@ namespace Doji.PackageAuthoring.Wizards {
         }
 
         /// <summary>
-        /// Updates the generated <c>EditorSettings.asset</c> file with the resolved root namespace used for IDE project generation.
+        /// Updates the generated <c>EditorSettings.asset</c> file with the resolved root namespace used for IDE project
+        /// generation.
         /// </summary>
         /// <param name="assetPath">Path to the generated <c>EditorSettings.asset</c>.</param>
         /// <param name="rootNamespace">Namespace value to write.</param>
@@ -301,7 +305,8 @@ namespace Doji.PackageAuthoring.Wizards {
 
         /// <summary>
         /// Rewrites every existing application-identifier entry under Unity's YAML map to the same generated identifier.
-        /// The method intentionally preserves the target list already present in the template asset instead of hardcoding targets in code.
+        /// The method intentionally preserves the target list already present in the template asset instead of hardcoding
+        /// targets in code.
         /// </summary>
         /// <param name="content">Full YAML content of <c>ProjectSettings.asset</c>.</param>
         /// <param name="applicationIdentifier">Identifier value to assign to each target entry.</param>
@@ -405,7 +410,8 @@ namespace Doji.PackageAuthoring.Wizards {
 
         private static bool ShouldCopyProjectSettingsPath(string sourcePath) {
             string normalizedPath = sourcePath.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
-            string templatesDirectorySegment = $"{Path.DirectorySeparatorChar}PackageAuthoringTemplates{Path.DirectorySeparatorChar}";
+            string templatesDirectorySegment =
+                $"{Path.DirectorySeparatorChar}PackageAuthoringTemplates{Path.DirectorySeparatorChar}";
 
             if (normalizedPath.Contains(templatesDirectorySegment, StringComparison.OrdinalIgnoreCase)) {
                 return false;

@@ -1,9 +1,9 @@
-using Doji.PackageAuthoring.Models;
 using System.Collections.Generic;
+using Doji.PackageAuthoring.Models;
+using Doji.PackageAuthoring.Wizards.PackageSearch;
+using Doji.PackageAuthoring.Wizards.UI;
 using UnityEditor;
 using UnityEngine;
-using Doji.PackageAuthoring.Wizards.UI;
-using Doji.PackageAuthoring.Wizards.PackageSearch;
 
 namespace Doji.PackageAuthoring.Wizards.Drawers {
     /// <summary>
@@ -14,18 +14,23 @@ namespace Doji.PackageAuthoring.Wizards.Drawers {
         private static readonly string CompanyNameField = $"<{nameof(ProjectSettings.CompanyName)}>k__BackingField";
         private static readonly string ProductNameField = $"<{nameof(ProjectSettings.ProductName)}>k__BackingField";
         private static readonly string VersionField = $"<{nameof(ProjectSettings.Version)}>k__BackingField";
-        private static readonly string PreferredEditorField = $"<{nameof(ProjectSettings.PreferredEditor)}>k__BackingField";
+
+        private static readonly string PreferredEditorField =
+            $"<{nameof(ProjectSettings.PreferredEditor)}>k__BackingField";
+
         private static readonly string IncludedPackagesField =
             $"<{nameof(ProjectSettings.IncludedPackages)}>k__BackingField";
+
         private static readonly Dictionary<string, bool> IncludedPackagesFoldoutStates = new();
         private static readonly Dictionary<string, bool> AdvancedFoldoutStates = new();
 
-        private static readonly string GenerateAgentsFileField = $"<{nameof(ProjectSettings.GenerateAgentsFile)}>k__BackingField";
+        private static readonly string GenerateAgentsFileField =
+            $"<{nameof(ProjectSettings.GenerateAgentsFile)}>k__BackingField";
 
         private static readonly string TargetLocationField =
             $"<{nameof(ProjectSettings.TargetLocation)}>k__BackingField";
 
-        /// <inheritdoc />
+        /// <inheritdoc/>
         public override float GetPropertyHeight(SerializedProperty property, GUIContent label) {
             ProjectSettingsDrawerContext.State state = ProjectSettingsDrawerContext.Current;
             SerializedProperty includedPackagesProperty = property.FindPropertyRelative(IncludedPackagesField);
@@ -44,7 +49,7 @@ namespace Doji.PackageAuthoring.Wizards.Drawers {
             return height - EditorGUIUtility.standardVerticalSpacing;
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc/>
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label) {
             ProjectSettingsDrawerContext.State state = ProjectSettingsDrawerContext.Current;
             Rect row = new(position.x, position.y, position.width, EditorGUIUtility.singleLineHeight);
@@ -87,9 +92,9 @@ namespace Doji.PackageAuthoring.Wizards.Drawers {
             SerializedProperty property,
             GUIContent label,
             params string[] hoverTargets) {
-            float propertyHeight = EditorGUI.GetPropertyHeight(property, label, includeChildren: true);
+            float propertyHeight = EditorGUI.GetPropertyHeight(property, label, true);
             Rect propertyRect = new(row.x, row.y, row.width, propertyHeight);
-            EditorGUI.PropertyField(propertyRect, property, label, includeChildren: true);
+            EditorGUI.PropertyField(propertyRect, property, label, true);
             RepositoryLayoutPreviewHoverContext.SetHoveredTargetsIfHovered(propertyRect, hoverTargets);
             row.y += propertyHeight + EditorGUIUtility.standardVerticalSpacing;
         }
@@ -97,7 +102,7 @@ namespace Doji.PackageAuthoring.Wizards.Drawers {
         private static float GetFieldHeight(SerializedProperty property = null) {
             float propertyHeight = property == null
                 ? EditorGUIUtility.singleLineHeight
-                : EditorGUI.GetPropertyHeight(property, includeChildren: true);
+                : EditorGUI.GetPropertyHeight(property, true);
             return propertyHeight + EditorGUIUtility.standardVerticalSpacing;
         }
 
@@ -131,10 +136,11 @@ namespace Doji.PackageAuthoring.Wizards.Drawers {
                 PackageAuthoringFieldLabels.Project.PreferredEditor,
                 RepositoryLayoutPreviewHoverTargets.ProjectManifest);
 
-            using (PackageSettingsDrawerContext.Push(UnityRegistryPackageAutocompleteField.SuggestionOverflowMode.Scroll)) {
-                float listHeight = EditorGUI.GetPropertyHeight(includedPackagesProperty, GUIContent.none, includeChildren: true);
+            using (PackageSettingsDrawerContext.Push(
+                       UnityRegistryPackageAutocompleteField.SuggestionOverflowMode.Scroll)) {
+                float listHeight = EditorGUI.GetPropertyHeight(includedPackagesProperty, GUIContent.none, true);
                 Rect listRect = new(row.x, row.y, row.width, listHeight);
-                EditorGUI.PropertyField(listRect, includedPackagesProperty, GUIContent.none, includeChildren: true);
+                EditorGUI.PropertyField(listRect, includedPackagesProperty, GUIContent.none, true);
                 RepositoryLayoutPreviewHoverContext.SetHoveredTargetsIfHovered(
                     listRect,
                     RepositoryLayoutPreviewHoverTargets.ProjectManifest);
@@ -145,7 +151,8 @@ namespace Doji.PackageAuthoring.Wizards.Drawers {
                 PackageAuthoringFieldLabels.Project.IncludedPackagesInfo,
                 row.width);
             Rect helpBoxRect = new(row.x, row.y, row.width, helpBoxHeight);
-            EditorGUI.HelpBox(helpBoxRect, PackageAuthoringFieldLabels.Project.IncludedPackagesInfo.text, MessageType.None);
+            EditorGUI.HelpBox(helpBoxRect, PackageAuthoringFieldLabels.Project.IncludedPackagesInfo.text,
+                MessageType.None);
             RepositoryLayoutPreviewHoverContext.SetHoveredTargetsIfHovered(
                 helpBoxRect,
                 RepositoryLayoutPreviewHoverTargets.ProjectManifest);
@@ -189,8 +196,9 @@ namespace Doji.PackageAuthoring.Wizards.Drawers {
 
             height += GetFieldHeight(parentProperty.FindPropertyRelative(PreferredEditorField));
 
-            using (PackageSettingsDrawerContext.Push(UnityRegistryPackageAutocompleteField.SuggestionOverflowMode.Scroll)) {
-                height += EditorGUI.GetPropertyHeight(includedPackagesProperty, GUIContent.none, includeChildren: true) +
+            using (PackageSettingsDrawerContext.Push(
+                       UnityRegistryPackageAutocompleteField.SuggestionOverflowMode.Scroll)) {
+                height += EditorGUI.GetPropertyHeight(includedPackagesProperty, GUIContent.none, true) +
                           EditorGUIUtility.standardVerticalSpacing;
             }
 
@@ -212,11 +220,13 @@ namespace Doji.PackageAuthoring.Wizards.Drawers {
         }
 
         private static string GetIncludedPackagesFoldoutKey(SerializedProperty parentProperty) {
-            return $"{parentProperty.serializedObject.targetObject.GetInstanceID()}::{parentProperty.propertyPath}.included-packages";
+            return
+                $"{parentProperty.serializedObject.targetObject.GetInstanceID()}::{parentProperty.propertyPath}.included-packages";
         }
 
         private static string GetAdvancedFoldoutKey(SerializedProperty parentProperty) {
-            return $"{parentProperty.serializedObject.targetObject.GetInstanceID()}::{parentProperty.propertyPath}.advanced";
+            return
+                $"{parentProperty.serializedObject.targetObject.GetInstanceID()}::{parentProperty.propertyPath}.advanced";
         }
 
         private static bool GetFoldoutState(Dictionary<string, bool> states, string key) {

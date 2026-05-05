@@ -28,7 +28,7 @@ namespace Doji.PackageAuthoring.Utilities {
         }
 
         private static void RunGitCommand(string arguments, string workingDirectory, bool suppressStdErr = false) {
-            ProcessStartInfo startInfo = new ProcessStartInfo {
+            ProcessStartInfo startInfo = new() {
                 FileName = "git",
                 Arguments = arguments,
                 RedirectStandardOutput = true,
@@ -38,7 +38,7 @@ namespace Doji.PackageAuthoring.Utilities {
                 WorkingDirectory = workingDirectory
             };
 
-            using (Process process = new Process()) {
+            using (Process process = new()) {
                 process.StartInfo = startInfo;
                 process.Start();
 
@@ -60,7 +60,7 @@ namespace Doji.PackageAuthoring.Utilities {
 
         public static void CommitInitialChanges(string workingDirectory) {
             // Stage all files
-            RunGitCommand("add .", workingDirectory, suppressStdErr: true);
+            RunGitCommand("add .", workingDirectory, true);
 
             // Commit with the message "initial commit"
             RunGitCommand("commit -m \"initial commit\"", workingDirectory);

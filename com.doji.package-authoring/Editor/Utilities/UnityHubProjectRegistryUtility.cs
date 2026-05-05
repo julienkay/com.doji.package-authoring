@@ -41,7 +41,8 @@ namespace Doji.PackageAuthoring.Utilities {
                 File.WriteAllText(registryPath, root.ToString(Formatting.None));
                 Debug.Log($"Added project to Unity Hub registry: {projectPath}");
                 return true;
-            } catch (Exception exception) {
+            }
+            catch (Exception exception) {
                 Debug.LogWarning(
                     $"Failed to add generated project to Unity Hub registry at '{registryPath}'. {exception.GetType().Name}: {exception.Message}");
                 return false;
@@ -70,7 +71,8 @@ namespace Doji.PackageAuthoring.Utilities {
         }
 
         private static JObject BuildProjectEntry(string projectPath) {
-            string projectName = Path.GetFileName(projectPath.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar));
+            string projectName =
+                Path.GetFileName(projectPath.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar));
             string containingFolderPath = Path.GetDirectoryName(projectPath) ?? string.Empty;
             DateTimeOffset lastModifiedUtc = Directory.GetLastWriteTimeUtc(projectPath);
             string editorVersion = TryReadProjectVersion(projectPath, "m_EditorVersion");

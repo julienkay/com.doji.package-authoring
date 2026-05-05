@@ -4,20 +4,8 @@ using Newtonsoft.Json.Linq;
 
 namespace Doji.PackageAuthoring.Wizards.PackageSearch {
     internal static class ScopedRegistryManifestReader {
-        internal readonly struct ScopedRegistryDefinition {
-            public readonly string Name;
-            public readonly string Url;
-            public readonly IReadOnlyList<string> Scopes;
-
-            public ScopedRegistryDefinition(string name, string url, IReadOnlyList<string> scopes) {
-                Name = name;
-                Url = url;
-                Scopes = scopes;
-            }
-        }
-
         public static List<ScopedRegistryDefinition> ReadFromProjectManifest(string manifestPath) {
-            List<ScopedRegistryDefinition> registries = new List<ScopedRegistryDefinition>();
+            List<ScopedRegistryDefinition> registries = new();
             if (!File.Exists(manifestPath)) {
                 return registries;
             }
@@ -34,7 +22,7 @@ namespace Doji.PackageAuthoring.Wizards.PackageSearch {
                     continue;
                 }
 
-                List<string> scopes = new List<string>();
+                List<string> scopes = new();
                 if (registryToken["scopes"] is JArray scopesToken) {
                     foreach (JToken scopeToken in scopesToken) {
                         string scope = scopeToken.Value<string>();
@@ -48,6 +36,18 @@ namespace Doji.PackageAuthoring.Wizards.PackageSearch {
             }
 
             return registries;
+        }
+
+        internal readonly struct ScopedRegistryDefinition {
+            public readonly string Name;
+            public readonly string Url;
+            public readonly IReadOnlyList<string> Scopes;
+
+            public ScopedRegistryDefinition(string name, string url, IReadOnlyList<string> scopes) {
+                Name = name;
+                Url = url;
+                Scopes = scopes;
+            }
         }
     }
 }

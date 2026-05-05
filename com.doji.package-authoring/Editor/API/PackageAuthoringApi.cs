@@ -1,11 +1,12 @@
 using System.Collections.Generic;
+using Doji.PackageAuthoring.Models;
 using Doji.PackageAuthoring.Wizards;
 using Doji.PackageAuthoring.Wizards.Presets;
-using Doji.PackageAuthoring.Models;
 
 namespace Doji.PackageAuthoring {
     /// <summary>
-    /// Exposes package authoring settings and generation operations for editor scripts that drive the tooling programmatically.
+    /// Exposes package authoring settings and generation operations for editor scripts that drive the tooling
+    /// programmatically.
     /// </summary>
     public static class PackageAuthoringApi {
         /// <summary>
@@ -53,7 +54,8 @@ namespace Doji.PackageAuthoring {
             SaveAllProjectSettings();
         }
 
-        private static void RestoreDefaultContents(IEnumerable<IPackageAuthoringTemplateSettingsAsset> templateSettings) {
+        private static void
+            RestoreDefaultContents(IEnumerable<IPackageAuthoringTemplateSettingsAsset> templateSettings) {
             foreach (IPackageAuthoringTemplateSettingsAsset templateSetting in templateSettings) {
                 templateSetting.RestoreDefaultContent();
             }

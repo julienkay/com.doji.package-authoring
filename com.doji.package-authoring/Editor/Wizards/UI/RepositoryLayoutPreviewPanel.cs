@@ -2,12 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using Doji.PackageAuthoring.Models;
 using Doji.PackageAuthoring.Utilities;
 using Doji.PackageAuthoring.Wizards.Presets;
-using Doji.PackageAuthoring.Models;
 using Doji.PackageAuthoring.Wizards.Templates;
 using UnityEditor;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace Doji.PackageAuthoring.Wizards.UI {
     /// <summary>
@@ -30,21 +31,22 @@ namespace Doji.PackageAuthoring.Wizards.UI {
         private static readonly Color DocsTint = new(0.78f, 0.90f, 1f);
         private static readonly Color PackageTint = new(0.84f, 1f, 0.84f);
         private static readonly Color ProjectTint = new(1f, 0.92f, 0.78f);
+        private readonly GUIContent _labelContent = new();
+        private PreviewSnapshot _cachedSnapshot;
+        private PreviewSnapshotKey _cachedSnapshotKey;
+        private bool _hasCachedSnapshot;
+        private bool _hoverHighlightingEnabled = true;
+        private RepositoryLayoutPreviewSelection _selectionPreview;
+        private GUIStyle _tagStyle;
+        private GUIStyle _treeContainerStyle;
 
         private GUIStyle _treeRowStyle;
-        private GUIStyle _treeContainerStyle;
-        private GUIStyle _tagStyle;
-        private RepositoryLayoutPreviewSelection _selectionPreview;
-        private bool _hoverHighlightingEnabled = true;
-        private readonly GUIContent _labelContent = new();
-        private bool _hasCachedSnapshot;
-        private PreviewSnapshotKey _cachedSnapshotKey;
-        private PreviewSnapshot _cachedSnapshot;
 
         /// <summary>
         /// Draws the preview section and updates its scroll state.
         /// </summary>
-        public void Draw(float windowWidth, float windowHeight, RepositoryLayoutPreviewData data, ref Vector2 scrollPosition) {
+        public void Draw(float windowWidth, float windowHeight, RepositoryLayoutPreviewData data,
+            ref Vector2 scrollPosition) {
             PreviewSnapshot snapshot = GetOrBuildSnapshot(data);
             float previewWidth = Mathf.Clamp(windowWidth * 0.4f, MinWidth, MaxWidth);
             float previewHeight = Mathf.Max(MinHeight, windowHeight - 72f);
@@ -83,10 +85,12 @@ namespace Doji.PackageAuthoring.Wizards.UI {
             float treeHeight = Mathf.Max(MinHeight - 32f, panelHeight - 32f);
 
             RepositoryLayoutPreviewSelection previewSelection = GetOrCreateSelectionPreview();
-            string selectedPath = Selection.activeObject == previewSelection ? previewSelection.RelativePath : string.Empty;
+            string selectedPath = Selection.activeObject == previewSelection
+                ? previewSelection.RelativePath
+                : string.Empty;
             IReadOnlyCollection<string> hoveredTargets = _hoverHighlightingEnabled
                 ? RepositoryLayoutPreviewHoverContext.CurrentTargets
-                : System.Array.Empty<string>();
+                : Array.Empty<string>();
 
             EditorGUILayout.BeginVertical(
                 _treeContainerStyle,
@@ -94,7 +98,7 @@ namespace Doji.PackageAuthoring.Wizards.UI {
                 GUILayout.MinHeight(treeHeight),
                 GUILayout.Height(treeHeight));
 
-            using (EditorGUILayout.ScrollViewScope scrollView = new EditorGUILayout.ScrollViewScope(
+            using (EditorGUILayout.ScrollViewScope scrollView = new(
                        scrollPosition,
                        GUILayout.ExpandWidth(true),
                        GUILayout.Height(treeHeight - 12f))) {
@@ -104,7 +108,7 @@ namespace Doji.PackageAuthoring.Wizards.UI {
                     bool isRelatedHover = hoveredTargets.Count > 0 &&
                                           IsHoverMatch(entry.Node, hoveredTargets, snapshot.Root.Name, data);
                     bool isSelected = entry.Node.CanPreview &&
-                                      string.Equals(entry.Node.RelativePath, selectedPath, System.StringComparison.Ordinal);
+                                      string.Equals(entry.Node.RelativePath, selectedPath, StringComparison.Ordinal);
                     bool isHovered = entry.Node.CanPreview &&
                                      rowRect.Contains(Event.current.mousePosition);
                     if (isRelatedHover) {
@@ -132,6 +136,7 @@ namespace Doji.PackageAuthoring.Wizards.UI {
                     DrawEntry(rowRect, entry);
                 }
             }
+
             EditorGUILayout.EndVertical();
         }
 
@@ -152,7 +157,7 @@ namespace Doji.PackageAuthoring.Wizards.UI {
 
             RepositoryLayoutNode root = BuildPreviewTree(data);
             List<RepositoryLayoutEntry> entries = new();
-            AppendEntries(entries, root, string.Empty, isLast: true, isRoot: true);
+            AppendEntries(entries, root, string.Empty, true, true);
 
             _cachedSnapshot = new PreviewSnapshot(root, entries);
             _cachedSnapshotKey = snapshotKey;
@@ -181,14 +186,12 @@ namespace Doji.PackageAuthoring.Wizards.UI {
         /// This is intentionally kept next to the preview tree renderer instead of on
         /// <see cref="RepositoryLayoutPreviewHoverTargets"/>. The mapping needs access to both the generated node paths and
         /// the current scaffold data, and several fields expand to multiple rows rather than a single static file.
-        ///
         /// Each switch case defines the matching rule for one hovered field. The rule can match a preview row in
         /// three different ways:
         /// exact relative path comparison for a specific generated file or folder,
         /// relative path prefix comparison for an entire generated subtree,
         /// or text comparison against the node name, output path, or generated preview content when the field's value
         /// is embedded into several files.
-        ///
         /// Example:
         /// the package identifier highlights broadly because it is both the package folder name and a token that
         /// appears in multiple generated files, while dependencies only highlight <c>package.json</c> because that is
@@ -272,7 +275,7 @@ namespace Doji.PackageAuthoring.Wizards.UI {
         /// </summary>
         private static bool MatchesPath(RepositoryLayoutNode node, string relativePath) {
             return !string.IsNullOrWhiteSpace(relativePath) &&
-                   string.Equals(node.RelativePath, relativePath, System.StringComparison.Ordinal);
+                   string.Equals(node.RelativePath, relativePath, StringComparison.Ordinal);
         }
 
         /// <summary>
@@ -280,7 +283,7 @@ namespace Doji.PackageAuthoring.Wizards.UI {
         /// </summary>
         private static bool MatchesPrefix(RepositoryLayoutNode node, string relativePathPrefix) {
             return !string.IsNullOrWhiteSpace(relativePathPrefix) &&
-                   node.RelativePath.StartsWith(relativePathPrefix, System.StringComparison.Ordinal);
+                   node.RelativePath.StartsWith(relativePathPrefix, StringComparison.Ordinal);
         }
 
         /// <summary>
@@ -289,7 +292,7 @@ namespace Doji.PackageAuthoring.Wizards.UI {
         private static bool MatchesContent(RepositoryLayoutNode node, string value) {
             return !string.IsNullOrWhiteSpace(value) &&
                    !string.IsNullOrWhiteSpace(node.PreviewContent) &&
-                   node.PreviewContent.Contains(value, System.StringComparison.OrdinalIgnoreCase);
+                   node.PreviewContent.Contains(value, StringComparison.OrdinalIgnoreCase);
         }
 
         private static string[] GetHoverHighlights(
@@ -302,12 +305,13 @@ namespace Doji.PackageAuthoring.Wizards.UI {
                 hoveredTargets == null ||
                 hoveredTargets.Count == 0 ||
                 string.IsNullOrWhiteSpace(node.PreviewContent)) {
-                return System.Array.Empty<string>();
+                return Array.Empty<string>();
             }
 
-            HashSet<string> highlights = new(System.StringComparer.Ordinal);
+            HashSet<string> highlights = new(StringComparer.Ordinal);
             foreach (string hoveredTarget in hoveredTargets) {
-                foreach (string highlight in GetHoverHighlightsForTarget(node, hoveredTarget, rootDirectoryName, data)) {
+                foreach (string highlight in
+                         GetHoverHighlightsForTarget(node, hoveredTarget, rootDirectoryName, data)) {
                     if (!string.IsNullOrWhiteSpace(highlight)) {
                         highlights.Add(highlight);
                     }
@@ -315,7 +319,7 @@ namespace Doji.PackageAuthoring.Wizards.UI {
             }
 
             if (highlights.Count == 0) {
-                return System.Array.Empty<string>();
+                return Array.Empty<string>();
             }
 
             string[] highlightArray = new string[highlights.Count];
@@ -397,7 +401,7 @@ namespace Doji.PackageAuthoring.Wizards.UI {
                 Selection.activeObject = null;
             }
 
-            UnityEngine.Object.DestroyImmediate(_selectionPreview);
+            Object.DestroyImmediate(_selectionPreview);
             _selectionPreview = null;
         }
 
@@ -440,16 +444,17 @@ namespace Doji.PackageAuthoring.Wizards.UI {
             _selectionPreview.hideFlags = HideFlags.HideInHierarchy | HideFlags.DontSaveInEditor;
             ApplySelectionPayload(
                 _selectionPreview,
-                displayName: "Repository Layout Preview",
-                relativePath: string.Empty,
-                previewContent: string.Empty,
-                sourceFilePath: string.Empty,
-                sourceFolderPath: string.Empty,
-                hoverHighlights: null);
+                "Repository Layout Preview",
+                string.Empty,
+                string.Empty,
+                string.Empty,
+                string.Empty,
+                null);
             return _selectionPreview;
         }
 
-        private void SelectPreview(RepositoryLayoutNode node, string rootDirectoryName, RepositoryLayoutPreviewData data) {
+        private void SelectPreview(RepositoryLayoutNode node, string rootDirectoryName,
+            RepositoryLayoutPreviewData data) {
             if (!node.CanPreview) {
                 return;
             }
@@ -505,11 +510,13 @@ namespace Doji.PackageAuthoring.Wizards.UI {
             string sourceFilePath,
             string sourceFolderPath,
             string[] hoverHighlights) {
-            preview.UpdateContent(displayName, relativePath, previewContent, sourceFilePath, sourceFolderPath, hoverHighlights);
+            preview.UpdateContent(displayName, relativePath, previewContent, sourceFilePath, sourceFolderPath,
+                hoverHighlights);
         }
 
         private static RepositoryLayoutNode BuildPreviewTree(RepositoryLayoutPreviewData data) {
-            RepositoryLayoutNode root = CreateDirectoryNode(data.RootDirectoryName, data.RootDirectoryName, RepositoryLayoutGroup.None);
+            RepositoryLayoutNode root = CreateDirectoryNode(data.RootDirectoryName, data.RootDirectoryName,
+                RepositoryLayoutGroup.None);
 
             if (data.IncludeDocsFolder) {
                 root.Children.Add(BuildDocsNode(data));
@@ -544,8 +551,10 @@ namespace Doji.PackageAuthoring.Wizards.UI {
 
         private static RepositoryLayoutNode BuildDocsNode(RepositoryLayoutPreviewData data) {
             RepositoryLayoutNode docs = CreateDirectoryNode("docs", "docs", RepositoryLayoutGroup.Docs);
-            docs.Children.Add(CreateGeneratedFileNode(".gitignore", "docs/.gitignore", data.Context.GetDocsGitIgnore(), RepositoryLayoutGroup.Docs));
-            docs.Children.Add(CreateGeneratedFileNode("docfx.json", "docs/docfx.json", data.Context.GetDocfxJson(), RepositoryLayoutGroup.Docs));
+            docs.Children.Add(CreateGeneratedFileNode(".gitignore", "docs/.gitignore", data.Context.GetDocsGitIgnore(),
+                RepositoryLayoutGroup.Docs));
+            docs.Children.Add(CreateGeneratedFileNode("docfx.json", "docs/docfx.json", data.Context.GetDocfxJson(),
+                RepositoryLayoutGroup.Docs));
             docs.Children.Add(CreateGeneratedFileNode(
                 "docfx-pdf.json",
                 "docs/docfx-pdf.json",
@@ -556,11 +565,14 @@ namespace Doji.PackageAuthoring.Wizards.UI {
                 "docs/filterConfig.yml",
                 data.Context.GetFilterConfig(),
                 RepositoryLayoutGroup.Docs));
-            docs.Children.Add(CreateGeneratedFileNode("index.md", "docs/index.md", data.Context.GetIndexMD(), RepositoryLayoutGroup.Docs));
+            docs.Children.Add(CreateGeneratedFileNode("index.md", "docs/index.md", data.Context.GetIndexMD(),
+                RepositoryLayoutGroup.Docs));
 
             RepositoryLayoutNode api = CreateDirectoryNode("api", "docs/api", RepositoryLayoutGroup.Docs);
-            api.Children.Add(CreateGeneratedFileNode(".gitignore", "docs/api/.gitignore", data.Context.GetDocsApiGitIgnore(), RepositoryLayoutGroup.Docs));
-            api.Children.Add(CreateGeneratedFileNode("index.md", "docs/api/index.md", data.Context.GetDocsApiIndex(), RepositoryLayoutGroup.Docs));
+            api.Children.Add(CreateGeneratedFileNode(".gitignore", "docs/api/.gitignore",
+                data.Context.GetDocsApiGitIgnore(), RepositoryLayoutGroup.Docs));
+            api.Children.Add(CreateGeneratedFileNode("index.md", "docs/api/index.md", data.Context.GetDocsApiIndex(),
+                RepositoryLayoutGroup.Docs));
             docs.Children.Add(api);
 
             DocsBrandingImageSettings brandingImages = DocsBrandingImageSettings.Instance;
@@ -590,20 +602,24 @@ namespace Doji.PackageAuthoring.Wizards.UI {
             }
 
             RepositoryLayoutNode manual = CreateDirectoryNode("manual", "docs/manual", RepositoryLayoutGroup.Docs);
-            manual.Children.Add(CreateGeneratedFileNode("toc.yml", "docs/manual/toc.yml", data.Context.GetManualToc(), RepositoryLayoutGroup.Docs));
+            manual.Children.Add(CreateGeneratedFileNode("toc.yml", "docs/manual/toc.yml", data.Context.GetManualToc(),
+                RepositoryLayoutGroup.Docs));
             docs.Children.Add(manual);
 
             RepositoryLayoutNode pdf = CreateDirectoryNode("pdf", "docs/pdf", RepositoryLayoutGroup.Docs);
-            pdf.Children.Add(CreateGeneratedFileNode("toc.yml", "docs/pdf/toc.yml", data.Context.GetPdfToc(), RepositoryLayoutGroup.Docs));
+            pdf.Children.Add(CreateGeneratedFileNode("toc.yml", "docs/pdf/toc.yml", data.Context.GetPdfToc(),
+                RepositoryLayoutGroup.Docs));
             docs.Children.Add(pdf);
 
-            docs.Children.Add(CreateGeneratedFileNode("toc.yml", "docs/toc.yml", data.Context.GetRootToc(), RepositoryLayoutGroup.Docs));
+            docs.Children.Add(CreateGeneratedFileNode("toc.yml", "docs/toc.yml", data.Context.GetRootToc(),
+                RepositoryLayoutGroup.Docs));
             return docs;
         }
 
         private static RepositoryLayoutNode BuildPackageNode(RepositoryLayoutPreviewData data) {
             string packageRoot = data.PackageName;
-            RepositoryLayoutNode package = CreateDirectoryNode(data.PackageName, packageRoot, RepositoryLayoutGroup.Package);
+            RepositoryLayoutNode package =
+                CreateDirectoryNode(data.PackageName, packageRoot, RepositoryLayoutGroup.Package);
             package.Children.Add(CreateGeneratedFileNode(
                 "CHANGELOG.md",
                 $"{packageRoot}/CHANGELOG.md",
@@ -611,7 +627,8 @@ namespace Doji.PackageAuthoring.Wizards.UI {
                 RepositoryLayoutGroup.Package));
 
             if (data.IncludeEditorFolder) {
-                RepositoryLayoutNode editor = CreateDirectoryNode("Editor", $"{packageRoot}/Editor", RepositoryLayoutGroup.Package);
+                RepositoryLayoutNode editor =
+                    CreateDirectoryNode("Editor", $"{packageRoot}/Editor", RepositoryLayoutGroup.Package);
                 editor.Children.Add(CreateGeneratedFileNode(
                     $"{data.AssemblyName}.Editor.asmdef",
                     $"{packageRoot}/Editor/{data.AssemblyName}.Editor.asmdef",
@@ -628,7 +645,8 @@ namespace Doji.PackageAuthoring.Wizards.UI {
                     RepositoryLayoutGroup.Package));
             }
 
-            RepositoryLayoutNode runtime = CreateDirectoryNode("Runtime", $"{packageRoot}/Runtime", RepositoryLayoutGroup.Package);
+            RepositoryLayoutNode runtime =
+                CreateDirectoryNode("Runtime", $"{packageRoot}/Runtime", RepositoryLayoutGroup.Package);
             runtime.Children.Add(CreateGeneratedFileNode(
                 $"{data.AssemblyName}.asmdef",
                 $"{packageRoot}/Runtime/{data.AssemblyName}.asmdef",
@@ -642,15 +660,18 @@ namespace Doji.PackageAuthoring.Wizards.UI {
             package.Children.Add(runtime);
 
             if (data.IncludeSamplesFolder) {
-                RepositoryLayoutNode samples = CreateDirectoryNode("Samples~", $"{packageRoot}/Samples~", RepositoryLayoutGroup.Package);
+                RepositoryLayoutNode samples = CreateDirectoryNode("Samples~", $"{packageRoot}/Samples~",
+                    RepositoryLayoutGroup.Package);
                 samples.Children.Add(CreateGeneratedFileNode(
                     $"{data.AssemblyName}.asmdef",
                     $"{packageRoot}/Samples~/{data.AssemblyName}.asmdef",
                     data.Context.GetSamplesAsmDef(RuntimeAssemblyGuidPreview),
                     RepositoryLayoutGroup.Package));
-                samples.Children.Add(CreateDirectoryNode("00-SharedSampleAssets", $"{packageRoot}/Samples~/00-SharedSampleAssets", RepositoryLayoutGroup.Package));
+                samples.Children.Add(CreateDirectoryNode("00-SharedSampleAssets",
+                    $"{packageRoot}/Samples~/00-SharedSampleAssets", RepositoryLayoutGroup.Package));
 
-                RepositoryLayoutNode basicSample = CreateDirectoryNode("01-BasicSample", $"{packageRoot}/Samples~/01-BasicSample", RepositoryLayoutGroup.Package);
+                RepositoryLayoutNode basicSample = CreateDirectoryNode("01-BasicSample",
+                    $"{packageRoot}/Samples~/01-BasicSample", RepositoryLayoutGroup.Package);
                 basicSample.Children.Add(CreateGeneratedFileNode(
                     "BasicSample.cs",
                     $"{packageRoot}/Samples~/01-BasicSample/BasicSample.cs",
@@ -662,7 +683,8 @@ namespace Doji.PackageAuthoring.Wizards.UI {
             }
 
             if (data.IncludeTestsFolder) {
-                package.Children.Add(CreateDirectoryNode("Tests", $"{packageRoot}/Tests", RepositoryLayoutGroup.Package));
+                package.Children.Add(
+                    CreateDirectoryNode("Tests", $"{packageRoot}/Tests", RepositoryLayoutGroup.Package));
             }
 
             package.Children.Add(CreateGeneratedFileNode(
@@ -675,7 +697,8 @@ namespace Doji.PackageAuthoring.Wizards.UI {
 
         private static RepositoryLayoutNode BuildCompanionProjectNode(RepositoryLayoutPreviewData data) {
             RepositoryLayoutNode projects = CreateDirectoryNode("projects", "projects", RepositoryLayoutGroup.Project);
-            RepositoryLayoutNode project = CreateDirectoryNode(data.CompanionProjectName, $"projects/{data.CompanionProjectName}", RepositoryLayoutGroup.Project);
+            RepositoryLayoutNode project = CreateDirectoryNode(data.CompanionProjectName,
+                $"projects/{data.CompanionProjectName}", RepositoryLayoutGroup.Project);
             if (data.IncludeRepositoryGitIgnore) {
                 project.Children.Add(CreateGeneratedFileNode(
                     ".gitignore",
@@ -684,9 +707,11 @@ namespace Doji.PackageAuthoring.Wizards.UI {
                     RepositoryLayoutGroup.Project));
             }
 
-            project.Children.Add(CreateDirectoryNode("Assets", $"projects/{data.CompanionProjectName}/Assets", RepositoryLayoutGroup.Project));
+            project.Children.Add(CreateDirectoryNode("Assets", $"projects/{data.CompanionProjectName}/Assets",
+                RepositoryLayoutGroup.Project));
 
-            RepositoryLayoutNode packages = CreateDirectoryNode("Packages", $"projects/{data.CompanionProjectName}/Packages", RepositoryLayoutGroup.Project);
+            RepositoryLayoutNode packages = CreateDirectoryNode("Packages",
+                $"projects/{data.CompanionProjectName}/Packages", RepositoryLayoutGroup.Project);
             packages.Children.Add(CreateGeneratedFileNode(
                 "manifest.json",
                 $"projects/{data.CompanionProjectName}/Packages/manifest.json",
@@ -702,15 +727,16 @@ namespace Doji.PackageAuthoring.Wizards.UI {
             return projects;
         }
 
-        private static RepositoryLayoutNode CreateDirectoryNode(string name, string relativePath, RepositoryLayoutGroup group) {
+        private static RepositoryLayoutNode CreateDirectoryNode(string name, string relativePath,
+            RepositoryLayoutGroup group) {
             return new RepositoryLayoutNode(
                 name,
                 relativePath,
-                isDirectory: true,
-                previewContent: string.Empty,
-                sourceFilePath: string.Empty,
-                sourceFolderPath: GetExistingFolderPath(relativePath),
-                group: group);
+                true,
+                string.Empty,
+                string.Empty,
+                GetExistingFolderPath(relativePath),
+                group);
         }
 
         private static RepositoryLayoutNode CreateGeneratedFileNode(
@@ -721,11 +747,11 @@ namespace Doji.PackageAuthoring.Wizards.UI {
             return new RepositoryLayoutNode(
                 name,
                 relativePath,
-                isDirectory: false,
+                false,
                 previewContent,
-                sourceFilePath: string.Empty,
-                sourceFolderPath: string.Empty,
-                group: group);
+                string.Empty,
+                string.Empty,
+                group);
         }
 
         private static RepositoryLayoutNode CreateTemplateFileNode(
@@ -740,11 +766,11 @@ namespace Doji.PackageAuthoring.Wizards.UI {
             return new RepositoryLayoutNode(
                 name,
                 relativePath,
-                isDirectory: false,
+                false,
                 previewContent,
-                sourceFilePath: GetExistingFilePath(sourcePath),
-                sourceFolderPath: GetExistingFolderPath(Path.GetDirectoryName(sourcePath)),
-                group: group);
+                GetExistingFilePath(sourcePath),
+                GetExistingFolderPath(Path.GetDirectoryName(sourcePath)),
+                group);
         }
 
         private static RepositoryLayoutNode CreateGeneratedBinaryFileNode(
@@ -756,11 +782,11 @@ namespace Doji.PackageAuthoring.Wizards.UI {
             return new RepositoryLayoutNode(
                 name,
                 relativePath,
-                isDirectory: false,
+                false,
                 previewContent,
-                sourceFilePath: GetExistingFilePath(sourceAssetPath),
-                sourceFolderPath: GetExistingFolderPath(Path.GetDirectoryName(sourceAssetPath)),
-                group: group);
+                GetExistingFilePath(sourceAssetPath),
+                GetExistingFolderPath(Path.GetDirectoryName(sourceAssetPath)),
+                group);
         }
 
         private static bool TryReadTemplateFile(string relativePath, out string fileContent) {
@@ -816,12 +842,39 @@ namespace Doji.PackageAuthoring.Wizards.UI {
         private static List<RepositoryLayoutNode> GetSortedChildren(List<RepositoryLayoutNode> children) {
             List<RepositoryLayoutNode> sortedChildren = new(children);
             sortedChildren.Sort((left, right) => {
-                int ignoreCaseComparison = string.Compare(left.Name, right.Name, System.StringComparison.OrdinalIgnoreCase);
+                int ignoreCaseComparison = string.Compare(left.Name, right.Name, StringComparison.OrdinalIgnoreCase);
                 return ignoreCaseComparison != 0
                     ? ignoreCaseComparison
-                    : string.Compare(left.Name, right.Name, System.StringComparison.Ordinal);
+                    : string.Compare(left.Name, right.Name, StringComparison.Ordinal);
             });
             return sortedChildren;
+        }
+
+        private void DrawEntry(Rect rowRect, RepositoryLayoutEntry entry) {
+            Rect textRect = rowRect;
+            Rect tagRect = default;
+            bool hasTag = !string.IsNullOrEmpty(entry.Node.GroupLabel);
+            if (hasTag) {
+                tagRect = new Rect(
+                    rowRect.xMax - TagColumnWidth - TagRightMargin,
+                    rowRect.y + 1f,
+                    TagColumnWidth,
+                    Mathf.Max(0f, rowRect.height - 2f));
+                textRect.xMax = Mathf.Max(textRect.xMin, tagRect.xMin - TagSpacing);
+            }
+
+            _labelContent.text = entry.DisplayText;
+            _labelContent.tooltip = entry.DisplayText;
+            GUI.Label(textRect, _labelContent, _treeRowStyle);
+
+            if (!hasTag) {
+                return;
+            }
+
+            Color previousColor = GUI.color;
+            GUI.color = entry.Node.GroupColor;
+            GUI.Box(tagRect, entry.Node.GroupLabel, _tagStyle);
+            GUI.color = previousColor;
         }
 
         /// <summary>
@@ -909,33 +962,6 @@ namespace Doji.PackageAuthoring.Wizards.UI {
             public List<RepositoryLayoutNode> Children { get; } = new();
         }
 
-        private void DrawEntry(Rect rowRect, RepositoryLayoutEntry entry) {
-            Rect textRect = rowRect;
-            Rect tagRect = default;
-            bool hasTag = !string.IsNullOrEmpty(entry.Node.GroupLabel);
-            if (hasTag) {
-                tagRect = new Rect(
-                    rowRect.xMax - TagColumnWidth - TagRightMargin,
-                    rowRect.y + 1f,
-                    TagColumnWidth,
-                    Mathf.Max(0f, rowRect.height - 2f));
-                textRect.xMax = Mathf.Max(textRect.xMin, tagRect.xMin - TagSpacing);
-            }
-
-            _labelContent.text = entry.DisplayText;
-            _labelContent.tooltip = entry.DisplayText;
-            GUI.Label(textRect, _labelContent, _treeRowStyle);
-
-            if (!hasTag) {
-                return;
-            }
-
-            Color previousColor = GUI.color;
-            GUI.color = entry.Node.GroupColor;
-            GUI.Box(tagRect, entry.Node.GroupLabel, _tagStyle);
-            GUI.color = previousColor;
-        }
-
         private readonly struct RepositoryLayoutEntry {
             public RepositoryLayoutEntry(string displayText, RepositoryLayoutNode node) {
                 DisplayText = displayText;
@@ -996,10 +1022,8 @@ namespace Doji.PackageAuthoring.Wizards.UI {
             /// This signature must include every field that can change either preview structure or generated preview text.
             /// That includes values that only affect file contents, such as companion <c>Packages/manifest.json</c>
             /// dependencies, selected IDE integration, tokenized text, and toggles that add or remove generated sections.
-            ///
             /// TODO: Extract signature builder into a small internal helper and cover it with focused editor tests.
             /// Direct tests would make preview-cache regressions easier to catch when new wizard fields are added.
-            ///
             /// When adding new wizard fields or generated outputs, update this signature alongside the preview builders.
             /// Missing one field here can leave the Inspector preview showing stale generated content from an older snapshot.
             /// </remarks>

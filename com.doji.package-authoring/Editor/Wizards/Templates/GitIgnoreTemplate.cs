@@ -3,7 +3,8 @@ namespace Doji.PackageAuthoring.Wizards.Templates {
     /// Provides the built-in fallback content for generated project <c>.gitignore</c> files.
     /// </summary>
     internal static class GitIgnoreTemplate {
-        public const string DefaultContent = @"# This .gitignore file should be placed at the root of your Unity project directory
+        public const string DefaultContent =
+            @"# This .gitignore file should be placed at the root of your Unity project directory
 #
 # Get latest from https://github.com/github/gitignore/blob/main/Unity.gitignore
 #

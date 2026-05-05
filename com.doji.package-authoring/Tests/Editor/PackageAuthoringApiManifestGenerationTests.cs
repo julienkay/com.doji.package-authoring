@@ -12,10 +12,9 @@ namespace Doji.PackageAuthoring.Tests {
             string rootDirectory = PackageAuthoringApi.GeneratePackage(
                 CreateProjectSettings("Tokenized Companion"),
                 CreatePackageSettings(
-                    authorUrl: "https://docs.doji-tech.com/{{PACKAGE_NAME}}",
-                    documentationUrl: "https://docs.doji-tech.com/{{PACKAGE_NAME}}/manual"),
-                CreateRepoSettings(),
-                openProjectAfterCreation: false);
+                    "https://docs.doji-tech.com/{{PACKAGE_NAME}}",
+                    "https://docs.doji-tech.com/{{PACKAGE_NAME}}/manual"),
+                CreateRepoSettings());
 
             string packageManifestPath = Path.Combine(
                 rootDirectory,

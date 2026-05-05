@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using System.IO;
 using UnityEditor;
+using Debug = UnityEngine.Debug;
 
 namespace Doji.PackageAuthoring.Utilities {
     /// <summary>
@@ -14,12 +15,12 @@ namespace Doji.PackageAuthoring.Utilities {
         /// <returns><see langword="true"/> when a launch command was started successfully.</returns>
         public static bool TryOpenProjectInCurrentEditor(string projectPath) {
             if (string.IsNullOrWhiteSpace(projectPath)) {
-                UnityEngine.Debug.LogError("Cannot open a Unity project because the project path is empty.");
+                Debug.LogError("Cannot open a Unity project because the project path is empty.");
                 return false;
             }
 
             if (IsProjectOpen(projectPath)) {
-                UnityEngine.Debug.Log($"Project already appears to be open; skipping auto-open: {projectPath}");
+                Debug.Log($"Project already appears to be open; skipping auto-open: {projectPath}");
                 return false;
             }
 
@@ -39,7 +40,7 @@ namespace Doji.PackageAuthoring.Utilities {
         private static bool TryOpenProjectOnMac(string projectPath) {
             string applicationPath = EditorApplication.applicationPath;
             string editorExecutablePath = ResolveMacEditorExecutablePath(applicationPath);
-            UnityEngine.Debug.Log(
+            Debug.Log(
                 $"Resolving macOS Unity editor launch path. applicationPath='{applicationPath}', executablePath='{editorExecutablePath}', projectPath='{projectPath}'.");
             return TryOpenProjectWithExecutable(editorExecutablePath, projectPath);
         }
@@ -49,7 +50,7 @@ namespace Doji.PackageAuthoring.Utilities {
         /// </summary>
         private static bool TryOpenProjectWithExecutable(string editorExecutablePath, string projectPath) {
             if (string.IsNullOrWhiteSpace(editorExecutablePath) || !File.Exists(editorExecutablePath)) {
-                UnityEngine.Debug.LogError("Could not locate Unity Editor executable to open new project.");
+                Debug.LogError("Could not locate Unity Editor executable to open new project.");
                 return false;
             }
 
@@ -59,7 +60,7 @@ namespace Doji.PackageAuthoring.Utilities {
                 UseShellExecute = false
             });
 
-            UnityEngine.Debug.Log($"Opening project in Unity: {projectPath}");
+            Debug.Log($"Opening project in Unity: {projectPath}");
             return true;
         }
 
@@ -126,6 +127,5 @@ namespace Doji.PackageAuthoring.Utilities {
         private static string Quote(string value) {
             return $"\"{value.Replace("\"", "\\\"")}\"";
         }
-
     }
 }

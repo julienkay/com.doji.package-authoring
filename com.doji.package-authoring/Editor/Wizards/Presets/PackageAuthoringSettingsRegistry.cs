@@ -28,7 +28,8 @@ namespace Doji.PackageAuthoring.Wizards.Presets {
         /// <summary>
         /// Package authoring settings assets that are persisted but do not expose template default restoration.
         /// </summary>
-        internal static IReadOnlyList<IPackageAuthoringProjectSettingsAsset> NonTemplatePersistedSettingsAssets { get; } = new IPackageAuthoringProjectSettingsAsset[] {
+        internal static IReadOnlyList<IPackageAuthoringProjectSettingsAsset>
+            NonTemplatePersistedSettingsAssets { get; } = new IPackageAuthoringProjectSettingsAsset[] {
             PackageAuthoringProjectSettings.Instance,
             DocsBrandingImageSettings.Instance
         };
@@ -40,7 +41,9 @@ namespace Doji.PackageAuthoring.Wizards.Presets {
         /// This collection is a behavioral subset of <see cref="AllPersistedSettingsAssets"/>. Every entry here also
         /// participates in the persisted settings list because template settings must be saved after edits or resets.
         /// </remarks>
-        internal static IReadOnlyList<IPackageAuthoringTemplateSettingsAsset> AllResettableTemplateSettingsAssets { get; } = new IPackageAuthoringTemplateSettingsAsset[] {
+        internal static IReadOnlyList<IPackageAuthoringTemplateSettingsAsset> AllResettableTemplateSettingsAssets {
+            get;
+        } = new IPackageAuthoringTemplateSettingsAsset[] {
             PackageReadmeTemplateSettings.Instance,
             GitIgnoreTemplateSettings.Instance,
             CustomLicenseTemplateSettings.Instance,
@@ -59,11 +62,13 @@ namespace Doji.PackageAuthoring.Wizards.Presets {
         };
 
         /// <summary>
-        /// All package authoring settings assets that should be persisted together, whether or not they are editable templates.
+        /// All package authoring settings assets that should be persisted together, whether or not they are editable
+        /// templates.
         /// </summary>
         /// <remarks>
         /// This combines <see cref="NonTemplatePersistedSettingsAssets"/> with
-        /// <see cref="AllResettableTemplateSettingsAssets"/> so save operations can treat package authoring settings as one set.
+        /// <see cref="AllResettableTemplateSettingsAssets"/> so save operations can treat package authoring settings as one
+        /// set.
         /// </remarks>
         internal static IEnumerable<IPackageAuthoringProjectSettingsAsset> AllPersistedSettingsAssets {
             get {
@@ -71,7 +76,8 @@ namespace Doji.PackageAuthoring.Wizards.Presets {
                     yield return settingsAsset;
                 }
 
-                foreach (IPackageAuthoringTemplateSettingsAsset templateSettingsAsset in AllResettableTemplateSettingsAssets) {
+                foreach (IPackageAuthoringTemplateSettingsAsset templateSettingsAsset in
+                         AllResettableTemplateSettingsAssets) {
                     yield return templateSettingsAsset;
                 }
             }

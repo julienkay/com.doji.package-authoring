@@ -12,28 +12,13 @@ namespace Doji.PackageAuthoring.Wizards.PackageSearch {
         private const float SourceBadgeWidth = 64f;
         private const float SourceBadgePadding = 6f;
 
-        /// <summary>
-        /// Controls how the autocomplete field behaves when more matches exist than are shown initially.
-        /// </summary>
-        internal enum SuggestionOverflowMode {
-            /// <summary>
-            /// Shows the first page of matches and appends a trailing hint that more results are available.
-            /// </summary>
-            Hint,
-
-            /// <summary>
-            /// Shows matches inside a fixed-height scroll view so additional results remain accessible inline.
-            /// </summary>
-            Scroll
-        }
-
-        private readonly Action _requestRepaint;
-        private readonly PackageSearchCache _cache;
-        private readonly Dictionary<string, Vector2> _scrollPositions = new();
-        private SuggestionOverflowMode _overflowMode;
-
         private static readonly Color BadgeTextColor = new(1f, 1f, 1f, 0.98f);
         private static GUIStyle _badgeLabelStyle;
+        private readonly PackageSearchCache _cache;
+
+        private readonly Action _requestRepaint;
+        private readonly Dictionary<string, Vector2> _scrollPositions = new();
+        private SuggestionOverflowMode _overflowMode;
 
         public UnityRegistryPackageAutocompleteField(
             Action requestRepaint,
@@ -45,12 +30,23 @@ namespace Doji.PackageAuthoring.Wizards.PackageSearch {
             _cache.Changed += HandleCacheChanged;
         }
 
-        public void SetOverflowMode(SuggestionOverflowMode overflowMode) {
-            _overflowMode = overflowMode;
+        private static GUIStyle BadgeLabelStyle {
+            get {
+                _badgeLabelStyle ??= new GUIStyle(EditorStyles.miniBoldLabel) {
+                    alignment = TextAnchor.MiddleCenter,
+                    clipping = TextClipping.Clip
+                };
+
+                return _badgeLabelStyle;
+            }
         }
 
         public void Dispose() {
             _cache.Changed -= HandleCacheChanged;
+        }
+
+        public void SetOverflowMode(SuggestionOverflowMode overflowMode) {
+            _overflowMode = overflowMode;
         }
 
         /// <summary>
@@ -205,7 +201,7 @@ namespace Doji.PackageAuthoring.Wizards.PackageSearch {
                 return scrollPosition;
             }
 
-            scrollPosition.y = Mathf.Clamp(scrollPosition.y + (currentEvent.delta.y * 12f), 0f, maxScrollY);
+            scrollPosition.y = Mathf.Clamp(scrollPosition.y + currentEvent.delta.y * 12f, 0f, maxScrollY);
             currentEvent.Use();
             GUI.changed = true;
             return scrollPosition;
@@ -259,24 +255,13 @@ namespace Doji.PackageAuthoring.Wizards.PackageSearch {
             GUI.contentColor = originalContentColor;
         }
 
-        private static GUIStyle BadgeLabelStyle {
-            get {
-                _badgeLabelStyle ??= new GUIStyle(EditorStyles.miniBoldLabel) {
-                    alignment = TextAnchor.MiddleCenter,
-                    clipping = TextClipping.Clip
-                };
-
-                return _badgeLabelStyle;
-            }
-        }
-
         private static Color GetSourceBadgeColor(string sourceName) {
             if (string.Equals(sourceName, "Unity", StringComparison.OrdinalIgnoreCase)) {
                 return new Color(0.76f, 0.82f, 0.9f, 1f);
             }
 
             uint hash = ComputeStableHash(sourceName);
-            float hue = (hash % 1000u) / 1000f;
+            float hue = hash % 1000u / 1000f;
             return Color.HSVToRGB(hue, 0.18f, 0.9f);
         }
 
@@ -311,6 +296,21 @@ namespace Doji.PackageAuthoring.Wizards.PackageSearch {
 
         private void HandleCacheChanged() {
             _requestRepaint?.Invoke();
+        }
+
+        /// <summary>
+        /// Controls how the autocomplete field behaves when more matches exist than are shown initially.
+        /// </summary>
+        internal enum SuggestionOverflowMode {
+            /// <summary>
+            /// Shows the first page of matches and appends a trailing hint that more results are available.
+            /// </summary>
+            Hint,
+
+            /// <summary>
+            /// Shows matches inside a fixed-height scroll view so additional results remain accessible inline.
+            /// </summary>
+            Scroll
         }
     }
 }

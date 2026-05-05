@@ -1,8 +1,9 @@
+using System;
 using System.IO;
 using System.Linq;
+using Doji.PackageAuthoring.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using Doji.PackageAuthoring.Models;
 using UnityEngine;
 
 namespace Doji.PackageAuthoring.Wizards.Templates {
@@ -32,7 +33,8 @@ namespace Doji.PackageAuthoring.Wizards.Templates {
 
             if (ctx.Package.CreateTestsFolder) {
                 json["testables"] = new JArray(ctx.Package.PackageName);
-            } else {
+            }
+            else {
                 json.Remove("testables");
             }
 
@@ -107,7 +109,7 @@ namespace Doji.PackageAuthoring.Wizards.Templates {
 
         private static bool IsLocalPackageReference(string version) {
             return !string.IsNullOrWhiteSpace(version)
-                   && version.StartsWith("file:", System.StringComparison.OrdinalIgnoreCase);
+                   && version.StartsWith("file:", StringComparison.OrdinalIgnoreCase);
         }
 
         private static void AddPreferredEditorDependency(JObject deps, PreferredEditor preferredEditor) {
@@ -130,7 +132,7 @@ namespace Doji.PackageAuthoring.Wizards.Templates {
             }
 
             return new JObject(deps.Properties()
-                .OrderBy(property => property.Name, System.StringComparer.Ordinal)
+                .OrderBy(property => property.Name, StringComparer.Ordinal)
                 .Select(property => new JProperty(property.Name, property.Value)));
         }
     }

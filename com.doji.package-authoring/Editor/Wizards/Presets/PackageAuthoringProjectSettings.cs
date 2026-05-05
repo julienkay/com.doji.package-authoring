@@ -1,7 +1,7 @@
+using Doji.PackageAuthoring.Models;
 using UnityEditor;
 using UnityEditorInternal;
 using UnityEngine;
-using Doji.PackageAuthoring.Models;
 
 namespace Doji.PackageAuthoring.Wizards.Presets {
     /// <summary>
@@ -9,26 +9,28 @@ namespace Doji.PackageAuthoring.Wizards.Presets {
     /// This keeps a cached in-memory instance so editor UI state keyed by target instance remains stable across repaints.
     /// </summary>
     [FilePath("ProjectSettings/PackageAuthoringProjectSettings.asset", FilePathAttribute.Location.ProjectFolder)]
-    internal sealed class PackageAuthoringProjectSettings : PackageAuthoringProfile, IPackageAuthoringProjectSettingsAsset {
+    internal sealed class PackageAuthoringProjectSettings : PackageAuthoringProfile,
+        IPackageAuthoringProjectSettingsAsset {
         private static PackageAuthoringProjectSettings _instance;
 
         /// <summary>
         /// Shared project settings asset used as the default authoring profile.
-        /// Unlike <c>ScriptableSingleton</c>, loading and saving is owned explicitly so this type can inherit the shared profile base.
+        /// Unlike <c>ScriptableSingleton</c>, loading and saving is owned explicitly so this type can inherit the shared
+        /// profile base.
         /// </summary>
         public static PackageAuthoringProjectSettings Instance => _instance ??= GetOrCreateSettings();
+
+        private void OnDisable() {
+            if (_instance == this) {
+                _instance = null;
+            }
+        }
 
         /// <summary>
         /// Saves the current settings instance back into the project settings asset.
         /// </summary>
         public void SaveSettings() {
             Save(true);
-        }
-
-        private void OnDisable() {
-            if (_instance == this) {
-                _instance = null;
-            }
         }
 
         // Returning the same object instance across GUI passes is important because some editor controls

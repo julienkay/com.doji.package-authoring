@@ -1,10 +1,9 @@
 using System.IO;
-using UnityEditor;
-using UnityEngine;
-using Doji.PackageAuthoring;
 using Doji.PackageAuthoring.Models;
 using Doji.PackageAuthoring.Wizards.Presets;
 using Doji.PackageAuthoring.Wizards.UI;
+using UnityEditor;
+using UnityEngine;
 
 namespace Doji.PackageAuthoring.Wizards {
     /// <summary>
@@ -13,29 +12,39 @@ namespace Doji.PackageAuthoring.Wizards {
     internal class ProjectCreationWizard : EditorWindow {
         private const string SessionStateKey = "Doji.PackageAuthoring.ProjectCreationWizard.SessionState";
         private const string ProjectSectionPresetTooltip = "Apply project defaults or a preset asset.";
+
         private const string ProjectSectionTooltip =
             "The generated project starts from this template project's baseline. The generated project includes the project container, a generated Assets folder, copied Packages and ProjectSettings, and a generated .gitignore. These values customize the generated project where product metadata is written.";
 
         private static readonly string ProductNameField =
-            $"<{nameof(Doji.PackageAuthoring.Models.ProjectSettings.ProductName)}>k__BackingField";
+            $"<{nameof(Models.ProjectSettings.ProductName)}>k__BackingField";
 
         private static readonly string TargetLocationField =
-            $"<{nameof(Doji.PackageAuthoring.Models.ProjectSettings.TargetLocation)}>k__BackingField";
+            $"<{nameof(Models.ProjectSettings.TargetLocation)}>k__BackingField";
 
         [SerializeField] private bool _autoOpenAfterCreation = true;
+        private SerializedProperty _autoOpenAfterCreationProperty;
 
         private PackageAuthoringProfile _defaults;
         private SerializedObject _defaultsSerializedObject;
         private SerializedObject _windowSerializedObject;
-        private SerializedProperty _autoOpenAfterCreationProperty;
 
         private PackageAuthoringProfile Defaults => _defaults ??= CreateTemporaryProfile();
         private string ScopedSessionStateKey => WizardSessionStateUtility.GetProjectScopedKey(SessionStateKey);
         private ProjectSettings ProjectSettings => Defaults.ProjectDefaults;
-        [MenuItem("Window/Package Authoring/Create Project...")]
-        public static void ShowWindow() {
-            GetWindow<ProjectCreationWizard>().titleContent = new GUIContent("Project Creation");
-        }
+
+        private string PreviewProjectDirectory =>
+            Path.GetFullPath(Path.Combine(CurrentTargetLocation, CurrentProductName));
+
+        private string CurrentProductName => GetSerializedString(
+            PackageAuthoringGui.FindProjectDefaultsProperty(_defaultsSerializedObject),
+            ProductNameField,
+            ProjectSettings.ProductName);
+
+        private string CurrentTargetLocation => GetSerializedString(
+            PackageAuthoringGui.FindProjectDefaultsProperty(_defaultsSerializedObject),
+            TargetLocationField,
+            ProjectSettings.TargetLocation);
 
         /// <summary>
         /// Initializes the window title and seeds the initial ad hoc state from project defaults.
@@ -81,6 +90,11 @@ namespace Doji.PackageAuthoring.Wizards {
             if (GUILayout.Button("Create Project")) {
                 CreateProjectStructure();
             }
+        }
+
+        [MenuItem("Window/Package Authoring/Create Project...")]
+        public static void ShowWindow() {
+            GetWindow<ProjectCreationWizard>().titleContent = new GUIContent("Project Creation");
         }
 
         /// <summary>
@@ -172,18 +186,6 @@ namespace Doji.PackageAuthoring.Wizards {
             PackageAuthoringGui.DrawProjectOutputField(_defaultsSerializedObject);
             EditorGUILayout.LabelField("Project Folder", PreviewProjectDirectory, EditorStyles.miniLabel);
         }
-
-        private string PreviewProjectDirectory => Path.GetFullPath(Path.Combine(CurrentTargetLocation, CurrentProductName));
-
-        private string CurrentProductName => GetSerializedString(
-            PackageAuthoringGui.FindProjectDefaultsProperty(_defaultsSerializedObject),
-            ProductNameField,
-            ProjectSettings.ProductName);
-
-        private string CurrentTargetLocation => GetSerializedString(
-            PackageAuthoringGui.FindProjectDefaultsProperty(_defaultsSerializedObject),
-            TargetLocationField,
-            ProjectSettings.TargetLocation);
 
         private static string GetSerializedString(SerializedProperty property, string relativePath, string fallback) {
             return WizardStateUtility.GetSerializedString(property, relativePath, fallback);

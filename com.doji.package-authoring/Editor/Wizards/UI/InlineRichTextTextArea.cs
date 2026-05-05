@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
@@ -12,7 +13,7 @@ namespace Doji.PackageAuthoring.Wizards.UI {
     /// </remarks>
     internal static class InlineRichTextTextArea {
         private static readonly Color TransparentColor = new(0f, 0f, 0f, 0f);
-        private static readonly System.Collections.Generic.Dictionary<string, Vector2> ScrollPositions = new();
+        private static readonly Dictionary<string, Vector2> ScrollPositions = new();
 
         /// <summary>
         /// Draws the editable multiline field with inline token highlighting.
@@ -81,8 +82,8 @@ namespace Doji.PackageAuthoring.Wizards.UI {
 
         private static Rect GetViewportRect(float minHeight) {
             return EditorGUILayout.GetControlRect(
-                hasLabel: false,
-                height: minHeight,
+                false,
+                minHeight,
                 GUILayout.MinHeight(minHeight),
                 GUILayout.ExpandHeight(false));
         }

@@ -29,7 +29,7 @@ namespace Doji.PackageAuthoring.Models {
             }
 
             foreach (PackageDependencyEntry dependency in other.Items) {
-                PackageDependencyEntry clone = new PackageDependencyEntry();
+                PackageDependencyEntry clone = new();
                 clone.CopyFrom(dependency);
                 Items.Add(clone);
             }

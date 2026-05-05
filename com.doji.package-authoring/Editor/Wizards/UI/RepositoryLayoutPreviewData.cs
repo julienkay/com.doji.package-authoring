@@ -64,6 +64,5 @@ namespace Doji.PackageAuthoring.Wizards.UI {
         /// Template content shown for the generated companion-project <c>.gitignore</c>.
         /// </summary>
         public string RepositoryGitIgnoreTemplate { get; set; }
-
     }
 }

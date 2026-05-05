@@ -1,7 +1,7 @@
-using UnityEditor;
-using UnityEngine;
 using Doji.PackageAuthoring.Models;
 using Doji.PackageAuthoring.Wizards.UI;
+using UnityEditor;
+using UnityEngine;
 
 namespace Doji.PackageAuthoring.Wizards.Drawers {
     /// <summary>
@@ -10,8 +10,10 @@ namespace Doji.PackageAuthoring.Wizards.Drawers {
     [CustomPropertyDrawer(typeof(PackageSettings))]
     internal sealed class PackageSettingsDrawer : PropertyDrawer {
         private static readonly string PackageNameField = $"<{nameof(PackageSettings.PackageName)}>k__BackingField";
+
         private static readonly string PackageDisplayNameField =
             $"<{nameof(PackageSettings.PackageDisplayName)}>k__BackingField";
+
         private static readonly string AssemblyNameField = $"<{nameof(PackageSettings.AssemblyName)}>k__BackingField";
         private static readonly string NamespaceNameField = $"<{nameof(PackageSettings.NamespaceName)}>k__BackingField";
         private static readonly string DescriptionField = $"<{nameof(PackageSettings.Description)}>k__BackingField";
@@ -19,6 +21,7 @@ namespace Doji.PackageAuthoring.Wizards.Drawers {
         private static readonly string IncludeAuthorField = $"<{nameof(PackageSettings.IncludeAuthor)}>k__BackingField";
         private static readonly string AuthorUrlField = $"<{nameof(PackageSettings.AuthorUrl)}>k__BackingField";
         private static readonly string AuthorEmailField = $"<{nameof(PackageSettings.AuthorEmail)}>k__BackingField";
+
         private static readonly string DocumentationUrlField =
             $"<{nameof(PackageSettings.DocumentationUrl)}>k__BackingField";
 
@@ -36,6 +39,7 @@ namespace Doji.PackageAuthoring.Wizards.Drawers {
 
         private static readonly string CreateDocsFolderField =
             $"<{nameof(PackageSettings.CreateDocsFolder)}>k__BackingField";
+
         private static readonly string IncludeReadmeField =
             $"<{nameof(PackageSettings.IncludeReadme)}>k__BackingField";
 
@@ -47,9 +51,10 @@ namespace Doji.PackageAuthoring.Wizards.Drawers {
 
         private static readonly string CreateTestsFolderField =
             $"<{nameof(PackageSettings.CreateTestsFolder)}>k__BackingField";
+
         private static readonly string DependenciesField = $"<{nameof(PackageSettings.Dependencies)}>k__BackingField";
 
-        /// <inheritdoc />
+        /// <inheritdoc/>
         public override float GetPropertyHeight(SerializedProperty property, GUIContent label) {
             int lineCount = 14;
             if (property.FindPropertyRelative(IncludeAuthorField).boolValue) {
@@ -60,17 +65,17 @@ namespace Doji.PackageAuthoring.Wizards.Drawers {
                 lineCount += 3;
             }
 
-            float lineHeight = (EditorGUIUtility.singleLineHeight * lineCount) +
-                               (EditorGUIUtility.standardVerticalSpacing * (lineCount - 1));
+            float lineHeight = EditorGUIUtility.singleLineHeight * lineCount +
+                               EditorGUIUtility.standardVerticalSpacing * (lineCount - 1);
             SerializedProperty dependenciesProperty = property.FindPropertyRelative(DependenciesField);
             float dependenciesHeight = EditorGUI.GetPropertyHeight(
                 dependenciesProperty,
                 GUIContent.none,
-                includeChildren: true);
+                true);
             return lineHeight + 8f + dependenciesHeight;
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc/>
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label) {
             Rect row = new(position.x, position.y, position.width, EditorGUIUtility.singleLineHeight);
 
@@ -191,12 +196,12 @@ namespace Doji.PackageAuthoring.Wizards.Drawers {
             float dependenciesHeight = EditorGUI.GetPropertyHeight(
                 dependenciesProperty,
                 GUIContent.none,
-                includeChildren: true);
+                true);
             EditorGUI.PropertyField(
                 new Rect(row.x, row.y, row.width, dependenciesHeight),
                 dependenciesProperty,
                 PackageAuthoringFieldLabels.Package.Dependencies,
-                includeChildren: true);
+                true);
             RepositoryLayoutPreviewHoverContext.SetHoveredTargetsIfHovered(
                 new Rect(row.x, row.y, row.width, dependenciesHeight),
                 RepositoryLayoutPreviewHoverTargets.Dependencies);

@@ -1,10 +1,9 @@
-using System;
 using System.Collections.Generic;
+using Doji.PackageAuthoring.Models;
+using Doji.PackageAuthoring.Wizards.PackageSearch;
 using UnityEditor;
 using UnityEditorInternal;
 using UnityEngine;
-using Doji.PackageAuthoring.Models;
-using Doji.PackageAuthoring.Wizards.PackageSearch;
 
 namespace Doji.PackageAuthoring.Wizards.Drawers {
     /// <summary>
@@ -22,22 +21,14 @@ namespace Doji.PackageAuthoring.Wizards.Drawers {
 
         private static readonly Dictionary<string, State> States = new();
 
-        private static class Content {
-            public static readonly GUIContent Version =
-                EditorGUIUtility.TrTextContent("Version", "Must follow SemVer (ex: 1.0.0-preview.1).");
-
-            public static readonly GUIContent Package =
-                EditorGUIUtility.TrTextContent("Package name", "Must be lowercase");
-        }
-
-        /// <inheritdoc />
+        /// <inheritdoc/>
         public override float GetPropertyHeight(SerializedProperty property, GUIContent label) {
             State state = GetState(property);
             state.OverflowMode = PackageSettingsDrawerContext.Current.OverflowMode;
             return GetLabelHeight(label) + state.DependenciesList.GetHeight();
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc/>
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label) {
             State state = GetState(property);
             state.OverflowMode = PackageSettingsDrawerContext.Current.OverflowMode;
@@ -79,10 +70,18 @@ namespace Doji.PackageAuthoring.Wizards.Drawers {
             return state;
         }
 
+        private static class Content {
+            public static readonly GUIContent Version =
+                EditorGUIUtility.TrTextContent("Version", "Must follow SemVer (ex: 1.0.0-preview.1).");
+
+            public static readonly GUIContent Package =
+                EditorGUIUtility.TrTextContent("Package name", "Must be lowercase");
+        }
+
         private sealed class State {
-            private SerializedObject _serializedObject;
             private SerializedProperty _itemsProperty;
             private string _propertyPath;
+            private SerializedObject _serializedObject;
 
             public State() {
                 DependencyAutocompleteField = new UnityRegistryPackageAutocompleteField(
@@ -109,10 +108,10 @@ namespace Doji.PackageAuthoring.Wizards.Drawers {
                 DependenciesList = new ReorderableList(
                     _serializedObject,
                     _itemsProperty,
-                    draggable: true,
-                    displayHeader: true,
-                    displayAddButton: true,
-                    displayRemoveButton: true) {
+                    true,
+                    true,
+                    true,
+                    true) {
                     drawHeaderCallback = DrawDependencyHeader,
                     drawFooterCallback = DrawDependencyFooter,
                     drawElementCallback = DrawDependencyElement,

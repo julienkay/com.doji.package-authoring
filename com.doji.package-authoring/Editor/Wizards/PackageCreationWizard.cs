@@ -1,12 +1,10 @@
-using System;
 using System.IO;
-using UnityEditor;
-using UnityEngine;
-using Doji.PackageAuthoring;
 using Doji.PackageAuthoring.Models;
 using Doji.PackageAuthoring.Wizards.Presets;
 using Doji.PackageAuthoring.Wizards.Templates;
 using Doji.PackageAuthoring.Wizards.UI;
+using UnityEditor;
+using UnityEngine;
 
 namespace Doji.PackageAuthoring.Wizards {
     /// <summary>
@@ -15,6 +13,7 @@ namespace Doji.PackageAuthoring.Wizards {
     internal class PackageCreationWizard : EditorWindow {
         private const string SessionStateKey = "Doji.PackageAuthoring.PackageCreationWizard.SessionState";
         private const string PackageSectionPresetTooltip = "Apply package defaults or a package preset asset.";
+
         private const string CompanionProjectSectionTooltip =
             "The companion project starts from this template project's baseline. The generated project includes the project container, a generated Assets folder, copied Packages and ProjectSettings, and a generated .gitignore. These values customize the generated project where product metadata is written.";
 
@@ -22,40 +21,40 @@ namespace Doji.PackageAuthoring.Wizards {
             "Apply project defaults or a preset asset to the companion project.";
 
         private static readonly string PackageNameField =
-            $"<{nameof(Doji.PackageAuthoring.Models.PackageSettings.PackageName)}>k__BackingField";
+            $"<{nameof(Models.PackageSettings.PackageName)}>k__BackingField";
 
         private static readonly string AssemblyNameField =
-            $"<{nameof(Doji.PackageAuthoring.Models.PackageSettings.AssemblyName)}>k__BackingField";
+            $"<{nameof(Models.PackageSettings.AssemblyName)}>k__BackingField";
 
         private static readonly string CreateDocsFolderField =
-            $"<{nameof(Doji.PackageAuthoring.Models.PackageSettings.CreateDocsFolder)}>k__BackingField";
+            $"<{nameof(Models.PackageSettings.CreateDocsFolder)}>k__BackingField";
 
         private static readonly string CreateSamplesFolderField =
-            $"<{nameof(Doji.PackageAuthoring.Models.PackageSettings.CreateSamplesFolder)}>k__BackingField";
+            $"<{nameof(Models.PackageSettings.CreateSamplesFolder)}>k__BackingField";
 
         private static readonly string CreateEditorFolderField =
-            $"<{nameof(Doji.PackageAuthoring.Models.PackageSettings.CreateEditorFolder)}>k__BackingField";
+            $"<{nameof(Models.PackageSettings.CreateEditorFolder)}>k__BackingField";
 
         private static readonly string CreateTestsFolderField =
-            $"<{nameof(Doji.PackageAuthoring.Models.PackageSettings.CreateTestsFolder)}>k__BackingField";
+            $"<{nameof(Models.PackageSettings.CreateTestsFolder)}>k__BackingField";
 
         private static readonly string ProductNameField =
-            $"<{nameof(Doji.PackageAuthoring.Models.ProjectSettings.ProductName)}>k__BackingField";
+            $"<{nameof(Models.ProjectSettings.ProductName)}>k__BackingField";
 
         private static readonly string TargetLocationField =
-            $"<{nameof(Doji.PackageAuthoring.Models.ProjectSettings.TargetLocation)}>k__BackingField";
+            $"<{nameof(Models.ProjectSettings.TargetLocation)}>k__BackingField";
 
         [SerializeField] private Vector2 _contentScrollPosition;
         [SerializeField] private Vector2 _repositoryLayoutPreviewScrollPosition;
         [SerializeField] private bool _autoOpenAfterCreation = true;
-
-        private PackageContext Ctx => new(ProjectSettings, PackageSettings, RepoSettings);
+        private SerializedProperty _autoOpenAfterCreationProperty;
 
         private PackageAuthoringProfile _defaults;
         private SerializedObject _defaultsSerializedObject;
-        private SerializedObject _windowSerializedObject;
-        private SerializedProperty _autoOpenAfterCreationProperty;
         private RepositoryLayoutPreviewPanel _repositoryLayoutPreviewPanel;
+        private SerializedObject _windowSerializedObject;
+
+        private PackageContext Ctx => new(ProjectSettings, PackageSettings, RepoSettings);
 
         private PackageAuthoringProfile Defaults => _defaults ??= CreateTemporaryProfile();
         private string ScopedSessionStateKey => WizardSessionStateUtility.GetProjectScopedKey(SessionStateKey);
@@ -64,15 +63,49 @@ namespace Doji.PackageAuthoring.Wizards {
         private RepoSettings RepoSettings => Defaults.RepoDefaults;
         private string CurrentGitIgnoreTemplate => GitIgnoreTemplateSettings.Instance.GetResolvedContent(Ctx);
 
-        /// <summary>
-        /// Opens the package creation wizard.
-        /// </summary>
-        [MenuItem("Window/Package Authoring/Create Package...")]
-        public static void ShowWindow() {
-            PackageCreationWizard window = GetWindow<PackageCreationWizard>();
-            window.titleContent = new GUIContent("Package Creation");
-            window.minSize = new Vector2(1000f, 600f);
-        }
+        private string PreviewRootDirectory => GetFullPath(CurrentTargetLocation, CurrentPackageName);
+        private string PreviewPackageDirectory => GetFullPath(PreviewRootDirectory, CurrentPackageName);
+        private string PreviewProjectDirectory => GetFullPath(PreviewRootDirectory, "projects", CurrentProductName);
+
+        private string CurrentPackageName => GetSerializedString(
+            PackageAuthoringGui.FindPackageDefaultsProperty(_defaultsSerializedObject),
+            PackageNameField,
+            PackageSettings.PackageName);
+
+        private string CurrentAssemblyName => GetSerializedString(
+            PackageAuthoringGui.FindPackageDefaultsProperty(_defaultsSerializedObject),
+            AssemblyNameField,
+            PackageSettings.AssemblyName);
+
+        private string CurrentProductName => GetSerializedString(
+            PackageAuthoringGui.FindProjectDefaultsProperty(_defaultsSerializedObject),
+            ProductNameField,
+            ProjectSettings.ProductName);
+
+        private string CurrentTargetLocation => GetSerializedString(
+            PackageAuthoringGui.FindProjectDefaultsProperty(_defaultsSerializedObject),
+            TargetLocationField,
+            ProjectSettings.TargetLocation);
+
+        private bool CurrentCreateDocsFolder => GetSerializedBool(
+            PackageAuthoringGui.FindPackageDefaultsProperty(_defaultsSerializedObject),
+            CreateDocsFolderField,
+            PackageSettings.CreateDocsFolder);
+
+        private bool CurrentCreateSamplesFolder => GetSerializedBool(
+            PackageAuthoringGui.FindPackageDefaultsProperty(_defaultsSerializedObject),
+            CreateSamplesFolderField,
+            PackageSettings.CreateSamplesFolder);
+
+        private bool CurrentCreateEditorFolder => GetSerializedBool(
+            PackageAuthoringGui.FindPackageDefaultsProperty(_defaultsSerializedObject),
+            CreateEditorFolderField,
+            PackageSettings.CreateEditorFolder);
+
+        private bool CurrentCreateTestsFolder => GetSerializedBool(
+            PackageAuthoringGui.FindPackageDefaultsProperty(_defaultsSerializedObject),
+            CreateTestsFolderField,
+            PackageSettings.CreateTestsFolder);
 
         /// <summary>
         /// Initializes the window title, transient state, and dependency editor UI.
@@ -84,8 +117,8 @@ namespace Doji.PackageAuthoring.Wizards {
                 RestoreSessionState,
                 ApplyProjectDefaults,
                 InitializeSerializedState,
-                minSize: new Vector2(1000f, 600f),
-                wantsMouseMove: true);
+                new Vector2(1000f, 600f),
+                true);
         }
 
         private void OnDisable() {
@@ -97,6 +130,71 @@ namespace Doji.PackageAuthoring.Wizards {
                 ref _autoOpenAfterCreationProperty,
                 () => _repositoryLayoutPreviewPanel?.Dispose());
             _repositoryLayoutPreviewPanel = null;
+        }
+
+        /// <summary>
+        /// Draws the package creation wizard UI.
+        /// </summary>
+        private void OnGUI() {
+            if (_defaultsSerializedObject == null || _windowSerializedObject == null) {
+                InitializeSerializedState();
+            }
+
+            RepositoryLayoutPreviewHoverContext.BeginFrame();
+            _defaultsSerializedObject.Update();
+            _windowSerializedObject.Update();
+            GUILayout.Space(10f);
+
+            using (new EditorGUILayout.HorizontalScope(GUILayout.ExpandHeight(true))) {
+                using (EditorGUILayout.ScrollViewScope scrollView = new(
+                           _contentScrollPosition,
+                           GUILayout.ExpandWidth(true),
+                           GUILayout.ExpandHeight(true))) {
+                    _contentScrollPosition = scrollView.scrollPosition;
+
+                    EditorGUILayout.BeginVertical(GUILayout.ExpandWidth(true));
+                    DrawPackageDefinitionSection();
+
+                    GUILayout.Space(8f);
+                    DrawRepoSettingsSection();
+
+                    GUILayout.Space(8f);
+                    DrawCompanionProjectSection();
+
+                    GUILayout.Space(8f);
+                    PackageAuthoringGui.DrawSection("Output", DrawOutputSection);
+                    EditorGUILayout.EndVertical();
+                }
+
+                GUILayout.Space(10f);
+                _defaultsSerializedObject.ApplyModifiedProperties();
+                _windowSerializedObject.ApplyModifiedProperties();
+                DrawRepositoryLayoutPreviewPanel();
+            }
+
+            _defaultsSerializedObject.ApplyModifiedProperties();
+            _windowSerializedObject.ApplyModifiedProperties();
+
+            GUILayout.Space(10f);
+            using (new EditorGUILayout.HorizontalScope()) {
+                if (GUILayout.Button("Create Package", GUILayout.Height(24f), GUILayout.Width(140f))) {
+                    CreatePackageScaffolding();
+                }
+            }
+
+            if (Event.current.type == EventType.MouseMove) {
+                Repaint();
+            }
+        }
+
+        /// <summary>
+        /// Opens the package creation wizard.
+        /// </summary>
+        [MenuItem("Window/Package Authoring/Create Package...")]
+        public static void ShowWindow() {
+            PackageCreationWizard window = GetWindow<PackageCreationWizard>();
+            window.titleContent = new GUIContent("Package Creation");
+            window.minSize = new Vector2(1000f, 600f);
         }
 
         /// <summary>
@@ -153,61 +251,6 @@ namespace Doji.PackageAuthoring.Wizards {
             _defaultsSerializedObject = new SerializedObject(Defaults);
             _windowSerializedObject = new SerializedObject(this);
             _autoOpenAfterCreationProperty = _windowSerializedObject.FindProperty(nameof(_autoOpenAfterCreation));
-        }
-
-        /// <summary>
-        /// Draws the package creation wizard UI.
-        /// </summary>
-        private void OnGUI() {
-            if (_defaultsSerializedObject == null || _windowSerializedObject == null) {
-                InitializeSerializedState();
-            }
-
-            RepositoryLayoutPreviewHoverContext.BeginFrame();
-            _defaultsSerializedObject.Update();
-            _windowSerializedObject.Update();
-            GUILayout.Space(10f);
-
-            using (new EditorGUILayout.HorizontalScope(GUILayout.ExpandHeight(true))) {
-                using (EditorGUILayout.ScrollViewScope scrollView = new EditorGUILayout.ScrollViewScope(
-                           _contentScrollPosition,
-                           GUILayout.ExpandWidth(true),
-                           GUILayout.ExpandHeight(true))) {
-                    _contentScrollPosition = scrollView.scrollPosition;
-
-                    EditorGUILayout.BeginVertical(GUILayout.ExpandWidth(true));
-                    DrawPackageDefinitionSection();
-
-                    GUILayout.Space(8f);
-                    DrawRepoSettingsSection();
-
-                    GUILayout.Space(8f);
-                    DrawCompanionProjectSection();
-
-                    GUILayout.Space(8f);
-                    PackageAuthoringGui.DrawSection("Output", DrawOutputSection);
-                    EditorGUILayout.EndVertical();
-                }
-
-                GUILayout.Space(10f);
-                _defaultsSerializedObject.ApplyModifiedProperties();
-                _windowSerializedObject.ApplyModifiedProperties();
-                DrawRepositoryLayoutPreviewPanel();
-            }
-
-            _defaultsSerializedObject.ApplyModifiedProperties();
-            _windowSerializedObject.ApplyModifiedProperties();
-
-            GUILayout.Space(10f);
-            using (new EditorGUILayout.HorizontalScope()) {
-                if (GUILayout.Button("Create Package", GUILayout.Height(24f), GUILayout.Width(140f))) {
-                    CreatePackageScaffolding();
-                }
-            }
-
-            if (Event.current.type == EventType.MouseMove) {
-                Repaint();
-            }
         }
 
         /// <summary>
@@ -347,50 +390,6 @@ namespace Doji.PackageAuthoring.Wizards {
                 RepositoryGitIgnoreTemplate = CurrentGitIgnoreTemplate
             };
         }
-
-        private string PreviewRootDirectory => GetFullPath(CurrentTargetLocation, CurrentPackageName);
-        private string PreviewPackageDirectory => GetFullPath(PreviewRootDirectory, CurrentPackageName);
-        private string PreviewProjectDirectory => GetFullPath(PreviewRootDirectory, "projects", CurrentProductName);
-
-        private string CurrentPackageName => GetSerializedString(
-            PackageAuthoringGui.FindPackageDefaultsProperty(_defaultsSerializedObject),
-            PackageNameField,
-            PackageSettings.PackageName);
-
-        private string CurrentAssemblyName => GetSerializedString(
-            PackageAuthoringGui.FindPackageDefaultsProperty(_defaultsSerializedObject),
-            AssemblyNameField,
-            PackageSettings.AssemblyName);
-
-        private string CurrentProductName => GetSerializedString(
-            PackageAuthoringGui.FindProjectDefaultsProperty(_defaultsSerializedObject),
-            ProductNameField,
-            ProjectSettings.ProductName);
-
-        private string CurrentTargetLocation => GetSerializedString(
-            PackageAuthoringGui.FindProjectDefaultsProperty(_defaultsSerializedObject),
-            TargetLocationField,
-            ProjectSettings.TargetLocation);
-
-        private bool CurrentCreateDocsFolder => GetSerializedBool(
-            PackageAuthoringGui.FindPackageDefaultsProperty(_defaultsSerializedObject),
-            CreateDocsFolderField,
-            PackageSettings.CreateDocsFolder);
-
-        private bool CurrentCreateSamplesFolder => GetSerializedBool(
-            PackageAuthoringGui.FindPackageDefaultsProperty(_defaultsSerializedObject),
-            CreateSamplesFolderField,
-            PackageSettings.CreateSamplesFolder);
-
-        private bool CurrentCreateEditorFolder => GetSerializedBool(
-            PackageAuthoringGui.FindPackageDefaultsProperty(_defaultsSerializedObject),
-            CreateEditorFolderField,
-            PackageSettings.CreateEditorFolder);
-
-        private bool CurrentCreateTestsFolder => GetSerializedBool(
-            PackageAuthoringGui.FindPackageDefaultsProperty(_defaultsSerializedObject),
-            CreateTestsFolderField,
-            PackageSettings.CreateTestsFolder);
 
         private static string GetSerializedString(SerializedProperty property, string relativePath, string fallback) {
             return WizardStateUtility.GetSerializedString(property, relativePath, fallback);

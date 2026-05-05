@@ -15,15 +15,14 @@ namespace Doji.PackageAuthoring.Tests {
             projectSettings.PreferredEditor = PreferredEditor.Rider;
 
             PackageSettings packageSettings = CreatePackageSettings(
-                authorUrl: string.Empty,
-                documentationUrl: string.Empty);
+                string.Empty,
+                string.Empty);
             packageSettings.CreateTestsFolder = true;
 
             string rootDirectory = PackageAuthoringApi.GeneratePackage(
                 projectSettings,
                 packageSettings,
-                CreateRepoSettings(),
-                openProjectAfterCreation: false);
+                CreateRepoSettings());
 
             string companionManifestPath = Path.Combine(
                 rootDirectory,
@@ -57,15 +56,14 @@ namespace Doji.PackageAuthoring.Tests {
             });
 
             PackageSettings packageSettings = CreatePackageSettings(
-                authorUrl: string.Empty,
-                documentationUrl: string.Empty);
+                string.Empty,
+                string.Empty);
             packageSettings.CreateTestsFolder = true;
 
             string rootDirectory = PackageAuthoringApi.GeneratePackage(
                 projectSettings,
                 packageSettings,
-                CreateRepoSettings(),
-                openProjectAfterCreation: false);
+                CreateRepoSettings());
 
             string companionManifestPath = Path.Combine(
                 rootDirectory,
@@ -118,15 +116,14 @@ namespace Doji.PackageAuthoring.Tests {
         public void GeneratePackage_OmitsCompanionManifestTestablesWhenTestsFolderIsDisabled() {
             ProjectSettings projectSettings = CreateProjectSettings("Companion Without Tests");
             PackageSettings packageSettings = CreatePackageSettings(
-                authorUrl: string.Empty,
-                documentationUrl: string.Empty);
+                string.Empty,
+                string.Empty);
             packageSettings.CreateTestsFolder = false;
 
             string rootDirectory = PackageAuthoringApi.GeneratePackage(
                 projectSettings,
                 packageSettings,
-                CreateRepoSettings(),
-                openProjectAfterCreation: false);
+                CreateRepoSettings());
 
             string companionManifestPath = Path.Combine(
                 rootDirectory,
@@ -145,9 +142,8 @@ namespace Doji.PackageAuthoring.Tests {
 
             string rootDirectory = PackageAuthoringApi.GeneratePackage(
                 projectSettings,
-                CreatePackageSettings(authorUrl: string.Empty, documentationUrl: string.Empty),
-                CreateRepoSettings(),
-                openProjectAfterCreation: false);
+                CreatePackageSettings(string.Empty, string.Empty),
+                CreateRepoSettings());
 
             string companionProjectSettingsPath = Path.Combine(
                 rootDirectory,
@@ -180,8 +176,7 @@ namespace Doji.PackageAuthoring.Tests {
             ProjectSettings projectSettings = CreateProjectSettings("Standalone Without Template Assets");
 
             string projectDirectory = PackageAuthoringApi.GenerateProject(
-                projectSettings,
-                openProjectAfterCreation: false);
+                projectSettings);
 
             string projectSettingsPath = Path.Combine(projectDirectory, "ProjectSettings");
 

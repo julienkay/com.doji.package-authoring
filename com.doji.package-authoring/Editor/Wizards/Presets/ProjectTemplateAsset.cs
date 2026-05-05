@@ -79,6 +79,12 @@ namespace Doji.PackageAuthoring.Wizards.Presets {
     /// </summary>
     internal abstract class ProjectTemplateAsset : ScriptableObject {
         /// <summary>
+        /// Raw template content edited in Project Settings.
+        /// </summary>
+        [field: SerializeField]
+        public string Content { get; set; }
+
+        /// <summary>
         /// Built-in fallback content used when the project has not customized the template yet.
         /// </summary>
         protected abstract string DefaultContent { get; }
@@ -87,12 +93,6 @@ namespace Doji.PackageAuthoring.Wizards.Presets {
         /// Project-root-relative file that stores the editable template content.
         /// </summary>
         protected abstract string SettingsFilePath { get; }
-
-        /// <summary>
-        /// Raw template content edited in Project Settings.
-        /// </summary>
-        [field: SerializeField]
-        public string Content { get; set; }
 
         /// <summary>
         /// Returns the template content with shared tokens resolved against the current scaffold context.
@@ -155,7 +155,8 @@ namespace Doji.PackageAuthoring.Wizards.Presets {
     /// <summary>
     /// Base settings object for project-scoped templates that know how to persist themselves back into plain text files.
     /// </summary>
-    internal abstract class ProjectTemplateSettingsAsset : ProjectTemplateAsset, IPackageAuthoringTemplateSettingsAsset {
+    internal abstract class
+        ProjectTemplateSettingsAsset : ProjectTemplateAsset, IPackageAuthoringTemplateSettingsAsset {
         /// <summary>
         /// Saves the current template settings instance back into the project settings file.
         /// </summary>

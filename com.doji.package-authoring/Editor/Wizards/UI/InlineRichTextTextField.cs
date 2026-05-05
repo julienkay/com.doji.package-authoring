@@ -9,10 +9,8 @@ namespace Doji.PackageAuthoring.Wizards.UI {
     /// Unity's IMGUI text fields do not render rich text directly, so this control uses two synchronized layers:
     /// a real <see cref="EditorGUI.TextField(UnityEngine.Rect,string,UnityEngine.GUIStyle)"/> for keyboard input,
     /// selection, and caret handling, plus a rich-text label drawn on top for the visible formatted text.
-    ///
     /// The input layer intentionally uses transparent glyph colors. That keeps Unity's built-in text editing behavior
     /// intact while allowing the overlay label to become the only visible text representation.
-    ///
     /// Draw order matters. The editable field must render first because <see cref="EditorGUI.TextField"/> paints its
     /// own chrome and content. If the rich-text overlay renders before the field, Unity repaints over it and the text
     /// appears invisible even though selection and editing still work.

@@ -1,8 +1,9 @@
 using System;
-using UnityEditor;
-using UnityEngine;
 using Doji.PackageAuthoring.Models;
 using Doji.PackageAuthoring.Wizards.Presets;
+using UnityEditor;
+using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace Doji.PackageAuthoring.Wizards {
     /// <summary>
@@ -54,7 +55,7 @@ namespace Doji.PackageAuthoring.Wizards {
             disposeExtra?.Invoke();
 
             if (defaults != null) {
-                UnityEngine.Object.DestroyImmediate(defaults);
+                Object.DestroyImmediate(defaults);
                 defaults = null;
             }
 

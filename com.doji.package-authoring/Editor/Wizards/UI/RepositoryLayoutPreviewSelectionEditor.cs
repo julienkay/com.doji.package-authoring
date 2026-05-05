@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using UnityEditor;
 using UnityEngine;
@@ -7,16 +8,16 @@ namespace Doji.PackageAuthoring.Wizards.UI {
     /// Displays selected repository preview entries as read-only text in the Inspector.
     /// </summary>
     [CustomEditor(typeof(RepositoryLayoutPreviewSelection))]
-    internal sealed class RepositoryLayoutPreviewSelectionEditor : UnityEditor.Editor {
+    internal sealed class RepositoryLayoutPreviewSelectionEditor : Editor {
         private const float RowHeight = 22f;
         private const float IconButtonWidth = 30f;
         private const float IconButtonGap = 6f;
         private static readonly Color TransparentColor = new(0f, 0f, 0f, 0f);
+        private GUIStyle _contentOverlayStyle;
 
         private GUIStyle _contentStyle;
-        private GUIStyle _contentOverlayStyle;
-        private GUIStyle _pathFieldStyle;
         private GUIStyle _iconButtonStyle;
+        private GUIStyle _pathFieldStyle;
 
         /// <summary>
         /// Draws a read-only inspector that mirrors Unity's simple text-asset viewing flow.
@@ -47,17 +48,17 @@ namespace Doji.PackageAuthoring.Wizards.UI {
             DrawPathRow(
                 "File",
                 preview.DisplayName,
-                icon: EditorGUIUtility.IconContent("DefaultAsset Icon", "Open this file with the default app"),
-                enabled: File.Exists(preview.SourceFilePath),
-                onClick: () => EditorUtility.OpenWithDefaultApp(preview.SourceFilePath));
+                EditorGUIUtility.IconContent("DefaultAsset Icon", "Open this file with the default app"),
+                File.Exists(preview.SourceFilePath),
+                () => EditorUtility.OpenWithDefaultApp(preview.SourceFilePath));
 
             DrawPathRow(
                 "Path",
                 preview.RelativePath,
-                icon: EditorGUIUtility.IconContent("d_FolderOpened Icon", "Reveal the containing folder"),
-                enabled: Directory.Exists(preview.SourceFolderPath),
-                onClick: () => EditorUtility.RevealInFinder(preview.SourceFolderPath));
-            
+                EditorGUIUtility.IconContent("d_FolderOpened Icon", "Reveal the containing folder"),
+                Directory.Exists(preview.SourceFolderPath),
+                () => EditorUtility.RevealInFinder(preview.SourceFolderPath));
+
             EditorGUILayout.Space(6f);
 
             float width = Mathf.Max(1f, EditorGUIUtility.currentViewWidth - 28f);
@@ -82,16 +83,16 @@ namespace Doji.PackageAuthoring.Wizards.UI {
         /// <summary>
         /// Draws one labeled header row with the selected value and its optional action button.
         /// </summary>
-        private void DrawPathRow(string label, string value, GUIContent icon, bool enabled, System.Action onClick) {
+        private void DrawPathRow(string label, string value, GUIContent icon, bool enabled, Action onClick) {
             using (new EditorGUILayout.HorizontalScope()) {
                 EditorGUILayout.PrefixLabel(label);
                 Rect fullRect = EditorGUILayout.GetControlRect(GUILayout.Height(RowHeight));
-                Rect valueRect = new Rect(
+                Rect valueRect = new(
                     fullRect.x,
                     fullRect.y,
                     Mathf.Max(0f, fullRect.width - IconButtonWidth - IconButtonGap),
                     fullRect.height);
-                Rect iconRect = new Rect(
+                Rect iconRect = new(
                     valueRect.xMax + IconButtonGap,
                     fullRect.y + 1f,
                     IconButtonWidth,

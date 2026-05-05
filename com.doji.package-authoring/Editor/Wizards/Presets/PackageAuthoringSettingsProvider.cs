@@ -1,8 +1,6 @@
+using Doji.PackageAuthoring.Wizards.UI;
 using UnityEditor;
 using UnityEngine;
-using Doji.PackageAuthoring.Models;
-using Doji.PackageAuthoring.Wizards.PackageSearch;
-using Doji.PackageAuthoring.Wizards.UI;
 
 namespace Doji.PackageAuthoring.Wizards.Presets {
     /// <summary>
@@ -14,7 +12,7 @@ namespace Doji.PackageAuthoring.Wizards.Presets {
         /// </summary>
         [SettingsProvider]
         public static SettingsProvider CreateProvider() {
-            SettingsProvider provider = new SettingsProvider("Project/Doji/Package Authoring", SettingsScope.Project) {
+            SettingsProvider provider = new("Project/Doji/Package Authoring", SettingsScope.Project) {
                 guiHandler = _ => DrawSettingsGui(),
                 titleBarGuiHandler = DrawTitleBarGui
             };
@@ -36,10 +34,10 @@ namespace Doji.PackageAuthoring.Wizards.Presets {
             }
 
             PackageAuthoringPresetMenu.Show(
-                buttonRect: default,
-                applyProjectDefaults: null,
-                applyPreset: ApplyPresetToProjectDefaults,
-                includeProjectDefaults: false);
+                default,
+                null,
+                ApplyPresetToProjectDefaults,
+                false);
         }
 
         /// <summary>
@@ -47,15 +45,14 @@ namespace Doji.PackageAuthoring.Wizards.Presets {
         /// </summary>
         private static void DrawSettingsGui() {
             PackageAuthoringProjectSettings settings = PackageAuthoringProjectSettings.Instance;
-            using SerializedObject serializedSettings = new SerializedObject(settings);
+            using SerializedObject serializedSettings = new(settings);
             serializedSettings.Update();
 
             EditorGUILayout.Space(8f);
             EditorGUI.BeginChangeCheck();
             PackageAuthoringGui.DrawPackageSettingsSection(
                 serializedSettings,
-                "Package Defaults",
-                overflowMode: UnityRegistryPackageAutocompleteField.SuggestionOverflowMode.Scroll);
+                "Package Defaults");
 
             EditorGUILayout.Space(8f);
             PackageAuthoringGui.DrawRepoSettingsSection(serializedSettings, "Repo Defaults");
@@ -64,8 +61,7 @@ namespace Doji.PackageAuthoring.Wizards.Presets {
             PackageAuthoringGui.DrawProjectSettingsSection(
                 serializedSettings,
                 "Project Defaults",
-                productLabel: "Project Name",
-                includeTargetLocation: true);
+                "Project Name");
 
             if (EditorGUI.EndChangeCheck()) {
                 serializedSettings.ApplyModifiedProperties();

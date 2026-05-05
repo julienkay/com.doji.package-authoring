@@ -8,20 +8,18 @@ namespace Doji.PackageAuthoring.Tests {
     /// Provides shared temp-output and settings helpers for package authoring API regression tests.
     /// </summary>
     internal abstract class PackageAuthoringApiTestBase {
-        private readonly string _tempRoot = Path.Combine(
+        protected string TempRoot { get; } = Path.Combine(
             Path.GetTempPath(),
             "Doji.PackageAuthoring.Tests",
             Guid.NewGuid().ToString("N"));
 
-        protected string TempRoot => _tempRoot;
-
         [TearDown]
         public void TearDown() {
-            if (!Directory.Exists(_tempRoot)) {
+            if (!Directory.Exists(TempRoot)) {
                 return;
             }
 
-            Directory.Delete(_tempRoot, recursive: true);
+            Directory.Delete(TempRoot, true);
         }
 
         protected ProjectSettings CreateProjectSettings(string productName) {
@@ -29,7 +27,7 @@ namespace Doji.PackageAuthoring.Tests {
                 CompanyName = "Doji Technologies",
                 ProductName = productName,
                 Version = "2.3.4",
-                TargetLocation = _tempRoot
+                TargetLocation = TempRoot
             };
         }
 

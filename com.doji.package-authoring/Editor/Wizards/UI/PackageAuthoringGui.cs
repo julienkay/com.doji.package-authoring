@@ -1,10 +1,10 @@
 using System;
+using Doji.PackageAuthoring.Models;
 using Doji.PackageAuthoring.Wizards.Drawers;
+using Doji.PackageAuthoring.Wizards.PackageSearch;
+using Doji.PackageAuthoring.Wizards.Presets;
 using UnityEditor;
 using UnityEngine;
-using Doji.PackageAuthoring.Models;
-using Doji.PackageAuthoring.Wizards.Presets;
-using Doji.PackageAuthoring.Wizards.PackageSearch;
 
 namespace Doji.PackageAuthoring.Wizards.UI {
     /// <summary>
@@ -101,7 +101,7 @@ namespace Doji.PackageAuthoring.Wizards.UI {
                 EditorGUILayout.PropertyField(
                     FindPackageDefaultsProperty(profileObject),
                     GUIContent.none,
-                    includeChildren: true);
+                    true);
                 drawFooter?.Invoke();
             }, drawHeaderAction);
         }
@@ -118,7 +118,7 @@ namespace Doji.PackageAuthoring.Wizards.UI {
                 EditorGUILayout.PropertyField(
                     FindRepoDefaultsProperty(profileObject),
                     GUIContent.none,
-                    includeChildren: true);
+                    true);
                 drawFooter?.Invoke();
             }, drawHeaderAction);
         }
@@ -155,12 +155,12 @@ namespace Doji.PackageAuthoring.Wizards.UI {
             DrawProjectSettingsSection(
                 profileObject,
                 new GUIContent(title, sectionTooltip),
-                productLabel: "Project Name",
-                includeTargetLocation: false,
-                drawHeaderAction: () => DrawSectionHeaderPresetButton(
+                "Project Name",
+                false,
+                () => DrawSectionHeaderPresetButton(
                     presetTooltip,
                     onPresetClicked),
-                drawFooter: () => DrawGeneratedProjectSettingsFooter(autoOpenAfterCreationProperty));
+                () => DrawGeneratedProjectSettingsFooter(autoOpenAfterCreationProperty));
         }
 
         /// <summary>
@@ -187,7 +187,7 @@ namespace Doji.PackageAuthoring.Wizards.UI {
                 EditorGUILayout.PropertyField(
                     FindProjectDefaultsProperty(profileObject),
                     GUIContent.none,
-                    includeChildren: true);
+                    true);
                 drawFooter?.Invoke();
             }, drawHeaderAction);
         }

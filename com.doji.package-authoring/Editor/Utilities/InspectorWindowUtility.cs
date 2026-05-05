@@ -10,6 +10,7 @@ namespace Doji.PackageAuthoring.Utilities {
     /// </summary>
     internal static class InspectorWindowUtility {
         private static readonly Type InspectorWindowType = Type.GetType("UnityEditor.InspectorWindow,UnityEditor");
+
         private static readonly MethodInfo ShowTabMethod = typeof(EditorWindow).GetMethod(
             "ShowTab",
             BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);

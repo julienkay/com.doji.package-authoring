@@ -16,16 +16,18 @@ namespace Doji.PackageAuthoring.Wizards.PackageSearch {
         private const string SessionStateKey =
             "Doji.PackageAuthoring.Wizards.PackageSearch.PackageSearchCache";
 
-        private readonly List<IPackageSearchSource> _sources = new();
         private readonly List<PackageSearchEntry> _entries = new();
+
+        private readonly List<IPackageSearchSource> _sources = new();
+
+        private PackageSearchCache() {
+        }
 
         /// <summary>
         /// Shared cache instance used by the package authoring tooling so all IMGUI hosts converge on the same
         /// merged package index and reuse the same session snapshot.
         /// </summary>
         public static PackageSearchCache Shared { get; } = new();
-
-        public event Action Changed;
 
         public bool IsLoading {
             get {
@@ -54,25 +56,11 @@ namespace Doji.PackageAuthoring.Wizards.PackageSearch {
             }
         }
 
-        [Serializable]
-        private sealed class SessionCacheSnapshot {
-            public string ManifestHash;
-            public long CachedAtUtcTicks;
-            public SessionCacheEntry[] Entries;
+        public void Dispose() {
+            DisposeSources();
         }
 
-        [Serializable]
-        private sealed class SessionCacheEntry {
-            public string PackageName;
-            public string Version;
-            public string DisplayName;
-            public string Description;
-            public string[] Keywords;
-            public string SourceName;
-        }
-
-        private PackageSearchCache() {
-        }
+        public event Action Changed;
 
         /// <summary>
         /// Ensures package metadata is available either by restoring the current session snapshot or by starting
@@ -140,20 +128,16 @@ namespace Doji.PackageAuthoring.Wizards.PackageSearch {
             return false;
         }
 
-        public void Dispose() {
-            DisposeSources();
-        }
-
         private void BuildSources() {
             foreach (ScopedRegistryManifestReader.ScopedRegistryDefinition registry in ScopedRegistryManifestReader
                          .ReadFromProjectManifest(Path.Combine("Packages",
                              "manifest.json"))) {
-                ScopedRegistryPackageSearchSource source = new ScopedRegistryPackageSearchSource(registry);
+                ScopedRegistryPackageSearchSource source = new(registry);
                 source.Changed += HandleSourceChanged;
                 _sources.Add(source);
             }
 
-            UnityPackageSearchSource unitySource = new UnityPackageSearchSource();
+            UnityPackageSearchSource unitySource = new();
             unitySource.Changed += HandleSourceChanged;
             _sources.Add(unitySource);
         }
@@ -176,7 +160,7 @@ namespace Doji.PackageAuthoring.Wizards.PackageSearch {
 
         private void RebuildEntries() {
             _entries.Clear();
-            HashSet<string> seenPackageNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            HashSet<string> seenPackageNames = new(StringComparer.OrdinalIgnoreCase);
 
             foreach (IPackageSearchSource source in _sources) {
                 foreach (PackageSearchEntry entry in source.Entries) {
@@ -199,7 +183,8 @@ namespace Doji.PackageAuthoring.Wizards.PackageSearch {
             }
 
             SessionCacheSnapshot snapshot = JsonUtility.FromJson<SessionCacheSnapshot>(snapshotJson);
-            if (snapshot == null || !string.Equals(snapshot.ManifestHash, ComputeManifestHash(), StringComparison.Ordinal)) {
+            if (snapshot == null ||
+                !string.Equals(snapshot.ManifestHash, ComputeManifestHash(), StringComparison.Ordinal)) {
                 SessionState.EraseString(SessionStateKey);
                 return false;
             }
@@ -299,6 +284,23 @@ namespace Doji.PackageAuthoring.Wizards.PackageSearch {
             }
 
             return false;
+        }
+
+        [Serializable]
+        private sealed class SessionCacheSnapshot {
+            public string ManifestHash;
+            public long CachedAtUtcTicks;
+            public SessionCacheEntry[] Entries;
+        }
+
+        [Serializable]
+        private sealed class SessionCacheEntry {
+            public string PackageName;
+            public string Version;
+            public string DisplayName;
+            public string Description;
+            public string[] Keywords;
+            public string SourceName;
         }
     }
 }

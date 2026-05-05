@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Text;
 using Doji.PackageAuthoring.Wizards.Templates;
@@ -34,7 +35,7 @@ namespace Doji.PackageAuthoring.Wizards.UI {
                 int startComparison = left.StartIndex.CompareTo(right.StartIndex);
                 return startComparison != 0 ? startComparison : right.Length.CompareTo(left.Length);
             });
-            
+
             StringBuilder builder = new();
             int currentIndex = 0;
 
@@ -69,7 +70,8 @@ namespace Doji.PackageAuthoring.Wizards.UI {
         }
 
         private static void AppendTokenMatches(List<RichTextMatch> matches, string value) {
-            IReadOnlyList<TemplateTokenMatch> tokenMatches = TemplateTokenResolver.GetDetectedSupportedTokenMatches(value);
+            IReadOnlyList<TemplateTokenMatch> tokenMatches =
+                TemplateTokenResolver.GetDetectedSupportedTokenMatches(value);
             foreach (TemplateTokenMatch match in tokenMatches) {
                 matches.Add(new RichTextMatch(match.StartIndex, match.Length, TokenColor));
             }
@@ -83,7 +85,7 @@ namespace Doji.PackageAuthoring.Wizards.UI {
                 return;
             }
 
-            HashSet<string> uniqueHighlights = new(System.StringComparer.Ordinal);
+            HashSet<string> uniqueHighlights = new(StringComparer.Ordinal);
             foreach (string highlight in hoverHighlights) {
                 if (!string.IsNullOrWhiteSpace(highlight)) {
                     uniqueHighlights.Add(highlight);
@@ -93,7 +95,7 @@ namespace Doji.PackageAuthoring.Wizards.UI {
             foreach (string highlight in uniqueHighlights) {
                 int startIndex = 0;
                 while (startIndex < value.Length) {
-                    int matchIndex = value.IndexOf(highlight, startIndex, System.StringComparison.Ordinal);
+                    int matchIndex = value.IndexOf(highlight, startIndex, StringComparison.Ordinal);
                     if (matchIndex < 0) {
                         break;
                     }

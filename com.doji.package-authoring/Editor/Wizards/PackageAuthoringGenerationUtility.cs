@@ -1,9 +1,9 @@
 using System;
 using System.IO;
 using System.Text.RegularExpressions;
+using Doji.PackageAuthoring.Models;
 using Doji.PackageAuthoring.Utilities;
 using Doji.PackageAuthoring.Wizards.Presets;
-using Doji.PackageAuthoring.Models;
 using Doji.PackageAuthoring.Wizards.Templates;
 using UnityEngine;
 using static Doji.PackageAuthoring.Utilities.GuidUtility;
@@ -157,7 +157,7 @@ namespace Doji.PackageAuthoring.Wizards {
                 GeneratedProjectScaffoldingUtility.CreateFile(
                     Path.Combine(rootDirectory, "AGENTS.md"),
                     agentsInstructions,
-                    overwrite: true);
+                    true);
             }
 
             if (repoSettings.IncludeReadme) {
@@ -175,8 +175,7 @@ namespace Doji.PackageAuthoring.Wizards {
                 Path.Combine(packageDirectory, "package.json"),
                 context.GetPackageManifest(),
                 AssetMetaTemplate.GetPackageManifestMeta(NewMetaGuid()),
-                overwrite: true,
-                overwriteMeta: false);
+                true);
 
             if (packageSettings.IncludeReadme) {
                 GeneratedProjectScaffoldingUtility.CreateFileWithMeta(
@@ -244,16 +243,23 @@ namespace Doji.PackageAuthoring.Wizards {
             Directory.CreateDirectory(Path.Combine(docsPath, "manual"));
             Directory.CreateDirectory(Path.Combine(docsPath, "pdf"));
 
-            GeneratedProjectScaffoldingUtility.CreateFile(Path.Combine(docsPath, ".gitignore"), context.GetDocsGitIgnore());
+            GeneratedProjectScaffoldingUtility.CreateFile(Path.Combine(docsPath, ".gitignore"),
+                context.GetDocsGitIgnore());
             GeneratedProjectScaffoldingUtility.CreateFile(Path.Combine(docsPath, "docfx.json"), context.GetDocfxJson());
-            GeneratedProjectScaffoldingUtility.CreateFile(Path.Combine(docsPath, "docfx-pdf.json"), context.GetDocfxPdfJson());
-            GeneratedProjectScaffoldingUtility.CreateFile(Path.Combine(docsPath, "filterConfig.yml"), context.GetFilterConfig());
+            GeneratedProjectScaffoldingUtility.CreateFile(Path.Combine(docsPath, "docfx-pdf.json"),
+                context.GetDocfxPdfJson());
+            GeneratedProjectScaffoldingUtility.CreateFile(Path.Combine(docsPath, "filterConfig.yml"),
+                context.GetFilterConfig());
             GeneratedProjectScaffoldingUtility.CreateFile(Path.Combine(docsPath, "index.md"), context.GetIndexMD());
-            GeneratedProjectScaffoldingUtility.CreateFile(Path.Combine(docsPath, "api", ".gitignore"), context.GetDocsApiGitIgnore());
-            GeneratedProjectScaffoldingUtility.CreateFile(Path.Combine(docsPath, "api", "index.md"), context.GetDocsApiIndex());
+            GeneratedProjectScaffoldingUtility.CreateFile(Path.Combine(docsPath, "api", ".gitignore"),
+                context.GetDocsApiGitIgnore());
+            GeneratedProjectScaffoldingUtility.CreateFile(Path.Combine(docsPath, "api", "index.md"),
+                context.GetDocsApiIndex());
             GeneratedProjectScaffoldingUtility.CreateFile(Path.Combine(docsPath, "toc.yml"), context.GetRootToc());
-            GeneratedProjectScaffoldingUtility.CreateFile(Path.Combine(docsPath, "manual", "toc.yml"), context.GetManualToc());
-            GeneratedProjectScaffoldingUtility.CreateFile(Path.Combine(docsPath, "pdf", "toc.yml"), context.GetPdfToc());
+            GeneratedProjectScaffoldingUtility.CreateFile(Path.Combine(docsPath, "manual", "toc.yml"),
+                context.GetManualToc());
+            GeneratedProjectScaffoldingUtility.CreateFile(Path.Combine(docsPath, "pdf", "toc.yml"),
+                context.GetPdfToc());
 
             DocsBrandingImageSettings brandingImages = DocsBrandingImageSettings.Instance;
             if (!brandingImages.HasAnyImage) {
@@ -265,7 +271,8 @@ namespace Doji.PackageAuthoring.Wizards {
                     brandingImages.LogoTexture,
                     brandingImages.FaviconTexture,
                     imagesPath)) {
-                Debug.LogWarning("Failed to generate one or more documentation branding images from the configured source textures.");
+                Debug.LogWarning(
+                    "Failed to generate one or more documentation branding images from the configured source textures.");
             }
         }
 
@@ -289,8 +296,7 @@ namespace Doji.PackageAuthoring.Wizards {
             GeneratedProjectScaffoldingUtility.CreateFile(asmDefPath, content);
             GeneratedProjectScaffoldingUtility.CreateFile(
                 metaPath,
-                AssetMetaTemplate.GetAsmDefMeta(guid),
-                overwrite: false);
+                AssetMetaTemplate.GetAsmDefMeta(guid));
             return guid;
         }
 

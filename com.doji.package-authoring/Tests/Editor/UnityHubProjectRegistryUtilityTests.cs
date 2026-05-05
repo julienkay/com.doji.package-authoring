@@ -17,7 +17,7 @@ namespace Doji.PackageAuthoring.Tests {
         [Test]
         public void TryRegisterProject_CreatesProjectsRegistryEntryForGeneratedProject() {
             ProjectSettings projectSettings = CreateProjectSettings("Hub Registration");
-            string projectDirectory = PackageAuthoringApi.GenerateProject(projectSettings, openProjectAfterCreation: false);
+            string projectDirectory = PackageAuthoringApi.GenerateProject(projectSettings);
             string hubDirectory = Path.Combine(TempRoot, "UnityHub");
             string registryPath = Path.Combine(hubDirectory, "projects-v1.json");
 
@@ -44,7 +44,7 @@ namespace Doji.PackageAuthoring.Tests {
         [Test]
         public void TryRegisterProject_UpdatesExistingRegistryEntryForProjectPath() {
             ProjectSettings projectSettings = CreateProjectSettings("Hub Registration Existing");
-            string projectDirectory = PackageAuthoringApi.GenerateProject(projectSettings, openProjectAfterCreation: false);
+            string projectDirectory = PackageAuthoringApi.GenerateProject(projectSettings);
             string hubDirectory = Path.Combine(TempRoot, "UnityHub");
             string registryPath = Path.Combine(hubDirectory, "projects-v1.json");
             Directory.CreateDirectory(hubDirectory);

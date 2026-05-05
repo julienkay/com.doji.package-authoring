@@ -11,7 +11,7 @@ namespace Doji.PackageAuthoring.Tests {
     internal sealed class PackageAuthoringApiTemplateResolutionTests : PackageAuthoringApiTestBase {
         private static Type ProjectTemplateStorageType => typeof(PackageAuthoringApi).Assembly.GetType(
             "Doji.PackageAuthoring.Wizards.Presets.ProjectTemplateStorage",
-            throwOnError: true);
+            true);
 
         [Test]
         public void GeneratePackage_ResolvesTokenizedTemplateFiles() {
@@ -21,10 +21,9 @@ namespace Doji.PackageAuthoring.Tests {
             string rootDirectory = PackageAuthoringApi.GeneratePackage(
                 projectSettings,
                 CreatePackageSettings(
-                    authorUrl: "https://example.com/{{PACKAGE_NAME}}",
-                    documentationUrl: "https://docs.doji-tech.com/{{PACKAGE_NAME}}/"),
-                CreateRepoSettings(includeReadme: true),
-                openProjectAfterCreation: false);
+                    "https://example.com/{{PACKAGE_NAME}}",
+                    "https://docs.doji-tech.com/{{PACKAGE_NAME}}/"),
+                CreateRepoSettings(true));
 
             string repositoryReadme = File.ReadAllText(Path.Combine(rootDirectory, "README.md"));
             string agentsFile = File.ReadAllText(Path.Combine(rootDirectory, "AGENTS.md"));
@@ -69,14 +68,14 @@ namespace Doji.PackageAuthoring.Tests {
                 string rootDirectory = PackageAuthoringApi.GeneratePackage(
                     CreateProjectSettings("Tokenized Companion"),
                     CreatePackageSettings(
-                        authorUrl: "https://example.com/{{PACKAGE_NAME}}",
-                        documentationUrl: "https://docs.doji-tech.com/{{PACKAGE_NAME}}/"),
-                    CreateRepoSettings(includeReadme: true),
-                    openProjectAfterCreation: false);
+                        "https://example.com/{{PACKAGE_NAME}}",
+                        "https://docs.doji-tech.com/{{PACKAGE_NAME}}/"),
+                    CreateRepoSettings(true));
 
                 string repositoryReadme = File.ReadAllText(Path.Combine(rootDirectory, "README.md"));
 
-                Assert.That(repositoryReadme, Is.EqualTo("# Repo Tokenized Companion\n\nPackage: com.doji.tests.tokenized\n"));
+                Assert.That(repositoryReadme,
+                    Is.EqualTo("# Repo Tokenized Companion\n\nPackage: com.doji.tests.tokenized\n"));
             }
             finally {
                 ClearTemplateProjectRootOverride();
@@ -118,7 +117,8 @@ namespace Doji.PackageAuthoring.Tests {
                 string customLicense = File.ReadAllText(customLicensePath);
                 string docfxJson = File.ReadAllText(docfxJsonPath);
 
-                Assert.That(repositoryReadme, Does.Contain("Document the public workflow, setup steps, and examples here."));
+                Assert.That(repositoryReadme,
+                    Does.Contain("Document the public workflow, setup steps, and examples here."));
                 Assert.That(repositoryReadme, Does.Not.Contain($"examples{Environment.NewLine}here."));
                 Assert.That(customLicense, Does.Contain("Custom License"));
                 Assert.That(docfxJson, Does.Contain("\"metadata\""));

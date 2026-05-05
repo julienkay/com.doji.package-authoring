@@ -1,7 +1,7 @@
 using Doji.PackageAuthoring.Models;
+using Doji.PackageAuthoring.Wizards.UI;
 using UnityEditor;
 using UnityEngine;
-using Doji.PackageAuthoring.Wizards.UI;
 
 namespace Doji.PackageAuthoring.Wizards.Drawers {
     /// <summary>
@@ -19,17 +19,18 @@ namespace Doji.PackageAuthoring.Wizards.Drawers {
         private static readonly string LicenseTypeField = $"<{nameof(RepoSettings.LicenseType)}>k__BackingField";
         private static readonly string RepositoryUrlField = $"<{nameof(RepoSettings.RepositoryUrl)}>k__BackingField";
 
-        /// <inheritdoc />
+        /// <inheritdoc/>
         public override float GetPropertyHeight(SerializedProperty property, GUIContent label) {
             SerializedProperty initializeGitRepositoryProperty =
                 property.FindPropertyRelative(InitializeGitRepositoryField);
             bool showRepositoryUrl = initializeGitRepositoryProperty?.boolValue ?? false;
             float lineCount = showRepositoryUrl ? 6f : 5f;
             float spacingCount = showRepositoryUrl ? 5f : 4f;
-            return (EditorGUIUtility.singleLineHeight * lineCount) + (EditorGUIUtility.standardVerticalSpacing * spacingCount);
+            return EditorGUIUtility.singleLineHeight * lineCount +
+                   EditorGUIUtility.standardVerticalSpacing * spacingCount;
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc/>
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label) {
             Rect row = new(position.x, position.y, position.width, EditorGUIUtility.singleLineHeight);
 

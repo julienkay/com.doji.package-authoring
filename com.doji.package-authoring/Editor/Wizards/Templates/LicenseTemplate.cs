@@ -1,3 +1,4 @@
+using System;
 using Doji.PackageAuthoring.Models;
 using Doji.PackageAuthoring.Wizards.Presets;
 
@@ -6,6 +7,8 @@ namespace Doji.PackageAuthoring.Wizards.Templates {
     /// Builds repository license text from the selected license preset.
     /// </summary>
     internal static class LicenseTemplate {
+        private static int CurrentYear => DateTime.Now.Year;
+
         public static string GetLicense(PackageContext ctx) {
             switch (ctx.Repo.LicenseType) {
                 case LicenseType.None:
@@ -21,8 +24,6 @@ namespace Doji.PackageAuthoring.Wizards.Templates {
                     return GetMitLicense(ctx);
             }
         }
-
-        private static int CurrentYear => System.DateTime.Now.Year;
 
         private static string GetMitLicense(PackageContext ctx) {
             string copyrightHolder = GetCopyrightHolder(ctx);

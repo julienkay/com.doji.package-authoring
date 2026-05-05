@@ -1,3 +1,5 @@
+using System;
+
 namespace Doji.PackageAuthoring.Wizards.PackageSearch {
     /// <summary>
     /// Normalized package metadata consumed by editor autocomplete UI regardless of package source.
@@ -70,7 +72,7 @@ namespace Doji.PackageAuthoring.Wizards.PackageSearch {
             Version = version;
             DisplayName = displayName;
             Description = description;
-            Keywords = keywords ?? System.Array.Empty<string>();
+            Keywords = keywords ?? Array.Empty<string>();
             SourceName = sourceName;
         }
     }

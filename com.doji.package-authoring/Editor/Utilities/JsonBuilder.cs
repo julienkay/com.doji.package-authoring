@@ -3,21 +3,25 @@ using Newtonsoft.Json.Linq;
 namespace Doji.PackageAuthoring.Utilities {
     internal static class JsonBuilder {
         public static JObject Obj(params JProperty[] props) {
-            JObject o = new JObject();
+            JObject o = new();
 
-            foreach (JProperty p in props)
-                if (p != null)
+            foreach (JProperty p in props) {
+                if (p != null) {
                     o.Add(p);
+                }
+            }
 
             return o;
         }
 
         public static JArray Arr(params object[] items) {
-            JArray a = new JArray();
+            JArray a = new();
 
-            foreach (object i in items)
-                if (i != null)
+            foreach (object i in items) {
+                if (i != null) {
                     a.Add(i);
+                }
+            }
 
             return a;
         }

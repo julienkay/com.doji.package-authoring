@@ -18,19 +18,16 @@ namespace Doji.PackageAuthoring.Models {
         /// <summary>
         /// Generates a license file for the SPDX <c>MIT</c> identifier.
         /// </summary>
-        [InspectorName("MIT")]
-        Mit,
+        [InspectorName("MIT")] Mit,
 
         /// <summary>
         /// Generates a license file for the SPDX <c>Apache-2.0</c> identifier.
         /// </summary>
-        [InspectorName("Apache-2.0")]
-        Apache,
+        [InspectorName("Apache-2.0")] Apache,
 
         /// <summary>
         /// Generates a license file for the SPDX <c>BSD-3-Clause</c> identifier.
         /// </summary>
-        [InspectorName("BSD-3-Clause")]
-        Bsd
+        [InspectorName("BSD-3-Clause")] Bsd
     }
 }

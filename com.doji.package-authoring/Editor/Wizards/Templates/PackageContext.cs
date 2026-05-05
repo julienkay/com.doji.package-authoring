@@ -5,6 +5,15 @@ namespace Doji.PackageAuthoring.Wizards.Templates {
     /// Carries the current scaffold configuration into template generators without coupling them to the wizard UI.
     /// </summary>
     internal sealed class PackageContext {
+        public PackageContext(
+            ProjectSettings project,
+            PackageSettings package,
+            RepoSettings repo) {
+            Project = project;
+            Package = package;
+            Repo = repo;
+        }
+
         /// <summary>
         /// Current companion project configuration.
         /// </summary>
@@ -19,14 +28,5 @@ namespace Doji.PackageAuthoring.Wizards.Templates {
         /// Current repository-level configuration.
         /// </summary>
         public RepoSettings Repo { get; }
-
-        public PackageContext(
-            ProjectSettings project,
-            PackageSettings package,
-            RepoSettings repo) {
-            Project = project;
-            Package = package;
-            Repo = repo;
-        }
     }
 }

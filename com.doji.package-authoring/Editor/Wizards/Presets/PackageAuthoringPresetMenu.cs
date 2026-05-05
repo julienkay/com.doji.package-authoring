@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
 using UnityEngine;
-using Doji.PackageAuthoring.Models;
 
 namespace Doji.PackageAuthoring.Wizards.Presets {
     /// <summary>
@@ -22,7 +21,7 @@ namespace Doji.PackageAuthoring.Wizards.Presets {
             Action applyProjectDefaults,
             Action<PackageAuthoringProfile> applyPreset,
             bool includeProjectDefaults = true) {
-            GenericMenu menu = new GenericMenu();
+            GenericMenu menu = new();
             if (includeProjectDefaults) {
                 menu.AddItem(new GUIContent("Project Defaults"), false, () => applyProjectDefaults?.Invoke());
                 menu.AddSeparator(string.Empty);

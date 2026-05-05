@@ -63,7 +63,7 @@ namespace Doji.PackageAuthoring.Utilities {
                 return true;
             }
             finally {
-                UnityEngine.Object.DestroyImmediate(readableCopy);
+                Object.DestroyImmediate(readableCopy);
             }
         }
 
@@ -78,7 +78,7 @@ namespace Doji.PackageAuthoring.Utilities {
                 return CreateIcoFile(readableCopy, IcoSizes, faviconPath);
             }
             finally {
-                UnityEngine.Object.DestroyImmediate(readableCopy);
+                Object.DestroyImmediate(readableCopy);
             }
         }
 
@@ -92,7 +92,8 @@ namespace Doji.PackageAuthoring.Utilities {
             }
 
             if (resolutions.Any(size => size > 256)) {
-                throw new ArgumentException("An image can not be larger than 256 x 256 (.ico max size).", nameof(resolutions));
+                throw new ArgumentException("An image can not be larger than 256 x 256 (.ico max size).",
+                    nameof(resolutions));
             }
 
             List<Texture2D> icons = new(resolutions.Count);
@@ -115,7 +116,7 @@ namespace Doji.PackageAuthoring.Utilities {
                     pngImageData.Add(icons[i].EncodeToPNG());
                 }
 
-                int offset = 6 + (16 * resolutions.Count);
+                int offset = 6 + 16 * resolutions.Count;
 
                 iconWriter.Write((short)0);
                 iconWriter.Write((short)1);
@@ -141,7 +142,7 @@ namespace Doji.PackageAuthoring.Utilities {
             finally {
                 foreach (Texture2D icon in icons) {
                     if (icon != null) {
-                        UnityEngine.Object.DestroyImmediate(icon);
+                        Object.DestroyImmediate(icon);
                     }
                 }
             }
@@ -180,7 +181,7 @@ namespace Doji.PackageAuthoring.Utilities {
                 texture.Apply(false, false);
             }
             finally {
-                UnityEngine.Object.DestroyImmediate(originalTexture);
+                Object.DestroyImmediate(originalTexture);
             }
         }
 
@@ -197,7 +198,7 @@ namespace Doji.PackageAuthoring.Utilities {
 
             Texture2D readableCopy = new(2, 2, TextureFormat.RGBA32, false);
             byte[] imageData = File.ReadAllBytes(assetPath);
-            if (readableCopy.LoadImage(imageData, markNonReadable: false)) {
+            if (readableCopy.LoadImage(imageData, false)) {
 #if UNITY_2022_1_OR_NEWER
                 readableCopy.ignoreMipmapLimit = true;
 #endif

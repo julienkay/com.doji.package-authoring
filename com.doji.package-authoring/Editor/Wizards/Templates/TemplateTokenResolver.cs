@@ -201,7 +201,8 @@ namespace Doji.PackageAuthoring.Wizards.Templates {
                     continue;
                 }
 
-                resolvedDocumentationUrl = resolvedDocumentationUrl.Replace(tokenValue.Key, tokenValue.Value ?? string.Empty);
+                resolvedDocumentationUrl =
+                    resolvedDocumentationUrl.Replace(tokenValue.Key, tokenValue.Value ?? string.Empty);
             }
 
             return resolvedDocumentationUrl;

@@ -1,4 +1,6 @@
+using Doji.PackageAuthoring.Wizards.Templates;
 using UnityEditor;
+using UnityEditorInternal;
 using UnityEngine;
 
 namespace Doji.PackageAuthoring.Wizards.Presets {
@@ -14,7 +16,7 @@ namespace Doji.PackageAuthoring.Wizards.Presets {
     /// Shared project settings asset for the generated repository <c>docs/.gitignore</c> template.
     /// </summary>
     internal sealed class DocsGitIgnoreTemplateSettings : ProjectTemplateSettingsBase<DocsGitIgnoreTemplateSettings> {
-        protected override string DefaultContent => Templates.DocfxTemplates.DocsGitIgnoreDefaultContent;
+        protected override string DefaultContent => DocfxTemplates.DocsGitIgnoreDefaultContent;
 
         protected override string SettingsFilePath => PackageAuthoringTemplateStoragePaths.DocsGitIgnore;
     }
@@ -22,8 +24,9 @@ namespace Doji.PackageAuthoring.Wizards.Presets {
     /// <summary>
     /// Shared project settings asset for the generated repository <c>docs/api/.gitignore</c> template.
     /// </summary>
-    internal sealed class DocsApiGitIgnoreTemplateSettings : ProjectTemplateSettingsBase<DocsApiGitIgnoreTemplateSettings> {
-        protected override string DefaultContent => Templates.DocfxTemplates.DocsApiGitIgnoreDefaultContent;
+    internal sealed class
+        DocsApiGitIgnoreTemplateSettings : ProjectTemplateSettingsBase<DocsApiGitIgnoreTemplateSettings> {
+        protected override string DefaultContent => DocfxTemplates.DocsApiGitIgnoreDefaultContent;
 
         protected override string SettingsFilePath => PackageAuthoringTemplateStoragePaths.DocsApiGitIgnore;
     }
@@ -32,7 +35,7 @@ namespace Doji.PackageAuthoring.Wizards.Presets {
     /// Shared project settings asset for the generated repository <c>docs/api/index.md</c> template.
     /// </summary>
     internal sealed class DocsApiIndexTemplateSettings : ProjectTemplateSettingsBase<DocsApiIndexTemplateSettings> {
-        protected override string DefaultContent => Templates.DocfxTemplates.DocsApiIndexDefaultContent;
+        protected override string DefaultContent => DocfxTemplates.DocsApiIndexDefaultContent;
 
         protected override string SettingsFilePath => PackageAuthoringTemplateStoragePaths.DocsApiIndex;
     }
@@ -41,7 +44,7 @@ namespace Doji.PackageAuthoring.Wizards.Presets {
     /// Shared project settings asset for the generated repository <c>docs/docfx.json</c> template.
     /// </summary>
     internal sealed class DocsDocfxJsonTemplateSettings : ProjectTemplateSettingsBase<DocsDocfxJsonTemplateSettings> {
-        protected override string DefaultContent => Templates.DocfxTemplates.DocfxJsonDefaultContent;
+        protected override string DefaultContent => DocfxTemplates.DocfxJsonDefaultContent;
 
         protected override string SettingsFilePath => PackageAuthoringTemplateStoragePaths.DocsDocfxJson;
     }
@@ -49,8 +52,9 @@ namespace Doji.PackageAuthoring.Wizards.Presets {
     /// <summary>
     /// Shared project settings asset for the generated repository <c>docs/docfx-pdf.json</c> template.
     /// </summary>
-    internal sealed class DocsDocfxPdfJsonTemplateSettings : ProjectTemplateSettingsBase<DocsDocfxPdfJsonTemplateSettings> {
-        protected override string DefaultContent => Templates.DocfxTemplates.DocfxPdfJsonDefaultContent;
+    internal sealed class
+        DocsDocfxPdfJsonTemplateSettings : ProjectTemplateSettingsBase<DocsDocfxPdfJsonTemplateSettings> {
+        protected override string DefaultContent => DocfxTemplates.DocfxPdfJsonDefaultContent;
 
         protected override string SettingsFilePath => PackageAuthoringTemplateStoragePaths.DocsDocfxPdfJson;
     }
@@ -58,8 +62,9 @@ namespace Doji.PackageAuthoring.Wizards.Presets {
     /// <summary>
     /// Shared project settings asset for the generated repository <c>docs/filterConfig.yml</c> template.
     /// </summary>
-    internal sealed class DocsFilterConfigTemplateSettings : ProjectTemplateSettingsBase<DocsFilterConfigTemplateSettings> {
-        protected override string DefaultContent => Templates.DocfxTemplates.FilterConfigDefaultContent;
+    internal sealed class
+        DocsFilterConfigTemplateSettings : ProjectTemplateSettingsBase<DocsFilterConfigTemplateSettings> {
+        protected override string DefaultContent => DocfxTemplates.FilterConfigDefaultContent;
 
         protected override string SettingsFilePath => PackageAuthoringTemplateStoragePaths.DocsFilterConfig;
     }
@@ -68,7 +73,7 @@ namespace Doji.PackageAuthoring.Wizards.Presets {
     /// Shared project settings asset for the generated repository <c>docs/index.md</c> template.
     /// </summary>
     internal sealed class DocsIndexTemplateSettings : ProjectTemplateSettingsBase<DocsIndexTemplateSettings> {
-        protected override string DefaultContent => Templates.DocfxTemplates.IndexDefaultContent;
+        protected override string DefaultContent => DocfxTemplates.IndexDefaultContent;
 
         protected override string SettingsFilePath => PackageAuthoringTemplateStoragePaths.DocsIndex;
     }
@@ -77,7 +82,7 @@ namespace Doji.PackageAuthoring.Wizards.Presets {
     /// Shared project settings asset for the generated repository <c>docs/toc.yml</c> template.
     /// </summary>
     internal sealed class DocsRootTocTemplateSettings : ProjectTemplateSettingsBase<DocsRootTocTemplateSettings> {
-        protected override string DefaultContent => Templates.DocfxTemplates.RootTocDefaultContent;
+        protected override string DefaultContent => DocfxTemplates.RootTocDefaultContent;
 
         protected override string SettingsFilePath => PackageAuthoringTemplateStoragePaths.DocsRootToc;
     }
@@ -86,7 +91,7 @@ namespace Doji.PackageAuthoring.Wizards.Presets {
     /// Shared project settings asset for the generated repository <c>docs/manual/toc.yml</c> template.
     /// </summary>
     internal sealed class DocsManualTocTemplateSettings : ProjectTemplateSettingsBase<DocsManualTocTemplateSettings> {
-        protected override string DefaultContent => Templates.DocfxTemplates.ManualTocDefaultContent;
+        protected override string DefaultContent => DocfxTemplates.ManualTocDefaultContent;
 
         protected override string SettingsFilePath => PackageAuthoringTemplateStoragePaths.DocsManualToc;
     }
@@ -95,7 +100,7 @@ namespace Doji.PackageAuthoring.Wizards.Presets {
     /// Shared project settings asset for the generated repository <c>docs/pdf/toc.yml</c> template.
     /// </summary>
     internal sealed class DocsPdfTocTemplateSettings : ProjectTemplateSettingsBase<DocsPdfTocTemplateSettings> {
-        protected override string DefaultContent => Templates.DocfxTemplates.PdfTocDefaultContent;
+        protected override string DefaultContent => DocfxTemplates.PdfTocDefaultContent;
 
         protected override string SettingsFilePath => PackageAuthoringTemplateStoragePaths.DocsPdfToc;
     }
@@ -129,11 +134,17 @@ namespace Doji.PackageAuthoring.Wizards.Presets {
         /// </summary>
         public bool HasAnyImage => FaviconTexture != null || LogoTexture != null;
 
+        private void OnDisable() {
+            if (_instance == this) {
+                _instance = null;
+            }
+        }
+
         /// <summary>
         /// Saves the current settings instance back into the project settings asset.
         /// </summary>
         public void SaveSettings() {
-            UnityEditorInternal.InternalEditorUtility.SaveToSerializedFileAndForget(
+            InternalEditorUtility.SaveToSerializedFileAndForget(
                 new Object[] {
                     this
                 },
@@ -141,14 +152,8 @@ namespace Doji.PackageAuthoring.Wizards.Presets {
                 true);
         }
 
-        private void OnDisable() {
-            if (_instance == this) {
-                _instance = null;
-            }
-        }
-
         private static DocsBrandingImageSettings GetOrCreateSettings() {
-            Object[] settings = UnityEditorInternal.InternalEditorUtility.LoadSerializedFileAndForget(
+            Object[] settings = InternalEditorUtility.LoadSerializedFileAndForget(
                 PackageAuthoringTemplateStoragePaths.DocsBrandingImageAsset);
             if (settings.Length > 0 && settings[0] is DocsBrandingImageSettings existingSettings) {
                 return existingSettings;

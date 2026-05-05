@@ -18,7 +18,8 @@ namespace Doji.PackageAuthoring.Wizards.UI {
                 new("Preferred Editor", "IDE integration package added to generated project manifests.");
 
             public static GUIContent IncludedPackages { get; } =
-                new("Included Packages", "Packages merged into generated project manifests after the baseline manifest and preferred IDE integration are applied.");
+                new("Included Packages",
+                    "Packages merged into generated project manifests after the baseline manifest and preferred IDE integration are applied.");
 
             public static GUIContent IncludedPackagesInfo { get; } =
                 new("These packages are added on top of the template project's baseline manifest.");
@@ -27,7 +28,8 @@ namespace Doji.PackageAuthoring.Wizards.UI {
                 new("Advanced");
 
             public static GUIContent GenerateAgentsFile { get; } =
-                new("Generate AGENTS.md", "Controls whether generated repositories include an AGENTS.md instructions file at the repository root.");
+                new("Generate AGENTS.md",
+                    "Controls whether generated repositories include an AGENTS.md instructions file at the repository root.");
 
             public static GUIContent TargetLocation { get; } =
                 new("Target Location", "Base output folder used when scaffolding projects from the editor windows.");
@@ -47,7 +49,8 @@ namespace Doji.PackageAuthoring.Wizards.UI {
                 new("Package Name", "User-facing package display name written to package.json.");
 
             public static GUIContent AssemblyName { get; } =
-                new("Assembly Name", "Assembly name used for the generated runtime asmdef and related editor/sample asmdefs.");
+                new("Assembly Name",
+                    "Assembly name used for the generated runtime asmdef and related editor/sample asmdefs.");
 
             public static GUIContent Namespace { get; } =
                 new("Namespace", "Root namespace used by generated source files and tokenized templates.");
@@ -59,7 +62,8 @@ namespace Doji.PackageAuthoring.Wizards.UI {
                 new("Company Name", "Company name written into generated package metadata.");
 
             public static GUIContent IncludeAuthorMetadata { get; } =
-                new("Include Author Metadata", "Controls whether author URL and email metadata are emitted into the generated package manifest.");
+                new("Include Author Metadata",
+                    "Controls whether author URL and email metadata are emitted into the generated package manifest.");
 
             public static GUIContent AuthorUrl { get; } =
                 new("URL", "Optional author URL written into the generated package manifest.");
@@ -68,34 +72,44 @@ namespace Doji.PackageAuthoring.Wizards.UI {
                 new("Email", "Optional author email written into the generated package manifest.");
 
             public static GUIContent MinimumUnityVersion { get; } =
-                new("Minimum Unity Version", "Controls whether the generated package manifest includes a minimum supported Unity editor version.");
+                new("Minimum Unity Version",
+                    "Controls whether the generated package manifest includes a minimum supported Unity editor version.");
 
             public static GUIContent MinimumUnityMajor { get; } =
-                new("Major", "Major Unity version written into the generated package manifest when minimum Unity version is enabled.");
+                new("Major",
+                    "Major Unity version written into the generated package manifest when minimum Unity version is enabled.");
 
             public static GUIContent MinimumUnityMinor { get; } =
-                new("Minor", "Minor Unity version written into the generated package manifest when minimum Unity version is enabled.");
+                new("Minor",
+                    "Minor Unity version written into the generated package manifest when minimum Unity version is enabled.");
 
             public static GUIContent MinimumUnityRelease { get; } =
-                new("Release", "Optional Unity release suffix written into the generated package manifest when minimum Unity version is enabled.");
+                new("Release",
+                    "Optional Unity release suffix written into the generated package manifest when minimum Unity version is enabled.");
 
             public static GUIContent DocumentationUrl { get; } =
-                new("Documentation URL", $"Optional documentation URL written into the generated package manifest. {TemplateTokenResolver.SupportedTokensTooltipSuffix}");
+                new("Documentation URL",
+                    $"Optional documentation URL written into the generated package manifest. {TemplateTokenResolver.SupportedTokensTooltipSuffix}");
 
             public static GUIContent IncludePackageReadme { get; } =
-                new("Include Package README", "Controls whether a README.md file is generated inside the package root.");
+                new("Include Package README",
+                    "Controls whether a README.md file is generated inside the package root.");
 
             public static GUIContent CreateDocumentationFolder { get; } =
-                new("Create Documentation Folder", "Controls whether a docs folder scaffold is created at the repository root.");
+                new("Create Documentation Folder",
+                    "Controls whether a docs folder scaffold is created at the repository root.");
 
             public static GUIContent CreateSamplesFolder { get; } =
-                new("Create Samples Folder", "Controls whether a Samples~ folder scaffold is created inside the package.");
+                new("Create Samples Folder",
+                    "Controls whether a Samples~ folder scaffold is created inside the package.");
 
             public static GUIContent CreateEditorFolder { get; } =
-                new("Create Editor Folder", "Controls whether an Editor folder and editor-only asmdef are created inside the package.");
+                new("Create Editor Folder",
+                    "Controls whether an Editor folder and editor-only asmdef are created inside the package.");
 
             public static GUIContent CreateTestsFolder { get; } =
-                new("Create Tests Folder", "Controls whether a Tests folder is created and the package is marked testable in the generated companion project.");
+                new("Create Tests Folder",
+                    "Controls whether a Tests folder is created and the package is marked testable in the generated companion project.");
 
             public static GUIContent Dependencies { get; } =
                 new("Dependencies", "Dependencies written into the generated package manifest.");
@@ -106,10 +120,12 @@ namespace Doji.PackageAuthoring.Wizards.UI {
                 EditorGUIUtility.TrTextContent("Repository Files");
 
             public static GUIContent CopyrightHolder { get; } =
-                EditorGUIUtility.TrTextContent("Copyright Holder", "Name written into generated copyright and license templates.");
+                EditorGUIUtility.TrTextContent("Copyright Holder",
+                    "Name written into generated copyright and license templates.");
 
             public static GUIContent IncludeReadme { get; } =
-                EditorGUIUtility.TrTextContent("Include README", "Controls whether a README.md file is generated at the repository root.");
+                EditorGUIUtility.TrTextContent("Include README",
+                    "Controls whether a README.md file is generated at the repository root.");
 
             public static GUIContent LicenseType { get; } =
                 EditorGUIUtility.TrTextContent("Open Source License", "Controls the generated license template.");

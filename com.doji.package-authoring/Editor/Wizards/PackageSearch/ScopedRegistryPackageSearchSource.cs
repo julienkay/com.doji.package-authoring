@@ -6,22 +6,17 @@ using UnityEngine.Networking;
 
 namespace Doji.PackageAuthoring.Wizards.PackageSearch {
     /// <summary>
-    /// Queries one scoped npm-compatible registry declared in the project manifest and exposes its latest package versions.
+    /// Queries one scoped npm-compatible registry declared in the project manifest and exposes its latest package
+    /// versions.
     /// Unity package manager does not surface arbitrary scoped registries through the same API as the Unity registry,
     /// so this source polls the registry's <c>/-/all</c> endpoint directly.
     /// </summary>
     internal sealed class ScopedRegistryPackageSearchSource : IPackageSearchSource {
-        private readonly ScopedRegistryManifestReader.ScopedRegistryDefinition _registry;
         private readonly List<PackageSearchEntry> _entries = new();
+        private readonly ScopedRegistryManifestReader.ScopedRegistryDefinition _registry;
 
         private UnityWebRequest _request;
         private UnityWebRequestAsyncOperation _requestOperation;
-
-        public event Action Changed;
-
-        public bool IsLoading => _requestOperation != null;
-        public string StatusMessage { get; private set; }
-        public IReadOnlyList<PackageSearchEntry> Entries => _entries;
 
         /// <summary>
         /// Binds the source to one scoped registry definition read from <c>Packages/manifest.json</c>.
@@ -30,6 +25,12 @@ namespace Doji.PackageAuthoring.Wizards.PackageSearch {
             _registry = registry;
             StatusMessage = $"Loading {_registry.Name} registry packages...";
         }
+
+        public event Action Changed;
+
+        public bool IsLoading => _requestOperation != null;
+        public string StatusMessage { get; private set; }
+        public IReadOnlyList<PackageSearchEntry> Entries => _entries;
 
         /// <summary>
         /// Starts an asynchronous registry fetch unless one is already in flight.

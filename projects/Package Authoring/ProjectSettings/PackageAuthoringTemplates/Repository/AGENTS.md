@@ -30,12 +30,6 @@ Keep durable project memory and maintainer-only planning and backlog notes under
 
 Prefer working in the package folder when functionality is package-owned.
 
-## Internal Docs
-
-Read `.codex/current-work.md` first for most sessions as handoff doc.
-
-Use the `current-work-maintenance` skill whenever updating `.codex/current-work.md` or when a task changes the active project focus, blockers, or next steps enough that the next session needs an updated handoff.
-
 ## Conventions
 
 When adding code:

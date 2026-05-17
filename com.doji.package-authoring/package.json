@@ -1,7 +1,7 @@
 {
   "name": "com.doji.package-authoring",
   "version": "1.0.0",
-  "displayName": "Package Authoring",
+  "displayName": "UPM Package Authoring",
   "description": "Unity editor tooling for scaffolding UPM packages and their companion sample projects.",
   "author": {
     "name": "Doji Technologies",

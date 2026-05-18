@@ -34,7 +34,7 @@ CLI: ```openupm add com.doji.package-authoring```
 
   1. In `Edit -> Project Settings -> Package Manager`, add a new scoped registry:
 
-         Name: package.openupm.com
+         Name: Doji
          URL: https://package.openupm.com
          Scope(s): com.doji
 

@@ -1,16 +1,10 @@
-<p align="right">
-  <a href="https://www.doji-tech.com/">
-    <img src="https://www.doji-tech.com/assets/favicon.ico" alt="Doji" title="Doji" height="70" />
-  </a>
-</p>
-
 # Package Authoring
 
 Unity editor tooling to create reusable UPM packages, companion Unity projects, and supporting repository files.
 
 [OpenUPM] · [Asset Store] · [Documentation]
 
-[<img src="docs/images/manual/documentation-home-hero.webp">](https://link-to-your-URL/)
+<img width="1726" height="935" alt="package-authoring-preview" src="https://github.com/user-attachments/assets/d054f0d6-895c-41da-b146-5fcf6df69fc7" />
 
 ## About
 

@@ -100,7 +100,9 @@ The manifest combines `Major` and `Minor` as `<major>.<minor>`.
 
 An optional Unity release suffix written to `package.json` as `unityRelease` when minimum Unity version support is enabled.
 
-Only needed when the package manifest must target a specific Unity release suffix.
+Leave this empty by default.
+
+Only needed when the package manifest must target a specific Unity release suffix such as `0f1` or `1f1`.
 
 ### Documentation URL
 

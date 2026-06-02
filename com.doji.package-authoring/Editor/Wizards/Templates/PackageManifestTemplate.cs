@@ -11,6 +11,9 @@ namespace Doji.PackageAuthoring.Wizards.Templates {
     /// </summary>
     internal static class PackageManifestTemplate {
         public static string GetPackageManifest(PackageContext ctx) {
+            string minimumUnityRelease = string.IsNullOrWhiteSpace(ctx.Package.MinimumUnityRelease)
+                ? string.Empty
+                : ctx.Package.MinimumUnityRelease.Trim();
             string documentationUrl = TemplateTokenResolver.Resolve(ctx.Package.DocumentationUrl, ctx);
 
             JObject json = Obj(
@@ -25,9 +28,9 @@ namespace Doji.PackageAuthoring.Wizards.Templates {
                     $"{ctx.Package.MinimumUnityMajor}.{ctx.Package.MinimumUnityMinor}"),
                 PropIf(
                     ctx.Package.IncludeMinimumUnityVersion &&
-                    !string.IsNullOrWhiteSpace(ctx.Package.MinimumUnityRelease),
+                    !string.IsNullOrWhiteSpace(minimumUnityRelease),
                     "unityRelease",
-                    ctx.Package.MinimumUnityRelease),
+                    minimumUnityRelease),
                 PropIf(!string.IsNullOrWhiteSpace(documentationUrl), "documentationUrl", documentationUrl),
                 PropIf(ctx.Package.CreateSamplesFolder, "samples", GetSamples(ctx)),
                 PropIf(ctx.Package.Dependencies is { Count: > 0 }, "dependencies", GetDependencies(ctx))

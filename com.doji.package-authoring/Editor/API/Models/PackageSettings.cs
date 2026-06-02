@@ -149,7 +149,9 @@ namespace Doji.PackageAuthoring.Models {
             IncludeMinimumUnityVersion = other.IncludeMinimumUnityVersion;
             MinimumUnityMajor = other.MinimumUnityMajor;
             MinimumUnityMinor = other.MinimumUnityMinor;
-            MinimumUnityRelease = other.MinimumUnityRelease;
+            MinimumUnityRelease = string.IsNullOrWhiteSpace(other.MinimumUnityRelease)
+                ? string.Empty
+                : other.MinimumUnityRelease.Trim();
             CreateDocsFolder = other.CreateDocsFolder;
             IncludeReadme = other.IncludeReadme;
             CreateSamplesFolder = other.CreateSamplesFolder;

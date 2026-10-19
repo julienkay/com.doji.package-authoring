@@ -221,12 +221,20 @@ namespace Doji.PackageAuthoring.Wizards.Drawers {
 
         private static string GetIncludedPackagesFoldoutKey(SerializedProperty parentProperty) {
             return
-                $"{parentProperty.serializedObject.targetObject.GetInstanceID()}::{parentProperty.propertyPath}.included-packages";
+                $"{GetTargetObjectId(parentProperty.serializedObject.targetObject)}::{parentProperty.propertyPath}.included-packages";
         }
 
         private static string GetAdvancedFoldoutKey(SerializedProperty parentProperty) {
             return
-                $"{parentProperty.serializedObject.targetObject.GetInstanceID()}::{parentProperty.propertyPath}.advanced";
+                $"{GetTargetObjectId(parentProperty.serializedObject.targetObject)}::{parentProperty.propertyPath}.advanced";
+        }
+
+        private static string GetTargetObjectId(Object targetObject) {
+#if UNITY_6000_2_OR_NEWER
+            return targetObject.GetEntityId().ToString();
+#else
+            return targetObject.GetInstanceID().ToString();
+#endif
         }
 
         private static bool GetFoldoutState(Dictionary<string, bool> states, string key) {

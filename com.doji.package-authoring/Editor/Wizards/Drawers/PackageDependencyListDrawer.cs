@@ -60,7 +60,7 @@ namespace Doji.PackageAuthoring.Wizards.Drawers {
         }
 
         private static State GetState(SerializedProperty property) {
-            string key = $"{property.serializedObject.targetObject.GetInstanceID()}::{property.propertyPath}";
+            string key = $"{GetTargetObjectId(property.serializedObject.targetObject)}::{property.propertyPath}";
             if (!States.TryGetValue(key, out State state)) {
                 state = new State();
                 States[key] = state;
@@ -68,6 +68,14 @@ namespace Doji.PackageAuthoring.Wizards.Drawers {
 
             state.Bind(property);
             return state;
+        }
+
+        private static string GetTargetObjectId(Object targetObject) {
+#if UNITY_6000_2_OR_NEWER
+            return targetObject.GetEntityId().ToString();
+#else
+            return targetObject.GetInstanceID().ToString();
+#endif
         }
 
         private static class Content {
@@ -137,7 +145,7 @@ namespace Doji.PackageAuthoring.Wizards.Drawers {
                 bool shouldShowSuggestions = ShouldShowSuggestions(index, packageNameProperty);
                 DependencyAutocompleteField.Draw(
                     rect,
-                    $"{_serializedObject.targetObject.GetInstanceID()}.{_propertyPath}.dependency.{index}",
+                    $"{GetTargetObjectId(_serializedObject.targetObject)}.{_propertyPath}.dependency.{index}",
                     packageNameProperty,
                     versionProperty,
                     shouldShowSuggestions);
@@ -148,7 +156,7 @@ namespace Doji.PackageAuthoring.Wizards.Drawers {
                 SerializedProperty packageNameProperty = dependency.FindPropertyRelative(DependencyPackageNameField);
                 bool shouldShowSuggestions = ShouldShowSuggestions(index, packageNameProperty);
                 return DependencyAutocompleteField.GetHeight(
-                    $"{_serializedObject.targetObject.GetInstanceID()}.{_propertyPath}.dependency.{index}",
+                    $"{GetTargetObjectId(_serializedObject.targetObject)}.{_propertyPath}.dependency.{index}",
                     packageNameProperty.stringValue,
                     shouldShowSuggestions);
             }

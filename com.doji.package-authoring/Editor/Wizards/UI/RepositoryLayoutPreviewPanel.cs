@@ -214,6 +214,8 @@ namespace Doji.PackageAuthoring.Wizards.UI {
                     return MatchesPath(node, "LICENSE");
                 case RepositoryLayoutPreviewHoverTargets.IncludeRepositoryReadme:
                     return MatchesPath(node, "README.md");
+                case RepositoryLayoutPreviewHoverTargets.CreateSignUpmPackageWorkflow:
+                    return MatchesPath(node, ".github/workflows/ci.yml");
                 case RepositoryLayoutPreviewHoverTargets.PackageName:
                     return MatchesContent(node, data.Context.Package.PackageName) ||
                            MatchesPath(node, data.PackageName);
@@ -542,6 +544,21 @@ namespace Doji.PackageAuthoring.Wizards.UI {
                     "AGENTS.md",
                     data.Context.GetAgentsInstructions(),
                     RepositoryLayoutGroup.Repo));
+            }
+
+            if (data.IncludeSignUpmPackageWorkflow) {
+                RepositoryLayoutNode github = CreateDirectoryNode(".github", ".github", RepositoryLayoutGroup.Repo);
+                RepositoryLayoutNode workflows = CreateDirectoryNode(
+                    "workflows",
+                    ".github/workflows",
+                    RepositoryLayoutGroup.Repo);
+                workflows.Children.Add(CreateGeneratedFileNode(
+                    "ci.yml",
+                    ".github/workflows/ci.yml",
+                    data.Context.GetSignUpmPackageWorkflow(),
+                    RepositoryLayoutGroup.Repo));
+                github.Children.Add(workflows);
+                root.Children.Add(github);
             }
 
             root.Children.Add(BuildCompanionProjectNode(data));
@@ -1039,6 +1056,7 @@ namespace Doji.PackageAuthoring.Wizards.UI {
                 AppendValue(signature, data.IncludeTestsFolder);
                 AppendValue(signature, data.IncludeRepositoryGitIgnore);
                 AppendValue(signature, data.IncludeAgentsFile);
+                AppendValue(signature, data.IncludeSignUpmPackageWorkflow);
                 AppendValue(signature, data.RepositoryGitIgnoreTemplate);
                 AppendContextValues(signature, data.Context);
                 return new PreviewSnapshotKey(signature.ToString());
@@ -1098,6 +1116,7 @@ namespace Doji.PackageAuthoring.Wizards.UI {
 
                 AppendValue(signature, context.Repo?.CopyrightHolder);
                 AppendValue(signature, (int?)context.Repo?.LicenseType ?? 0);
+                AppendValue(signature, context.Repo?.CreateSignUpmPackageWorkflow ?? false);
             }
 
             private static void AppendDependencies(StringBuilder signature, PackageDependencyList dependencies) {

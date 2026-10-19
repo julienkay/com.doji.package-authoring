@@ -61,6 +61,11 @@ namespace Doji.PackageAuthoring.Wizards.UI {
         public bool IncludeAgentsFile { get; set; }
 
         /// <summary>
+        /// Whether the repository preview should include the optional package signing workflow.
+        /// </summary>
+        public bool IncludeSignUpmPackageWorkflow { get; set; }
+
+        /// <summary>
         /// Template content shown for the generated companion-project <c>.gitignore</c>.
         /// </summary>
         public string RepositoryGitIgnoreTemplate { get; set; }

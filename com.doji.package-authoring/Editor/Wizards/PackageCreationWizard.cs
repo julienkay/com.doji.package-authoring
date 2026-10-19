@@ -387,6 +387,7 @@ namespace Doji.PackageAuthoring.Wizards {
                 IncludeTestsFolder = CurrentCreateTestsFolder,
                 IncludeRepositoryGitIgnore = !string.IsNullOrWhiteSpace(CurrentGitIgnoreTemplate),
                 IncludeAgentsFile = ProjectSettings.GenerateAgentsFile,
+                IncludeSignUpmPackageWorkflow = RepoSettings.CreateSignUpmPackageWorkflow,
                 RepositoryGitIgnoreTemplate = CurrentGitIgnoreTemplate
             };
         }

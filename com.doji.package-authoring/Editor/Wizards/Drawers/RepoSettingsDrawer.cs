@@ -16,6 +16,8 @@ namespace Doji.PackageAuthoring.Wizards.Drawers {
             $"<{nameof(RepoSettings.InitializeGitRepository)}>k__BackingField";
 
         private static readonly string IncludeReadmeField = $"<{nameof(RepoSettings.IncludeReadme)}>k__BackingField";
+        private static readonly string CreateSignUpmPackageWorkflowField =
+            $"<{nameof(RepoSettings.CreateSignUpmPackageWorkflow)}>k__BackingField";
         private static readonly string LicenseTypeField = $"<{nameof(RepoSettings.LicenseType)}>k__BackingField";
         private static readonly string RepositoryUrlField = $"<{nameof(RepoSettings.RepositoryUrl)}>k__BackingField";
 
@@ -24,8 +26,8 @@ namespace Doji.PackageAuthoring.Wizards.Drawers {
             SerializedProperty initializeGitRepositoryProperty =
                 property.FindPropertyRelative(InitializeGitRepositoryField);
             bool showRepositoryUrl = initializeGitRepositoryProperty?.boolValue ?? false;
-            float lineCount = showRepositoryUrl ? 6f : 5f;
-            float spacingCount = showRepositoryUrl ? 5f : 4f;
+            float lineCount = showRepositoryUrl ? 7f : 6f;
+            float spacingCount = showRepositoryUrl ? 6f : 5f;
             return EditorGUIUtility.singleLineHeight * lineCount +
                    EditorGUIUtility.standardVerticalSpacing * spacingCount;
         }
@@ -67,6 +69,12 @@ namespace Doji.PackageAuthoring.Wizards.Drawers {
                     PackageAuthoringFieldLabels.Repository.RepositoryUrl);
                 EditorGUI.indentLevel--;
             }
+
+            DrawField(
+                ref row,
+                property.FindPropertyRelative(CreateSignUpmPackageWorkflowField),
+                PackageAuthoringFieldLabels.Repository.CreateSignUpmPackageWorkflow,
+                RepositoryLayoutPreviewHoverTargets.CreateSignUpmPackageWorkflow);
 
             EditorGUI.EndProperty();
         }

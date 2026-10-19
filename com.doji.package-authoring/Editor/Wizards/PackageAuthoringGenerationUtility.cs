@@ -165,6 +165,12 @@ namespace Doji.PackageAuthoring.Wizards {
                     Path.Combine(rootDirectory, "README.md"),
                     context.GetRepositoryReadme());
             }
+
+            if (repoSettings.CreateSignUpmPackageWorkflow) {
+                GeneratedProjectScaffoldingUtility.CreateFile(
+                    Path.Combine(rootDirectory, ".github", "workflows", "ci.yml"),
+                    context.GetSignUpmPackageWorkflow());
+            }
         }
 
         private static void CreatePackageFiles(

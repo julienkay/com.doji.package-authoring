@@ -12,6 +12,7 @@ namespace Doji.PackageAuthoring.Wizards.UI {
         public const string RepoCopyrightHolder = nameof(RepoCopyrightHolder);
         public const string RepoLicenseType = nameof(RepoLicenseType);
         public const string IncludeRepositoryReadme = nameof(IncludeRepositoryReadme);
+        public const string CreateSignUpmPackageWorkflow = nameof(CreateSignUpmPackageWorkflow);
         public const string PackageName = nameof(PackageName);
         public const string PackageDisplayName = nameof(PackageDisplayName);
         public const string AssemblyName = nameof(AssemblyName);

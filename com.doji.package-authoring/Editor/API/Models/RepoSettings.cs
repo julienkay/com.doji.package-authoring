@@ -32,6 +32,12 @@ namespace Doji.PackageAuthoring.Models {
         public bool IncludeReadme { get; set; } = true;
 
         /// <summary>
+        /// Whether to generate a GitHub Actions workflow that signs and releases the package on version tags.
+        /// </summary>
+        [field: SerializeField]
+        public bool CreateSignUpmPackageWorkflow { get; set; }
+
+        /// <summary>
         /// Remote URL assigned to the generated repository's <c>origin</c> remote when provided.
         /// </summary>
         [field: SerializeField]
@@ -50,6 +56,7 @@ namespace Doji.PackageAuthoring.Models {
             LicenseType = other.LicenseType;
             InitializeGitRepository = other.InitializeGitRepository;
             IncludeReadme = other.IncludeReadme;
+            CreateSignUpmPackageWorkflow = other.CreateSignUpmPackageWorkflow;
             RepositoryUrl = other.RepositoryUrl;
         }
     }

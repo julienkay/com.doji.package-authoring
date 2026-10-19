@@ -76,6 +76,13 @@ namespace Doji.PackageAuthoring.Wizards.Templates {
         }
 
         /// <summary>
+        /// Builds the optional GitHub Actions workflow that signs and releases the package.
+        /// </summary>
+        public static string GetSignUpmPackageWorkflow(this PackageContext ctx) {
+            return SignUpmPackageWorkflowTemplate.GetContent(ctx.Package.PackageName);
+        }
+
+        /// <summary>
         /// Builds the starter sample script.
         /// </summary>
         public static string GetSampleScript(this PackageContext ctx) {

@@ -20,12 +20,12 @@ jobs:
 
     steps:
       - name: Check out repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7.0.1
 
       - name: Read package metadata
         run: |
-          package_name="$(jq -r '.name' package/package.json)"
-          package_version="$(jq -r '.version' package/package.json)"
+          package_name="$(jq -r '.name' com.doji.package-authoring/package.json)"
+          package_version="$(jq -r '.version' com.doji.package-authoring/package.json)"
 
           echo "PACKAGE_NAME=$package_name" >> "$GITHUB_ENV"
           echo "PACKAGE_VERSION=$package_version" >> "$GITHUB_ENV"
@@ -45,7 +45,7 @@ jobs:
       - name: Sign package
         run: |
           mkdir -p "$DIST_DIR"
-          upm pack ./package --organization-id "$UPM_ORG_ID" --destination "$DIST_DIR"
+          upm pack ./com.doji.package-authoring --organization-id "$UPM_ORG_ID" --destination "$DIST_DIR"
 
       - name: Print signed package info
         run: |

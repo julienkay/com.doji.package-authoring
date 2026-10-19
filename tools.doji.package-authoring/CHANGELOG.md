@@ -9,6 +9,7 @@ and this package adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
+- Generated package manifests include Unity 6000.0 compatibility metadata by default.
 - Optional generation of a GitHub Actions workflow that signs and releases the package when a version tag is pushed.
 
 ### Changed

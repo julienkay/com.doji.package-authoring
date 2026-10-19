@@ -11,6 +11,12 @@ namespace Doji.PackageAuthoring.Wizards.Templates {
     /// </summary>
     internal static class PackageManifestTemplate {
         public static string GetPackageManifest(PackageContext ctx) {
+            string minimumUnityMajor = string.IsNullOrWhiteSpace(ctx.Package.MinimumUnityMajor)
+                ? "6000"
+                : ctx.Package.MinimumUnityMajor.Trim();
+            string minimumUnityMinor = string.IsNullOrWhiteSpace(ctx.Package.MinimumUnityMinor)
+                ? "0"
+                : ctx.Package.MinimumUnityMinor.Trim();
             string minimumUnityRelease = string.IsNullOrWhiteSpace(ctx.Package.MinimumUnityRelease)
                 ? string.Empty
                 : ctx.Package.MinimumUnityRelease.Trim();
@@ -25,7 +31,7 @@ namespace Doji.PackageAuthoring.Wizards.Templates {
                 PropIf(
                     ctx.Package.IncludeMinimumUnityVersion,
                     "unity",
-                    $"{ctx.Package.MinimumUnityMajor}.{ctx.Package.MinimumUnityMinor}"),
+                    $"{minimumUnityMajor}.{minimumUnityMinor}"),
                 PropIf(
                     ctx.Package.IncludeMinimumUnityVersion &&
                     !string.IsNullOrWhiteSpace(minimumUnityRelease),

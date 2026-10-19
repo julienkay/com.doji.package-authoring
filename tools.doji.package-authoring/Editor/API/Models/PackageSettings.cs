@@ -71,25 +71,25 @@ namespace Doji.PackageAuthoring.Models {
         /// Whether the generated package manifest should include a minimum Unity version.
         /// </summary>
         [field: SerializeField]
-        public bool IncludeMinimumUnityVersion { get; set; }
+        public bool IncludeMinimumUnityVersion { get; set; } = true;
 
         /// <summary>
         /// Major Unity version written into the package manifest when enabled.
         /// </summary>
         [field: SerializeField]
-        public string MinimumUnityMajor { get; set; } = string.Empty;
+        public string MinimumUnityMajor { get; set; } = "6000";
 
         /// <summary>
         /// Minor Unity version written into the package manifest when enabled.
         /// </summary>
         [field: SerializeField]
-        public string MinimumUnityMinor { get; set; } = string.Empty;
+        public string MinimumUnityMinor { get; set; } = "0";
 
         /// <summary>
         /// Optional Unity release suffix written into the package manifest when enabled.
         /// </summary>
         [field: SerializeField]
-        public string MinimumUnityRelease { get; set; } = string.Empty;
+        public string MinimumUnityRelease { get; set; } = "0f1";
 
         /// <summary>
         /// Whether to include a documentation folder scaffold.

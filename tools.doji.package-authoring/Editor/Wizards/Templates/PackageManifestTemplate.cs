@@ -28,15 +28,8 @@ namespace Doji.PackageAuthoring.Wizards.Templates {
                 Prop("displayName", ctx.Package.PackageDisplayName),
                 Prop("description", ctx.Package.Description),
                 Prop("author", ctx.Package.IncludeAuthor ? GetAuthorMetadata(ctx) : null),
-                PropIf(
-                    ctx.Package.IncludeMinimumUnityVersion,
-                    "unity",
-                    $"{minimumUnityMajor}.{minimumUnityMinor}"),
-                PropIf(
-                    ctx.Package.IncludeMinimumUnityVersion &&
-                    !string.IsNullOrWhiteSpace(minimumUnityRelease),
-                    "unityRelease",
-                    minimumUnityRelease),
+                Prop("unity", $"{minimumUnityMajor}.{minimumUnityMinor}"),
+                Prop("unityRelease", minimumUnityRelease),
                 PropIf(!string.IsNullOrWhiteSpace(documentationUrl), "documentationUrl", documentationUrl),
                 PropIf(ctx.Package.CreateSamplesFolder, "samples", GetSamples(ctx)),
                 PropIf(ctx.Package.Dependencies is { Count: > 0 }, "dependencies", GetDependencies(ctx))

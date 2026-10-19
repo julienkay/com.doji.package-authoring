@@ -23,7 +23,6 @@ namespace Doji.PackageAuthoring.Wizards.UI {
         public const string AuthorUrl = nameof(AuthorUrl);
         public const string AuthorEmail = nameof(AuthorEmail);
         public const string DocumentationUrl = nameof(DocumentationUrl);
-        public const string IncludeMinimumUnityVersion = nameof(IncludeMinimumUnityVersion);
         public const string MinimumUnityVersion = nameof(MinimumUnityVersion);
         public const string CreateDocsFolder = nameof(CreateDocsFolder);
         public const string IncludePackageReadme = nameof(IncludePackageReadme);

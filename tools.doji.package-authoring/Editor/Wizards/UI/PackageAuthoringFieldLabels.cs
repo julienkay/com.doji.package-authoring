@@ -73,19 +73,19 @@ namespace Doji.PackageAuthoring.Wizards.UI {
 
             public static GUIContent MinimumUnityVersion { get; } =
                 new("Minimum Unity Version",
-                    "Controls whether the generated package manifest includes a minimum supported Unity editor version.");
+                    "Unity compatibility metadata is always included in the generated package manifest.");
 
             public static GUIContent MinimumUnityMajor { get; } =
                 new("Major",
-                    "Major Unity version written into the generated package manifest when minimum Unity version is enabled.");
+                    "Major Unity version written into the generated package manifest.");
 
             public static GUIContent MinimumUnityMinor { get; } =
                 new("Minor",
-                    "Minor Unity version written into the generated package manifest when minimum Unity version is enabled.");
+                    "Minor Unity version written into the generated package manifest.");
 
             public static GUIContent MinimumUnityRelease { get; } =
                 new("Release",
-                    "Optional Unity release suffix written into the generated package manifest when minimum Unity version is enabled.");
+                    "Unity release component written into the generated package manifest.");
 
             public static GUIContent DocumentationUrl { get; } =
                 new("Documentation URL",

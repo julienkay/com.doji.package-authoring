@@ -16,9 +16,11 @@ and this package adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Fixed
 
 - Configure the editor test assembly through Unity's `TestAssemblies` optional reference.
+- Default blank `unityRelease` values to the current editor release in generated package manifests.
 
 ### Changed
 
+- Always include Unity compatibility metadata in generated package manifests; configure its values in a collapsed-by-default foldout.
 - Rename the package and repository to `tools.doji.package-authoring`.
 
 ## [1.0.2] - 2026-10-19

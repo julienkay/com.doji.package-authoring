@@ -25,9 +25,6 @@ namespace Doji.PackageAuthoring.Wizards.Drawers {
         private static readonly string DocumentationUrlField =
             $"<{nameof(PackageSettings.DocumentationUrl)}>k__BackingField";
 
-        private static readonly string IncludeMinimumUnityVersionField =
-            $"<{nameof(PackageSettings.IncludeMinimumUnityVersion)}>k__BackingField";
-
         private static readonly string MinimumUnityMajorField =
             $"<{nameof(PackageSettings.MinimumUnityMajor)}>k__BackingField";
 
@@ -61,7 +58,7 @@ namespace Doji.PackageAuthoring.Wizards.Drawers {
                 lineCount += 2;
             }
 
-            if (property.FindPropertyRelative(IncludeMinimumUnityVersionField).boolValue) {
+            if (property.isExpanded) {
                 lineCount += 3;
             }
 
@@ -132,14 +129,16 @@ namespace Doji.PackageAuthoring.Wizards.Drawers {
                 EditorGUI.indentLevel--;
             }
 
-            SerializedProperty includeUnityVersionProperty =
-                property.FindPropertyRelative(IncludeMinimumUnityVersionField);
-            DrawField(
-                ref row,
-                includeUnityVersionProperty,
+            property.isExpanded = EditorGUI.Foldout(
+                row,
+                property.isExpanded,
                 PackageAuthoringFieldLabels.Package.MinimumUnityVersion,
-                RepositoryLayoutPreviewHoverTargets.IncludeMinimumUnityVersion);
-            if (includeUnityVersionProperty.boolValue) {
+                true);
+            RepositoryLayoutPreviewHoverContext.SetHoveredTargetsIfHovered(
+                row,
+                RepositoryLayoutPreviewHoverTargets.MinimumUnityVersion);
+            row.y += EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
+            if (property.isExpanded) {
                 EditorGUI.indentLevel++;
                 DrawField(
                     ref row,

@@ -237,7 +237,6 @@ namespace Doji.PackageAuthoring.Wizards.UI {
                 case RepositoryLayoutPreviewHoverTargets.DocumentationUrl:
                     return MatchesContent(node, data.Context.Package.DocumentationUrl) ||
                            MatchesPath(node, $"{data.PackageName}/package.json");
-                case RepositoryLayoutPreviewHoverTargets.IncludeMinimumUnityVersion:
                 case RepositoryLayoutPreviewHoverTargets.MinimumUnityVersion:
                     return MatchesPath(node, $"{data.PackageName}/package.json");
                 case RepositoryLayoutPreviewHoverTargets.CreateDocsFolder:
@@ -1118,7 +1117,6 @@ namespace Doji.PackageAuthoring.Wizards.UI {
                 AppendValue(signature, context.Package?.AuthorUrl);
                 AppendValue(signature, context.Package?.AuthorEmail);
                 AppendValue(signature, context.Package?.DocumentationUrl);
-                AppendValue(signature, context.Package?.IncludeMinimumUnityVersion ?? false);
                 AppendValue(signature, context.Package?.MinimumUnityMajor);
                 AppendValue(signature, context.Package?.MinimumUnityMinor);
                 AppendValue(signature, context.Package?.MinimumUnityRelease);

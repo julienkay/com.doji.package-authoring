@@ -9,12 +9,12 @@ namespace Doji.PackageAuthoring.Tests {
     /// </summary>
     internal sealed class PackageAuthoringApiManifestGenerationTests : PackageAuthoringApiTestBase {
         [Test]
-        public void GeneratePackage_OmitsUnityReleaseWhenMinimumVersionReleaseIsUnset() {
+        public void GeneratePackage_UsesCurrentUnityReleaseWhenMinimumVersionReleaseIsUnset() {
             ProjectSettings projectSettings = CreateProjectSettings("Minimum Unity Default");
             PackageSettings packageSettings = CreatePackageSettings(
                 "https://docs.doji-tech.com/{{PACKAGE_NAME}}",
                 "https://docs.doji-tech.com/{{PACKAGE_NAME}}/manual");
-            packageSettings.IncludeMinimumUnityVersion = true;
+            string expectedUnityRelease = packageSettings.MinimumUnityRelease;
             packageSettings.MinimumUnityMajor = "6000";
             packageSettings.MinimumUnityMinor = "3";
             packageSettings.MinimumUnityRelease = " ";
@@ -31,7 +31,7 @@ namespace Doji.PackageAuthoring.Tests {
             JObject packageManifest = JObject.Parse(File.ReadAllText(packageManifestPath));
 
             Assert.That(packageManifest.Value<string>("unity"), Is.EqualTo("6000.3"));
-            Assert.That(packageManifest.ContainsKey("unityRelease"), Is.False);
+            Assert.That(packageManifest.Value<string>("unityRelease"), Is.EqualTo(expectedUnityRelease));
         }
 
         [Test]

@@ -90,7 +90,8 @@ namespace Doji.PackageAuthoring.Models {
         public string DocumentationUrl { get; set; } = string.Empty;
 
         /// <summary>
-        /// Whether the generated package manifest should include a minimum Unity version.
+        /// Legacy compatibility setting retained for existing callers.
+        /// Generated manifests always include Unity version metadata.
         /// </summary>
         [field: SerializeField]
         public bool IncludeMinimumUnityVersion { get; set; } = true;

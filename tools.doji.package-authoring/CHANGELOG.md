@@ -7,6 +7,8 @@ and this package adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [1.0.3] - 2026-10-20
+
 ### Added
 
 - Generated package manifests use the current Unity editor version for compatibility metadata by default.

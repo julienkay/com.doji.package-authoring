@@ -12,6 +12,10 @@ and this package adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Generated package manifests use the current Unity editor version for compatibility metadata by default.
 - Optional generation of a GitHub Actions workflow that signs and releases the package when a version tag is pushed.
 
+### Fixed
+
+- Configure the editor test assembly through Unity's `TestAssemblies` optional reference.
+
 ### Changed
 
 - Rename the package and repository to `tools.doji.package-authoring`.

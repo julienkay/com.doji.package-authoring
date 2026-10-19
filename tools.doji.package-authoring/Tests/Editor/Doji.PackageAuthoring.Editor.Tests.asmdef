@@ -2,9 +2,10 @@
     "name": "Doji.PackageAuthoring.Editor.Tests",
     "rootNamespace": "Doji.PackageAuthoring.Tests",
     "references": [
-        "Doji.PackageAuthoring.Editor",
-        "UnityEngine.TestRunner",
-        "UnityEditor.TestRunner"
+        "Doji.PackageAuthoring.Editor"
+    ],
+    "optionalUnityReferences": [
+        "TestAssemblies"
     ],
     "includePlatforms": [
         "Editor"
@@ -13,7 +14,6 @@
     "allowUnsafeCode": false,
     "overrideReferences": true,
     "precompiledReferences": [
-        "nunit.framework.dll",
         "Newtonsoft.Json.dll"
     ],
     "autoReferenced": false,

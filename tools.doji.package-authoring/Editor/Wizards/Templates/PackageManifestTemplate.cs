@@ -12,13 +12,13 @@ namespace Doji.PackageAuthoring.Wizards.Templates {
     internal static class PackageManifestTemplate {
         public static string GetPackageManifest(PackageContext ctx) {
             string minimumUnityMajor = string.IsNullOrWhiteSpace(ctx.Package.MinimumUnityMajor)
-                ? "6000"
+                ? PackageSettings.CurrentUnityVersionMajor
                 : ctx.Package.MinimumUnityMajor.Trim();
             string minimumUnityMinor = string.IsNullOrWhiteSpace(ctx.Package.MinimumUnityMinor)
-                ? "0"
+                ? PackageSettings.CurrentUnityVersionMinor
                 : ctx.Package.MinimumUnityMinor.Trim();
             string minimumUnityRelease = string.IsNullOrWhiteSpace(ctx.Package.MinimumUnityRelease)
-                ? string.Empty
+                ? PackageSettings.CurrentUnityVersionRelease
                 : ctx.Package.MinimumUnityRelease.Trim();
             string documentationUrl = TemplateTokenResolver.Resolve(ctx.Package.DocumentationUrl, ctx);
 

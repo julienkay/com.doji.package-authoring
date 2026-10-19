@@ -32,10 +32,10 @@ MonoBehaviour:
     <AuthorUrl>k__BackingField: https://docs.doji-tech.com/{{PACKAGE_NAME}}
     <AuthorEmail>k__BackingField: support@doji-tech.com
     <DocumentationUrl>k__BackingField: https://docs.doji-tech.com/{{PACKAGE_NAME}}
-    <IncludeMinimumUnityVersion>k__BackingField: 0
-    <MinimumUnityMajor>k__BackingField: 
-    <MinimumUnityMinor>k__BackingField: 
-    <MinimumUnityRelease>k__BackingField: 
+    <IncludeMinimumUnityVersion>k__BackingField: 1
+    <MinimumUnityMajor>k__BackingField: 6000
+    <MinimumUnityMinor>k__BackingField: 6
+    <MinimumUnityRelease>k__BackingField: 4f1
     <CreateDocsFolder>k__BackingField: 1
     <IncludeReadme>k__BackingField: 1
     <CreateSamplesFolder>k__BackingField: 0

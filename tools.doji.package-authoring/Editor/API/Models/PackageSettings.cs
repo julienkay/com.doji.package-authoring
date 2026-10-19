@@ -8,6 +8,28 @@ namespace Doji.PackageAuthoring.Models {
     [Serializable]
     public class PackageSettings {
         /// <summary>
+        /// Current Unity editor major version used when package settings do not provide a minimum version.
+        /// </summary>
+        internal static string CurrentUnityVersionMajor => GetCurrentUnityVersionPart(0, "6000");
+
+        /// <summary>
+        /// Current Unity editor minor version used when package settings do not provide a minimum version.
+        /// </summary>
+        internal static string CurrentUnityVersionMinor => GetCurrentUnityVersionPart(1, "0");
+
+        /// <summary>
+        /// Current Unity editor release component used when package settings do not provide a minimum version.
+        /// </summary>
+        internal static string CurrentUnityVersionRelease => GetCurrentUnityVersionPart(2, "0f1");
+
+        private static string GetCurrentUnityVersionPart(int partIndex, string fallback) {
+            string[] versionParts = Application.unityVersion.Split('.');
+            return versionParts.Length > partIndex && !string.IsNullOrWhiteSpace(versionParts[partIndex])
+                ? versionParts[partIndex]
+                : fallback;
+        }
+
+        /// <summary>
         /// Package identifier written to the generated <c>package.json</c>.
         /// </summary>
         [field: SerializeField]
@@ -77,19 +99,19 @@ namespace Doji.PackageAuthoring.Models {
         /// Major Unity version written into the package manifest when enabled.
         /// </summary>
         [field: SerializeField]
-        public string MinimumUnityMajor { get; set; } = "6000";
+        public string MinimumUnityMajor { get; set; } = CurrentUnityVersionMajor;
 
         /// <summary>
         /// Minor Unity version written into the package manifest when enabled.
         /// </summary>
         [field: SerializeField]
-        public string MinimumUnityMinor { get; set; } = "0";
+        public string MinimumUnityMinor { get; set; } = CurrentUnityVersionMinor;
 
         /// <summary>
         /// Optional Unity release suffix written into the package manifest when enabled.
         /// </summary>
         [field: SerializeField]
-        public string MinimumUnityRelease { get; set; } = "0f1";
+        public string MinimumUnityRelease { get; set; } = CurrentUnityVersionRelease;
 
         /// <summary>
         /// Whether to include a documentation folder scaffold.

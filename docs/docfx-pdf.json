@@ -6,7 +6,7 @@
           "files": [
             "**/*.cs"
           ],
-          "src": "../com.doji.package-authoring"
+          "src": "../tools.doji.package-authoring"
         }
       ],
       "dest": "api",
@@ -60,7 +60,7 @@
       "_disableContribution": true,
       "pdf": true,
       "pdfTocPage": true,
-      "pdfFileName": "com.doji.package-authoring.pdf"
+      "pdfFileName": "tools.doji.package-authoring.pdf"
     },
     "fileMetadataFiles": [],
     "template": [

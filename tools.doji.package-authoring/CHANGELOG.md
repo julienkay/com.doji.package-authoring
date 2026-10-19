@@ -11,6 +11,10 @@ and this package adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Optional generation of a GitHub Actions workflow that signs and releases the package when a version tag is pushed.
 
+### Changed
+
+- Rename the package and repository to `tools.doji.package-authoring`.
+
 ## [1.0.2] - 2026-10-19
 
 ### Fixed

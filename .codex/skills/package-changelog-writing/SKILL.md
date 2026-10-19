@@ -1,16 +1,16 @@
 ---
 name: package-changelog-writing
-description: Write or revise changelog entries for this Unity package-authoring project. Use when updating `com.doji.package-authoring/CHANGELOG.md`, deciding how unreleased work should be categorized, or summarizing package-facing changes for the upcoming release.
+description: Write or revise changelog entries for this Unity package-authoring project. Use when updating `tools.doji.package-authoring/CHANGELOG.md`, deciding how unreleased work should be categorized, or summarizing package-facing changes for the upcoming release.
 ---
 
 # Package Changelog Writing
 
-Use this skill for edits to `com.doji.package-authoring/CHANGELOG.md`.
+Use this skill for edits to `tools.doji.package-authoring/CHANGELOG.md`.
 
 Primary source of truth:
 
-- `com.doji.package-authoring/CHANGELOG.md`
-- the current package code under `com.doji.package-authoring/`
+- `tools.doji.package-authoring/CHANGELOG.md`
+- the current package code under `tools.doji.package-authoring/`
 
 Scope rules:
 

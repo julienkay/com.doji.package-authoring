@@ -1,16 +1,16 @@
 ---
 name: package-authoring-test-creation
-description: Add or revise Unity editor tests in the existing package-authoring test suite. Use when creating regression coverage for generated package or project output, scripting API behavior, token resolution, manifest content, or test suite architecture under `com.doji.package-authoring/Tests/Editor`.
+description: Add or revise Unity editor tests in the existing package-authoring test suite. Use when creating regression coverage for generated package or project output, scripting API behavior, token resolution, manifest content, or test suite architecture under `tools.doji.package-authoring/Tests/Editor`.
 ---
 
 # Package Authoring Test Creation
 
-Use this skill for tests that extend the existing package-authoring editor test suite in `com.doji.package-authoring`.
+Use this skill for tests that extend the existing package-authoring editor test suite in `tools.doji.package-authoring`.
 
 Primary scope:
 
-- `com.doji.package-authoring/Tests/Editor/`
-- `com.doji.package-authoring/Editor/API/PackageAuthoringApi.cs`
+- `tools.doji.package-authoring/Tests/Editor/`
+- `tools.doji.package-authoring/Editor/API/PackageAuthoringApi.cs`
 - generated output rooted in temp directories
 
 Choose the destination fixture before writing the test:
@@ -73,7 +73,7 @@ Assertion pattern:
 1. Build `ProjectSettings`, `PackageSettings`, and `RepoSettings` with only the fields needed for the scenario.
 2. Disable git initialization unless the test is explicitly about git behavior.
 3. Parse generated JSON with `JObject.Parse(...)` for manifest assertions.
-4. For package ids or dependency keys that contain dots, read from the containing `JObject` by exact key, for example `dependencies["com.doji.package-authoring"]`, instead of `SelectToken(...)`.
+4. For package ids or dependency keys that contain dots, read from the containing `JObject` by exact key, for example `dependencies["tools.doji.package-authoring"]`, instead of `SelectToken(...)`.
 5. For template outputs, assert both the resolved expected value and absence of unresolved tokens where that matters.
 
 When adding or updating tests:
@@ -88,9 +88,9 @@ When adding or updating tests:
 
 Current reference test:
 
-- `com.doji.package-authoring/Tests/Editor/PackageAuthoringApiManifestGenerationTests.cs`
-- `com.doji.package-authoring/Tests/Editor/PackageAuthoringApiTemplateResolutionTests.cs`
-- `com.doji.package-authoring/Tests/Editor/PackageAuthoringApiProjectGenerationTests.cs`
+- `tools.doji.package-authoring/Tests/Editor/PackageAuthoringApiManifestGenerationTests.cs`
+- `tools.doji.package-authoring/Tests/Editor/PackageAuthoringApiTemplateResolutionTests.cs`
+- `tools.doji.package-authoring/Tests/Editor/PackageAuthoringApiProjectGenerationTests.cs`
 
 Finish checklist:
 

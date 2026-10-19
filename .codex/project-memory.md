@@ -8,25 +8,25 @@
 
 ## Current Product Shape
 
-- The main package under development is `com.doji.package-authoring`.
+- The main package under development is `tools.doji.package-authoring`.
 - That package owns the editor tooling for project creation, package repository creation, generated metadata/templates, and reusable authoring defaults.
 - The repository also contains host-project baseline assets and settings used by the template project itself under `projects/Package Authoring`, including `Assets/Input`, `Assets/Settings`, `ProjectSettings`, and `Packages/manifest.json`.
 
 ## Package Audit Scope
 
-- Treat `com.doji.package-authoring` as the only shipped/publishable artifact for package-readiness reviews.
+- Treat `tools.doji.package-authoring` as the only shipped/publishable artifact for package-readiness reviews.
 - Do not flag `projects/Package Authoring/Assets/`, `projects/Package Authoring/ProjectSettings/`, or ad hoc local preset assets as publish-blocking package issues unless the user explicitly asks for whole-repo cleanup.
 - Non-committed local assets such as personal presets are not part of the package audit scope.
 
 ## Source Of Truth
 
-- Prefer `com.doji.package-authoring` for package-authoring behavior and package-owned implementation work.
+- Prefer `tools.doji.package-authoring` for package-authoring behavior and package-owned implementation work.
 - Use `projects/Package Authoring/Assets/`, `projects/Package Authoring/ProjectSettings`, and `projects/Package Authoring/Packages/manifest.json` when the task is explicitly about template-host support assets or generator baseline configuration.
 
 ## Repository Structure
 
-- `com.doji.package-authoring/Editor/Wizards` contains the main authoring flows, models, drawers, presets, and templates.
-- `com.doji.package-authoring/Editor/Utilities` contains supporting editor utilities such as Git, launcher, JSON, and image helpers.
+- `tools.doji.package-authoring/Editor/Wizards` contains the main authoring flows, models, drawers, presets, and templates.
+- `tools.doji.package-authoring/Editor/Utilities` contains supporting editor utilities such as Git, launcher, JSON, and image helpers.
 - `projects/Package Authoring/Assets/Editor` contains template-project-level editor helpers.
 - `docs/` is for human-facing documentation, not durable agent memory.
 
@@ -49,9 +49,9 @@
 ## Testing Notes
 
 - Prefer black-box editor regression tests through `PackageAuthoringApi.GeneratePackage(...)` or `PackageAuthoringApi.GenerateProject(...)` instead of asserting on internal template helpers when both paths cover the same behavior.
-- Place package-owned editor tests under `com.doji.package-authoring/Tests/Editor` in an editor-only asmdef that references `Doji.PackageAuthoring.Editor` and includes `optionalUnityReferences: [ "TestAssemblies" ]`.
+- Place package-owned editor tests under `tools.doji.package-authoring/Tests/Editor` in an editor-only asmdef that references `Doji.PackageAuthoring.Editor` and includes `optionalUnityReferences: [ "TestAssemblies" ]`.
 - Generate into unique temp directories, disable git initialization unless explicitly under test, assert on concrete generated files such as `package.json`, companion `Packages/manifest.json`, `README.md`, `AGENTS.md`, and DocFX files, and clean temp output in `TearDown`.
-- For manifest assertions, package ids like `com.doji.package-authoring` are literal JSON property names. Do not use `SelectToken(...)` for them; index the parent `JObject` by exact key instead.
+- For manifest assertions, package ids like `tools.doji.package-authoring` are literal JSON property names. Do not use `SelectToken(...)` for them; index the parent `JObject` by exact key instead.
 
 ## Generated Output Expectations
 
@@ -66,4 +66,4 @@
 ## Audit History Notes
 
 - A previous audit over-reported issues from the template host project. Future audits should scope findings to the shipped package first.
-- Remaining high-signal concerns should focus on package-owned hardcoded assumptions or brittle generation behavior inside `com.doji.package-authoring`.
+- Remaining high-signal concerns should focus on package-owned hardcoded assumptions or brittle generation behavior inside `tools.doji.package-authoring`.

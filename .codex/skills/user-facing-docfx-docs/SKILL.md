@@ -24,9 +24,9 @@ Do not guess from UI text alone. Verify against implementation before documentin
 
 Read only the files needed for the current page, usually:
 
-- wizard window classes in `com.doji.package-authoring/Editor/Wizards/`
-- settings models in `com.doji.package-authoring/Editor/Wizards/Models/`
-- drawers and shared GUI in `com.doji.package-authoring/Editor/Wizards/Drawers/` and `.../UI/`
+- wizard window classes in `tools.doji.package-authoring/Editor/Wizards/`
+- settings models in `tools.doji.package-authoring/Editor/Wizards/Models/`
+- drawers and shared GUI in `tools.doji.package-authoring/Editor/Wizards/Drawers/` and `.../UI/`
 - template providers and template classes in `.../Presets/` and `.../Templates/`
 
 Document actual behavior, including:

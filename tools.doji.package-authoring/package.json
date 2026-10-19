@@ -1,5 +1,5 @@
 {
-  "name": "com.doji.package-authoring",
+  "name": "tools.doji.package-authoring",
   "version": "1.0.2",
   "displayName": "UPM Package Authoring",
   "description": "Unity editor tooling for scaffolding UPM packages and their companion sample projects.",
@@ -8,7 +8,7 @@
     "url": "https://www.doji-tech.com/",
     "email": "support@doji-tech.com"
   },
-  "documentationUrl": "https://docs.doji-tech.com/com.doji.package-authoring/",
+  "documentationUrl": "https://docs.doji-tech.com/tools.doji.package-authoring/",
   "dependencies": {
     "com.unity.nuget.newtonsoft-json": "3.2.2"
   }

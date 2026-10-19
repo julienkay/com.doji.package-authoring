@@ -6,7 +6,7 @@
           "files": [
             "**/*.cs"
           ],
-          "src": "../com.doji.package-authoring"
+          "src": "../tools.doji.package-authoring"
         }
       ],
       "dest": "api",

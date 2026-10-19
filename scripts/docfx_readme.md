@@ -45,7 +45,7 @@ Build the PDF-oriented output with:
 ./scripts/docfx.sh build docs/docfx-pdf.json
 ```
 
-The generated PDF is written to `docs/_site/pdf/com.doji.package-authoring.pdf`.
+The generated PDF is written to `docs/_site/pdf/tools.doji.package-authoring.pdf`.
 
 ## Notes
 

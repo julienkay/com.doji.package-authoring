@@ -8,7 +8,7 @@ This repository is a Unity 6.3 template project centered on editor tooling for c
 
 Prefer these locations:
 
-- `com.doji.package-authoring/`: local package under development
+- `tools.doji.package-authoring/`: local package under development
 - `.codex/skills/`: project-specific skills; when a task matches one, read and follow the relevant `SKILL.md`
 - `.codex/project-memory.md`: durable project memory and agent-oriented project context
 

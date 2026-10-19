@@ -1,7 +1,7 @@
 {
   "dependencies": {
-    "com.doji.package-authoring": {
-      "version": "file:../../../com.doji.package-authoring",
+    "tools.doji.package-authoring": {
+      "version": "file:../../../tools.doji.package-authoring",
       "depth": 0,
       "source": "local",
       "dependencies": {

@@ -27,6 +27,16 @@ namespace Doji.PackageAuthoring.Wizards.Templates {
         }
 
         /// <summary>
+        /// Builds the Editor test asmdef JSON for the generated package.
+        /// </summary>
+        public static string GetEditorTestsAsmDef(
+            this PackageContext ctx,
+            string runtimeAssemblyGuid,
+            string editorAssemblyGuid) {
+            return AsmDefTemplate.GetEditorTestsAsmDef(ctx, runtimeAssemblyGuid, editorAssemblyGuid);
+        }
+
+        /// <summary>
         /// Builds the runtime assembly info file.
         /// </summary>
         public static string GetAssemblyInfo(this PackageContext ctx) {

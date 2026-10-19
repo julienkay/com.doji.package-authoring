@@ -10,6 +10,7 @@ and this package adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 
 - Generated package manifests use the current Unity editor version for compatibility metadata by default.
+- Generate Editor test assembly definitions with Unity's `TestAssemblies` optional reference when package tests are enabled.
 - Optional generation of a GitHub Actions workflow that signs and releases the package when a version tag is pushed.
 
 ### Fixed

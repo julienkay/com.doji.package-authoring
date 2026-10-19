@@ -24,6 +24,7 @@ namespace Doji.PackageAuthoring.Wizards.UI {
         private const float TagSpacing = 6f;
         private const float TagColumnWidth = 44f;
         private const string RuntimeAssemblyGuidPreview = "<runtime-assembly-guid>";
+        private const string EditorAssemblyGuidPreview = "<editor-assembly-guid>";
         private static readonly Color HoverColor = new(0.24f, 0.47f, 0.85f, 0.08f);
         private static readonly Color RelatedHoverColor = new(0.92f, 0.68f, 0.18f, 0.08f);
         private static readonly Color SelectionColor = new(0.24f, 0.47f, 0.85f, 0.18f);
@@ -700,8 +701,21 @@ namespace Doji.PackageAuthoring.Wizards.UI {
             }
 
             if (data.IncludeTestsFolder) {
-                package.Children.Add(
-                    CreateDirectoryNode("Tests", $"{packageRoot}/Tests", RepositoryLayoutGroup.Package));
+                RepositoryLayoutNode tests =
+                    CreateDirectoryNode("Tests", $"{packageRoot}/Tests", RepositoryLayoutGroup.Package);
+                RepositoryLayoutNode editorTests = CreateDirectoryNode(
+                    "Editor",
+                    $"{packageRoot}/Tests/Editor",
+                    RepositoryLayoutGroup.Package);
+                editorTests.Children.Add(CreateGeneratedFileNode(
+                    $"{data.AssemblyName}.Editor.Tests.asmdef",
+                    $"{packageRoot}/Tests/Editor/{data.AssemblyName}.Editor.Tests.asmdef",
+                    data.Context.GetEditorTestsAsmDef(
+                        RuntimeAssemblyGuidPreview,
+                        data.IncludeEditorFolder ? EditorAssemblyGuidPreview : null),
+                    RepositoryLayoutGroup.Package));
+                tests.Children.Add(editorTests);
+                package.Children.Add(tests);
             }
 
             package.Children.Add(CreateGeneratedFileNode(

@@ -84,6 +84,8 @@ namespace Doji.PackageAuthoring.Wizards {
             Directory.CreateDirectory(packageDirectory);
             Directory.CreateDirectory(projectDirectory);
 
+            string editorAssemblyGuid = null;
+
             if (packageSettings.CreateDocsFolder) {
                 CreateDocsFolder(rootDirectory, context);
             }
@@ -95,11 +97,20 @@ namespace Doji.PackageAuthoring.Wizards {
             }
 
             if (packageSettings.CreateEditorFolder) {
-                CreateEditorFolder(packageDirectory, context, packageSettings, runtimeAssemblyGuid);
+                editorAssemblyGuid = CreateEditorFolder(
+                    packageDirectory,
+                    context,
+                    packageSettings,
+                    runtimeAssemblyGuid);
             }
 
             if (packageSettings.CreateTestsFolder) {
-                GeneratedProjectScaffoldingUtility.CreateFolderWithMeta(Path.Combine(packageDirectory, "Tests"));
+                CreateTestsFolder(
+                    packageDirectory,
+                    context,
+                    packageSettings,
+                    runtimeAssemblyGuid,
+                    editorAssemblyGuid);
             }
 
             CreatePackageFiles(packageDirectory, context, packageSettings);
@@ -212,16 +223,31 @@ namespace Doji.PackageAuthoring.Wizards {
                 AssetMetaTemplate.GetMonoScriptMeta(NewMetaGuid()));
         }
 
-        private static void CreateEditorFolder(
+        private static string CreateEditorFolder(
             string packageDirectory,
             PackageContext context,
             PackageSettings packageSettings,
             string runtimeAssemblyGuid) {
             string editorPath = Path.Combine(packageDirectory, "Editor");
             GeneratedProjectScaffoldingUtility.CreateFolderWithMeta(editorPath);
-            CreateAsmDefWithMeta(
+            return CreateAsmDefWithMeta(
                 Path.Combine(editorPath, $"{packageSettings.AssemblyName}.Editor.asmdef"),
                 context.GetEditorAsmDef(runtimeAssemblyGuid));
+        }
+
+        private static void CreateTestsFolder(
+            string packageDirectory,
+            PackageContext context,
+            PackageSettings packageSettings,
+            string runtimeAssemblyGuid,
+            string editorAssemblyGuid) {
+            string testsPath = Path.Combine(packageDirectory, "Tests");
+            string editorTestsPath = Path.Combine(testsPath, "Editor");
+            GeneratedProjectScaffoldingUtility.CreateFolderWithMeta(testsPath);
+            GeneratedProjectScaffoldingUtility.CreateFolderWithMeta(editorTestsPath);
+            CreateAsmDefWithMeta(
+                Path.Combine(editorTestsPath, $"{packageSettings.AssemblyName}.Editor.Tests.asmdef"),
+                context.GetEditorTestsAsmDef(runtimeAssemblyGuid, editorAssemblyGuid));
         }
 
         private static void CreateSamplesFolder(
